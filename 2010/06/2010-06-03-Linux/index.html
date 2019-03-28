@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="lang"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="리눅스 파일권한 명령어"><meta name="keywords" content><meta name="author" content="bymin"><meta name="copyright" content="bymin"><title>리눅스 파일권한 명령어 | 젊은광대 기술블로그</title><link rel="shortcut icon" href="../../../melody-favicon.ico"><link rel="stylesheet" href="../../../css/index.css?version=1.6.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.6.1"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  }
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#리눅스-파일권한-상식"><span class="toc-number">1.</span> <span class="toc-text">리눅스 파일권한 상식</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#참고-맨앞에-문자가-일-경우-파일-d-이면-디렉토리-l-이면-링크를-나타냄"><span class="toc-number">2.</span> <span class="toc-text">참고 :  맨앞에 문자가 - 일 경우 파일, d 이면 디렉토리, l 이면 링크를 나타냄 )</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#umask-022"><span class="toc-number">3.</span> <span class="toc-text">umask 022</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#참조"><span class="toc-number">4.</span> <span class="toc-text">참조</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="../../../img/avatar.png"></div><div class="author-info__name text-center">bymin</div><div class="author-info__description text-center">잘정리하자</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="../../../archives"><span class="pull-left">Articles</span><span class="pull-right">109</span></a></div></div></div><div id="content-outer"><div class="no-bg" id="top-container"><div id="page-header"><span class="pull-left"> <a id="site-name" href="../../../index.html">젊은광대 기술블로그</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">리눅스 파일권한 명령어</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2010-06-03</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h1 id="리눅스-파일권한-상식"><a href="#리눅스-파일권한-상식" class="headerlink" title="리눅스 파일권한 상식"></a>리눅스 파일권한 상식</h1><p>ls -al 로 파일의 자세한 정보를 볼 수 있다 </p>
+<h1 id="참고-맨앞에-문자가-일-경우-파일-d-이면-디렉토리-l-이면-링크를-나타냄"><a href="#참고-맨앞에-문자가-일-경우-파일-d-이면-디렉토리-l-이면-링크를-나타냄" class="headerlink" title="참고 :  맨앞에 문자가 - 일 경우 파일, d 이면 디렉토리, l 이면 링크를 나타냄 )"></a>참고 :  맨앞에 문자가 - 일 경우 파일, d 이면 디렉토리, l 이면 링크를 나타냄 )</h1><p>r : Read  = 4<br>w : Write = 2<br>x : eXcute = 1</p>
+<p>-rwxrwxrwx   ( 777 )<br>-r–r–r–  ( 444 )<br>-rwx–x–x ( 711 )</p>
+<p>2~4필드 : 소유주 ( User ) 권한<br>5~7필드 : 그룹 ( Group )  권한<br>8~10필드 : 나머지 ( Others ) 권한</p>
+<ol>
+<li>chmod : 파일, 디렉토리 권한 수정<ul>
+<li>ex)<br>   chmod 755 a_file<br>   ( 소유자에겐 7(rwx), 그룹과 나머지에겐 5(r-x) 권한부여 )<br>   chmod o+rw a_file<br>   ( others에게 읽기, 쓰기 권한 부여 )<br>   chmod 700 *                <pre><code>( 현재 위치의 모든 파일과 폴더 권한 수정 )
+</code></pre>   chmod -R 755 www<br>   ( www디렉토리 내의 모든 파일과 디렉토리의 권한 수정 )</li>
+</ul>
+</li>
+</ol>
+<ol start="2">
+<li>umask : 파일이 만들어질때 허가권 기본값<ul>
+<li>ex) <h1 id="umask-022"><a href="#umask-022" class="headerlink" title="umask 022"></a>umask 022</h1><pre><code>-&gt; chmod와 반대개념 777에서 뺀다.  022일 경우 chmod 755 와 같음, 
+</code></pre></li>
+</ul>
+</li>
+</ol>
+<ol start="3">
+<li>chown : 파일 소유자, 소유그룹 수정 <ul>
+<li>ex)<br>   chown bible file1        <pre><code>( file1 파일의 소유자를 bible로 수정 )
+</code></pre>   chown bible:bible2 file2<br>   ( file2 파일의 소유자를 bible로 그룹을 bible2로 수정 )<br>   chown -cR nobody:nobody dirl<br>   ( dirl 폴더와 그안의 모든 파일,디렉토리의 소유자,소유그룹 변경 )<br>   chown -R bible:webhost uploads –from=nobody:nobody<br>   ( uploads디렉토리 내의 파일중 소유자가 nobody이고 소유그룹이 nobody로 되어 있는 파일의<pre><code>소유자를 bible로 변경하고 소유그룹을 webhost로 변경 )
+</code></pre></li>
+</ul>
+</li>
+</ol>
+<hr>
+<h1 id="참조"><a href="#참조" class="headerlink" title="참조"></a>참조</h1><hr>
+<ul>
+<li><a href="http://slog2.egloos.com/3546476" rel="external nofollow noopener noreferrer" target="_blank">[명령어] 리눅스 파일권환 명령어 umask, chmod, chown.</a></li>
+</ul>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noopener noreferrer" target="_blank">bymin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://youngclown.github.io/2010/06/2010-06-03-Linux/">https://youngclown.github.io/2010/06/2010-06-03-Linux/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="../2010-06-07-SQL_Loader/"><i class="fa fa-chevron-left">  </i><span>SQL*Loader 프로그래밍</span></a></div><div class="next-post pull-right"><a href="../../05/2010-05-19-FLASHBACK/"><span>FLASHBACK TABLE</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2019 By bymin</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io" rel="external nofollow noopener noreferrer" target="_blank"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody" rel="external nofollow noopener noreferrer" target="_blank"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="../../../js/utils.js?version=1.6.1"></script><script src="../../../js/fancybox.js?version=1.6.1"></script><script src="../../../js/sidebar.js?version=1.6.1"></script><script src="../../../js/copy.js?version=1.6.1"></script><script src="../../../js/fireworks.js?version=1.6.1"></script><script src="../../../js/transition.js?version=1.6.1"></script><script src="../../../js/scroll.js?version=1.6.1"></script><script src="../../../js/head.js?version=1.6.1"></script><script>if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+}</script></body></html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="lang"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="스프링 프레임워크를 기반으로 한 개발플랫폼 01"><meta name="keywords" content><meta name="author" content="bymin"><meta name="copyright" content="bymin"><title>스프링 프레임워크를 기반으로 한 개발플랫폼 01 | 젊은광대 기술블로그</title><link rel="shortcut icon" href="../../../melody-favicon.ico"><link rel="stylesheet" href="../../../css/index.css?version=1.6.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.6.1"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  }
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#스프링-부트-기능정의"><span class="toc-number">1.</span> <span class="toc-text">스프링 부트 기능정의</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스프링부트-구성요소"><span class="toc-number">2.</span> <span class="toc-text">스프링부트 구성요소</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Build-빌드"><span class="toc-number">3.</span> <span class="toc-text">Build(빌드)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-va-Kotilin-vs-Groovy"><span class="toc-number">4.</span> <span class="toc-text">Java va Kotilin vs Groovy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스프링부트는-2-0부터"><span class="toc-number">5.</span> <span class="toc-text">스프링부트는 2.0부터!!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#스프링부트는-애너테이션-기반으로-작동-컴포넌트를-탐색하여-동작함"><span class="toc-number">6.</span> <span class="toc-text">스프링부트는 애너테이션 기반으로 작동(컴포넌트를 탐색하여 동작함.)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Auto-Configuration"><span class="toc-number">7.</span> <span class="toc-text">Auto-Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#외부구성-External-Configuration"><span class="toc-number">8.</span> <span class="toc-text">외부구성(External Configuration)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Programming-in-Spring-Environment"><span class="toc-number">9.</span> <span class="toc-text">Programming in Spring Environment</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="../../../img/avatar.png"></div><div class="author-info__name text-center">bymin</div><div class="author-info__description text-center">잘정리하자</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="../../../archives"><span class="pull-left">Articles</span><span class="pull-right">109</span></a></div></div></div><div id="content-outer"><div class="no-bg" id="top-container"><div id="page-header"><span class="pull-left"> <a id="site-name" href="../../../index.html">젊은광대 기술블로그</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">스프링 프레임워크를 기반으로 한 개발플랫폼 01</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-10-29</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h2 id="스프링-부트-기능정의"><a href="#스프링-부트-기능정의" class="headerlink" title="스프링 부트 기능정의"></a>스프링 부트 기능정의</h2><p>단독실행가능한 스프링 애플리케이션 생성<br>내장 컨테이너로 톰캣, 제티, 혹은 언더토우 중에서 선택가능<br>스타터(starter)를 통해 간결한 의존성 구성지원<br>스프링에 대한 자동구성(Auto-Configuration) 제공<br>더이상 XML 구성 필요없음 (pom.xml 정도만 작업 후 순수한 자바만 가지고 적용가능.<br>제품 출시(release) 후 운영에 필요한 다양한 기능(상태점검, 모니터링 등) 제공 (healthcheck?)</p>
+<h2 id="스프링부트-구성요소"><a href="#스프링부트-구성요소" class="headerlink" title="스프링부트 구성요소"></a>스프링부트 구성요소</h2><p>빌드도구(그레이들 vs 메이븐) : 요근대는 그레이들을 많이씀. (아직 maven 사용)<br>스프링 프레임워크(4.x vs 5.x)<br>스프링 부트(v1.5 vs v2.0)<br>스프링 부트 스타터(spring-boot-starter)</p>
+<p>프랑스 철학자 ‘장 풀 샤르트르’가 인생은 BCD 라고 했다고 합니다.<br>태어나고(Bitch)- 죽는(Death) 사이에 수많은 선택을 한다고,</p>
+<p>스트링 부트 또한 BCD입니다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Build - Code - Deploy</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>Build</li>
+<li>Code.<ul>
+<li>spring-boot-starter</li>
+<li>Auto-configuration</li>
+<li>programming in spring enviroment</li>
+</ul>
+</li>
+<li>Deploy</li>
+</ul>
+<h2 id="Build-빌드"><a href="#Build-빌드" class="headerlink" title="Build(빌드)"></a>Build(빌드)</h2><p>[spring initializr]:(<a href="https://start.spring.io)를" rel="external nofollow noopener noreferrer" target="_blank">https://start.spring.io)를</a> 통해 파일을 생성해서 다운받을 수 있습니다.</p>
+<h2 id="Java-va-Kotilin-vs-Groovy"><a href="#Java-va-Kotilin-vs-Groovy" class="headerlink" title="Java va Kotilin vs Groovy"></a>Java va Kotilin vs Groovy</h2><p>스프링 부트는 자바, 코틀린, 그루비를 지원합니다.</p>
+<p>빌드도구로는 그레이들과 메이븐이 있는데,<br>의존성과 빌드동작들을 실행하는 스크립트가 존재합니다.<br>그래들은 build.gradle 에 선언하고 maven의 경우 pom.xml 에 선언하게 됩니다.</p>
+<p>Executable Jar or war</p>
+<p>실행학능한(Executable) JAR (or WAR) : App 과 tocmat 이 공존<br>고전적인 WAR : 톰캣과 APP이 분리되어있는 형태</p>
+<h2 id="스프링부트는-2-0부터"><a href="#스프링부트는-2-0부터" class="headerlink" title="스프링부트는 2.0부터!!"></a>스프링부트는 2.0부터!!</h2><p>1.5 는 스프링 4 지원 2.0은 스프링 5 지원이며 주가되는 것은 스프링부트 2.0을 주가 됩니다.</p>
+<h2 id="스프링부트는-애너테이션-기반으로-작동-컴포넌트를-탐색하여-동작함"><a href="#스프링부트는-애너테이션-기반으로-작동-컴포넌트를-탐색하여-동작함" class="headerlink" title="스프링부트는 애너테이션 기반으로 작동(컴포넌트를 탐색하여 동작함.)"></a>스프링부트는 애너테이션 기반으로 작동(컴포넌트를 탐색하여 동작함.)</h2><p>@SpringBoodtApplication(with SpringApplication)<br>@ComponentScan<br>@EnableAutoConfiguration<br>@configuration<br>@ConditonalOn~~<br>@SpringBoodtConfigration(= @Configuration)<br>@EnableConfigurationProperties<br>@ConfigurationProperties</p>
+<h2 id="Auto-Configuration"><a href="#Auto-Configuration" class="headerlink" title="Auto-Configuration"></a>Auto-Configuration</h2><ul>
+<li>spring-starter 를 github에서 검색가능합니다.</li>
+<li>스프링부트가 기술흐름에 따라 제공하는 관례(Convention)적인 구성</li>
+<li>봐야할 모듈 : spring-boot-autoconfigure</li>
+<li>동작선언<ul>
+<li>@EnableAtuoConfigurazion(with @SpringBootApplication)</li>
+<li>@Configuration</li>
+</ul>
+</li>
+<li>tkdyd dosjxpdltus<ul>
+<li>@Configuration</li>
+<li>@ConditonalOn</li>
+</ul>
+</li>
+</ul>
+<h2 id="외부구성-External-Configuration"><a href="#외부구성-External-Configuration" class="headerlink" title="외부구성(External Configuration)"></a>외부구성(External Configuration)</h2><ol>
+<li>실행인자</li>
+<li>spring_application_json<ul>
+<li>서버안에 json 으로 선언한 구성파일의 위치 지정</li>
+</ul>
+</li>
+<li>환경변수(운영체제)</li>
+<li>기타등등</li>
+<li>application.yml or application.properties</li>
+<li>application-{defaultprofiles}.yml</li>
+</ol>
+<p>1이 우선순위가 가장높습니다.</p>
+<h2 id="Programming-in-Spring-Environment"><a href="#Programming-in-Spring-Environment" class="headerlink" title="Programming in Spring Environment"></a>Programming in Spring Environment</h2><ul>
+<li>@ComponentScan 을 통해 ApplicationContext 적재<ul>
+<li>@Repository</li>
+<li>@Component</li>
+<li>@Service</li>
+<li>@Controller &amp; @RestController</li>
+<li>@Configuratioin<ul>
+<li>@Bean</li>
+<li>@ConfiguraitonProperties</li>
+</ul>
+</li>
+<li>DI, IoC, @Autowired</li>
+<li>@Value Vs @ConfigurationProperties</li>
+<li>AOP 프로그래밍</li>
+</ul>
+</li>
+</ul>
+<p>완료<br>– 업무 구현(비즈니스 로직)</p>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noopener noreferrer" target="_blank">bymin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://youngclown.github.io/2018/10/2018-10-27-springboot/">https://youngclown.github.io/2018/10/2018-10-27-springboot/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="../2018-10-29-eclipse/"><i class="fa fa-chevron-left">  </i><span>이클립스 CPU 100%</span></a></div><div class="next-post pull-right"><a href="../2018-10-29-clean_package/"><span>clean package -P</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2019 By bymin</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io" rel="external nofollow noopener noreferrer" target="_blank"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody" rel="external nofollow noopener noreferrer" target="_blank"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="../../../js/utils.js?version=1.6.1"></script><script src="../../../js/fancybox.js?version=1.6.1"></script><script src="../../../js/sidebar.js?version=1.6.1"></script><script src="../../../js/copy.js?version=1.6.1"></script><script src="../../../js/fireworks.js?version=1.6.1"></script><script src="../../../js/transition.js?version=1.6.1"></script><script src="../../../js/scroll.js?version=1.6.1"></script><script src="../../../js/head.js?version=1.6.1"></script><script>if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+}</script></body></html>

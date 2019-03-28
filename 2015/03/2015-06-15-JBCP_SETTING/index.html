@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="lang"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="TOMCAT Server.xml 에 설정된 DBCP 설정값"><meta name="keywords" content><meta name="author" content="bymin"><meta name="copyright" content="bymin"><title>TOMCAT Server.xml 에 설정된 DBCP 설정값 | 젊은광대 기술블로그</title><link rel="shortcut icon" href="../../../melody-favicon.ico"><link rel="stylesheet" href="../../../css/index.css?version=1.6.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.6.1"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  }
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="toggle-sidebar-info text-center"><span data-toggle="Toggle article">Toggle site</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="../../../img/avatar.png"></div><div class="author-info__name text-center">bymin</div><div class="author-info__description text-center">잘정리하자</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="../../../archives"><span class="pull-left">Articles</span><span class="pull-right">109</span></a></div></div></div><div id="content-outer"><div class="no-bg" id="top-container"><div id="page-header"><span class="pull-left"> <a id="site-name" href="../../../index.html">젊은광대 기술블로그</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="post-info"><div id="post-title">TOMCAT Server.xml 에 설정된 DBCP 설정값</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2015-03-25</time></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;Resource name=&quot;dreamdb&quot;  </span><br><span class="line">  auth=&quot;Container&quot;  </span><br><span class="line">  type=&quot;javax.sql.DataSource&quot;  </span><br><span class="line">  username=&quot;xxxxx&quot;  </span><br><span class="line">  password=&quot;xxxxx&quot;                         	</span><br><span class="line">  url=&quot;jdbc:mysql://xxxx/database?autoReconnect=true&quot;</span><br><span class="line">  driverClassName=&quot;org.gjt.mm.mysql.Driver&quot;</span><br><span class="line">  maxActive=&quot;1000&quot;</span><br><span class="line">  minIdle=&quot;3&quot;</span><br><span class="line">  maxIdle=&quot;5&quot;</span><br><span class="line">  maxWait=&quot;5000&quot;</span><br><span class="line">  removeAbandoned=&quot;true&quot;</span><br><span class="line">  testWhileIdle=&quot;true&quot;</span><br><span class="line">  testOnBorrow=&quot;true&quot;</span><br><span class="line">  validationQuery=&quot;select 1&quot;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>name - 필수 항목으로서 root java context 인 java:comp/env 에 상대적인 resource 이름이며 jdbc/ 로 시작 (예를 들어 jdbc/sarc)</p>
+</blockquote>
+<blockquote>
+<p>auth - resource manager 에 sign on 하는 주체로 Container (container-managed 일 경우) 혹은 Application (application-managed 일 경우)</p>
+</blockquote>
+<blockquote>
+<p>initialSize - 초기 connection 수로, default 는 0</p>
+</blockquote>
+<blockquote>
+<p>maxActive - 동시 사용 가능한 connection 수로 0 일 경우 무제한이며, default 는 8<br>(최대 동시 대여 가능 커넥션수)</p>
+</blockquote>
+<blockquote>
+<p>minIdle - maxActive 를 넘을 수 없으므로 때에 따라 idle connection 이 minIdle 보다 적을 수도 있고, -1 일 경우 무제한이며, default 는 0</p>
+</blockquote>
+<blockquote>
+<p>maxIdle - connection 의 최대 개수로, default 는 8</p>
+</blockquote>
+<blockquote>
+<p>maxWait - 새로운 connection 을 얻기 위해 대기하는 시간 (msec) 으로, 이 시간에 도달하게 되면 exception 이 발생하며, default 는 -1 로 무제한</p>
+</blockquote>
+<blockquote>
+<p>validationQuery - connection 유효성 체크 query 로 default 는 null 이다. 만일 MySQL/MariaDB/PPAS/PostgreSQL 에 적용하려면 select 1, Oracle 에 적용하려면 select 1 from dual 을 사용</p>
+</blockquote>
+<blockquote>
+<p>removeAbandoned - 대여시간 초과했는데 반납 안된 커넥션 처리</p>
+</blockquote>
+<blockquote>
+<p>removeAbandonedTimeout - 대여시간 설정 ( 1=5초 60=5분 )</p>
+</blockquote>
+<blockquote>
+<p>logAbandoned - 커넥션 삭제시에 로그출력 여부</p>
+</blockquote>
+<blockquote>
+<p>testWhileIdle - 커넥션에 아무런 데이터 송수신이 없을 경우 해당 커넥션이 유효한지 테스트를 할지 여부를 결정.</p>
+</blockquote>
+<blockquote>
+<p>timeBetweenEvictionRunsMillis - 커넥션이 쉬고 있을 때 커넥션 체크 쿼리를 실행하는 시간 간격을 설정. 놀고 있는 connection을 pool에서 제거하는 시간기준 (설정된 시간동안 놀고 있는 connection을 minIdle&amp;maxIdel 설정값을 고려하여 제거.)</p>
+</blockquote>
+<blockquote>
+<p>testOnBorrow - connection pool에서 connection을 가져올 때 해당 connection이 유효성 검사 여부</p>
+</blockquote>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noopener noreferrer" target="_blank">bymin</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://youngclown.github.io/2015/03/2015-06-15-JBCP_SETTING/">https://youngclown.github.io/2015/03/2015-06-15-JBCP_SETTING/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="post-meta__tag-list"></div><nav id="pagination"><div class="prev-post pull-left"><a href="../2015-03-25-JCONSOLE/"><i class="fa fa-chevron-left">  </i><span>jconsole 활용도와 로컬 셋팅 방법입니다</span></a></div><div class="next-post pull-right"><a href="../../../2014/09/2014-09-19-ASP3DES/"><span>ASP 에서 3DES 암호화하는 방법</span><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2019 By bymin</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io" rel="external nofollow noopener noreferrer" target="_blank"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody" rel="external nofollow noopener noreferrer" target="_blank"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="../../../js/utils.js?version=1.6.1"></script><script src="../../../js/fancybox.js?version=1.6.1"></script><script src="../../../js/sidebar.js?version=1.6.1"></script><script src="../../../js/copy.js?version=1.6.1"></script><script src="../../../js/fireworks.js?version=1.6.1"></script><script src="../../../js/transition.js?version=1.6.1"></script><script src="../../../js/scroll.js?version=1.6.1"></script><script src="../../../js/head.js?version=1.6.1"></script><script>if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+}</script></body></html>

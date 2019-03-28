@@ -1,0 +1,635 @@
+<!DOCTYPE html><html lang="lang"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="잘정리하자"><meta name="keywords" content><meta name="author" content="bymin"><meta name="copyright" content="bymin"><title>bymin | 젊은광대 기술블로그</title><link rel="shortcut icon" href="../../melody-favicon.ico"><link rel="stylesheet" href="../../css/index.css?version=1.6.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css?version=1.6.1"><link rel="dns-prefetch" href="https://cdn.staticfile.org"><link rel="dns-prefetch" href="https://cdn.bootcss.com"><link rel="dns-prefetch" href="https://creativecommons.org"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  }
+} </script></head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar"><div class="author-info"><div class="author-info__avatar text-center"><img src="../../img/avatar.png"></div><div class="author-info__name text-center">bymin</div><div class="author-info__description text-center">잘정리하자</div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="../../archives"><span class="pull-left">Articles</span><span class="pull-right">109</span></a></div></div></div><nav class="no-bg" id="nav"><div id="page-header"><span class="pull-left"> <a id="site-name" href="../../index.html">젊은광대 기술블로그</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus"><a class="site-page" href="/">Home</a><a class="site-page" href="/archives">Archives</a><a class="site-page" href="/tags">Tags</a><a class="site-page" href="/categories">Categories</a></span></div><div id="site-info"><div id="site-title">젊은광대 기술블로그</div><div id="site-sub-title">bymin</div></div></nav><div id="content-outer"><div class="layout" id="content-inner"><div class="recent-post-item article-container"><a class="article-title" href="../../2018/08/2011-03-22-DBPOOL/">BEA-001128_Connection for pool 'DB' closed.</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-08-28</time><div class="content"><ol>
+<li>실제 여유 용량이 5% 남음</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;BEA-310002&gt; &lt;5% of the total memory in the server is free&gt;</span><br><span class="line">Description : Free memory in the server has changed</span><br><span class="line">Action : no action required</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>구성에 따라서 예정된 데이터 정리 작업을 실행함</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Description : Scheduling data retirement tasks as per configuration</span><br><span class="line">Action : no action required</span><br><span class="line"></span><br><span class="line">&lt;BEA-320140&gt; &lt;Scheduling data retirement tasks as per configuration.&gt;</span><br></pre></td></tr></table></figure>
+<p>3.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Description : Processed configuration and scheduled data retirement tasks.</span><br><span class="line">Action : no action required</span><br><span class="line">&lt;BEA-320143&gt; &lt;Scheduled 0 data retirement tasks as per configuration.&gt;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>DB 가 connection closed 처리됨.</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;BEA-001128&gt; &lt;Connection for pool &quot;DB&quot; closed.&gt;</span><br></pre></td></tr></table></figure>
+<p>&lt;중략&gt;</p>
+<p>해당 문제는 대략 1분~2분 사이에 잠깐의 PoolDisable 현상이 나는 골치아픈 문제였습니다.</p>
+<p>워낙 접속하는 클라이언트가 많다보니 1분 정도의 PoolDisable 현상에서도 2천~9천건 가까운 에러가 발생하는데,<br>해당 문제는 DB 과부하로 5분 정도의 지연 현상이 생겼고,<br>그때, DB의 transaction 과 웹로직의 Shrink Frequency 와 뭔가 맞지 않는 설정이 있지 않은가 의심했습니다.</p>
+<p>서버의 웹로직의 Shrink Frequency 는 300초 즉 5분으로 설정되어있는데, 해당 시간이 지나면 끊고나서 재접속시키고 있습니다.</p>
+<p>결과적으로 DeadLock 이 발생하였고,<br>Shrink Frequency 의 설정값 5분을 초과하면서 DeadLock 이 떨어지기 전에 PoolDisable이 발생한 것으로 추측하며,<br>해당 옵션을 수정하였습니다.</p>
+<hr>
+<h1 id="참조"><a href="#참조" class="headerlink" title="참조"></a>참조</h1><hr>
+<ul>
+<li><a href="http://forums.oracle.com/forums/thread.jspa?threadID=928446" rel="external nofollow noopener noreferrer" target="_blank">BEA Weblogic AS 9.2 close pool connections</a></li>
+</ul>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="../../2018/08/2009-04-09-client_opner/">POPUP_OPNER</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-08-28</time><div class="content"><h2 id="자식창에서-부모창의-파일업로드-기능"><a href="#자식창에서-부모창의-파일업로드-기능" class="headerlink" title="자식창에서 부모창의 파일업로드 기능"></a>자식창에서 부모창의 파일업로드 기능</h2><p>클라이언트의 승낙 없이는 클라이언트의 자원을 함부로 사용할 수 없습니다.<br>파일업로드의 경우 클라이언트의 사용자가 직접 입력하지 않고<br>스크립트를 사용한다던지 하는 것은 보안차단되어 있습니다.</p>
+<p>현재 팝업창에서 파일업로드가 되면서 DB에 저장되는 형식을 가지고 있는데<br>다른 부분은 OPNER 로 빼서 팝업에 넘겨주는 것이 가능하나,<br>파일업로드의 경우 OPNER 에서 처리하지 않고<br>POPUP 창까지 클라이언트가 올리려던 경로를 기억해 둔 다음,<br>POPUP 창에서 처리하려고 할 경우 지금 기억하고 있는 것이 클라이언트가 집적 마우스로 선택해서 올리기 위한 자의적인 파일인지,<br>코더가 악의적으로 하드내의 특정 파일을 빼내려고 경로를 잡은 건지 알 방법이 없기에,<br>원칙적으로 이러한 코딩이 보안 설정되어있는 것으로 압니다.<br>이를 해결하기 위해선, 클라이언트의 사용자 승낙(예를 들어, ActiveX의 설치 과정)을 받아 클라이언트에 해당 파일을 업로드하도록 만들어진 프로그램을 설치해야만 그런 기능이 가능할 것입니다.<br>혹은 우선 OPNER 에서 실지로 파일을 임시 폴더로 업로드 한 뒤에,<br>메일 발송을 할 경우에 경로에 있는 임시 파일을 실제 파일 경로로 옮기는 것도 가능은 할 거 같습니다.  </p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="../../2018/06/2018-06-27-serialVersionUID/">serialVersionUID 선언</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-27</time><div class="content"><p>@SuppressWarnings(“serial”) 선언한 class 에서 에러가 발생했습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">java.io.InvalidClassException: com.openrtb.api.dto.xxx; local class incompatible: stream classdesc serialVersionUID = -8253581617857313489, local class serialVersionUID = -5676156168200907805</span><br><span class="line">	at java.io.ObjectStreamClass.initNonProxy(ObjectStreamClass.java:616)</span><br><span class="line">	at java.io.ObjectInputStream.readNonProxyDesc(ObjectInputStream.java:1630)</span><br><span class="line">	at java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1521)</span><br><span class="line">	at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1781)</span><br><span class="line">	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1353)</span><br><span class="line">	at java.io.ObjectInputStream.readObject(ObjectInputStream.java:373)</span><br><span class="line">	at java.util.ArrayList.readObject(ArrayList.java:791)</span><br><span class="line">	at sun.reflect.GeneratedMethodAccessor77.invoke(Unknown Source)</span><br><span class="line">	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)</span><br><span class="line">	at java.lang.reflect.Method.invoke(Method.java:498)</span><br><span class="line">	at java.io.ObjectStreamClass.invokeReadObject(ObjectStreamClass.java:1058)</span><br><span class="line">	at java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1909)</span><br><span class="line">	at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1808)</span><br><span class="line">	at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1353)</span><br><span class="line">	at java.io.ObjectInputStream.readObject(ObjectInputStream.java:373)</span><br></pre></td></tr></table></figure>
+<p>개발하면서 @SuppressWarnings(“serial”) 선언한 클래스에, 타개발자가 나중에 사용할 특정 변수를 추가하면서, JVM 에서 발급해주는 serialVersionUID가 변경되면서 발생한 문제.</p>
+<p>해당 서비스는 혼자 관리하기 때문이라는 안일하게 SuppressWarnings을 걸어놓았는데… ㅠㅜ</p>
+<p>class 가 내부 클래스에서 처리하면 문제가 없었지만, redis 를 사용하고 있었고, 해당 nosql 에 해당 클래스의 객체 정보를 바이너리화 하여 저장하고 있었기 때문에 조금의 실수라도 바로 문제가 발생할 수 밖에 없었던 겁니다!!!!!!</p>
+<p>JVM에 자동으로 변경된 Default 시리얼 번호와, redis에 바이너리로 저장한 class의 시리얼 번호가 틀리면서 문제가 발생했습니다.</p>
+<p>serialVersionUID 는 직렬화에 사용되는 고유 아이디인데, 다른 대부분의 redis 사용하는 객체클래스에는 적용해놓고, 이 녀석만 @SuppressWarnings(“serial”)을 선언해놓았더군요.</p>
+<p>잠시 배포 중단을 할 수 밖에 없었습니다.</p>
+<p>해당 클래스에 @SuppressWarnings(“serial”)을 선언할 때는,<br>해당 객체가 더이상 변경될 이유가 없고, 내가 관리하는 부분이니, 누군가 수정하지 않을 것이니 문제없겠지 하고 작업했던 걸로 기억합니다.</p>
+<p>정말 안일했고, 권장하는 방법을 무시하면 안된다는 것을 다시 한번 깨닫습니다.</p>
+<p>예전에 봤던 글의 결론을 첨부합니다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>자바 직렬화는 장점이 많은 기술입니다만 단점도 많습니다.<br>문제는 이 기술의 단점은 보완하기 힘든 형태로 되어 있기 때문에 사용 시 제약이 많습니다.<br>그래서 이 글을 적는 저는 직렬화를 사용할 때에는 아래와 같은 규칙을 지키려고 합니다.  </p>
+<ol>
+<li>외부 저장소로 저장되는 데이터는 짧은 만료시간의 데이터를 제외하고 자바 직렬화를 사용을 지양합니다.  </li>
+<li>역직렬화시 반드시 예외가 생긴다는 것을 생각하고 개발합니다.</li>
+<li>자주 변경되는 비즈니스적인 데이터를 자바 직렬화을 사용하지 않습니다.</li>
+<li>긴 만료 시간을 가지는 데이터는 JSON 등 다른 포맷을 사용하여 저장합니다.</li>
+</ol>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="../../2018/06/2018-06-26-ATOM_Setting/">ATOM 의 Github 설정 및 Git commit</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-26</time><div class="content"><p>Github blog를 만들 때, 지금 <a href="https://atom.io/" rel="external nofollow noopener noreferrer" target="_blank">ATOM Editor</a>을 사용 중이다.</p>
+<p>기본적으로 Markdown preview 기능을 제공해주기 때문에 (ctrl + shift + m : 단축키) 미리보기 기능이 좋아, 사용 중이다.</p>
+<p>github 연동이라든가, 브런치 및 여러가지 기능을 쓰려면 IntelliJ가 편하나, Github blog만 관리할 경우에는 Atom이 매우 편했다.</p>
+<p>물론 사람마다 다 다르겠지만, 나의 경우는 IntellJ 나 비쥬얼 스튜디오 2017의 경우 프리뷰 기능을 제공은 해주나, Atom 처럼 거의 html 을 완벽하게 구현해주지는 못하는 느낌이 들어서 그렇다.<br>(아마 Atom 자체가 html, js, javascript 가 지원되는 에디터이기 때문일 거 같다.)</p>
+<p>인터넷에서 처음 Atom 사용시 git-clone 을 패키지 설치하면 편하다는 글을 보았다.</p>
+<p>패키지에서 git-clone, git-plus 를 다운받았는데,<br>어떤 글에는 markdown preview 로 다운받으라는 글도 있었다.</p>
+<p>Atom 이 계속 업글되면서 default pakage 에 포함되어있는 것들도,<br>예전 글에서는 install pakage 로 등록해야하는 것 같다.</p>
+<p>git-clone 또한, 그냥 ctrl + shift + p 를 눌러,<br>커맨드 창을 호출하여 Git clone 을 치면, 나오는 Github 에서 제공하는 clone 을 쓰는 것이 더 편한 느낌이 든다.</p>
+<p>git-plus 기능 또한, 우측 버튼을 눌러 메뉴를 띄어 처리할 때 말고는 슈퍼검색(command line)을 눌러(ctrl+shift+p)서 git tab 을 검색해 띄우는 git 관련 툴이 조금씩 손에 익으니 더 편하게 되는거 같다.</p>
+<h2 id="markdown-preview"><a href="#markdown-preview" class="headerlink" title="markdown preview"></a>markdown preview</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctrl + shift + m</span><br></pre></td></tr></table></figure>
+<h2 id="git-commit-push-pull-등등"><a href="#git-commit-push-pull-등등" class="headerlink" title="git commit, push, pull 등등"></a>git commit, push, pull 등등</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctrl+shift+p &gt; git tab</span><br></pre></td></tr></table></figure>
+<h2 id="git-clone"><a href="#git-clone" class="headerlink" title="git clone"></a>git clone</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctrl+shift+p &gt; git clone</span><br></pre></td></tr></table></figure>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="../../2018/06/2018-06-20-Proxy-Path/">ProxyApi 처리 방안 및 고민</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-20</time><div class="content"><p>강의 준비를 하느라 일일 커밋을 못하고 있는 상황이라,<br>작년 여름에 있었던 재미난 일을 적습니다.</p>
+<p>전 연동 관련하여, 이미지 캐싱 기능을 사용하기 위해,<br>CDN 회사 중 한곳에게 이미지 캐싱을 위한 프록시 서버를 오청했습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://img.xxx.com/?src=이미지주소</span><br></pre></td></tr></table></figure>
+<p>형태로 요청하면, 해당 CDN 회사는 하루동안의 해당 이미지를 캐싱하는 것인데,<br>자체 개발하는 공수 및 서버 증설 비용보다, 프록시 서버를 두어 이용하는 것이 가격대비 높기 때문에 결정되었습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://zzzzz.com/images/upload/./repo/targetDir/p/AM/460x640/AMMP3WA9775A_118_01.png</span><br></pre></td></tr></table></figure>
+<p>특정 광고주 서버에서 위와같이 /./ 형태로 이미지를 수집하여, 노출시킬때,<br>이미지를 그냥 호출하면 자동으로 /./ 를 없애주면서 이미지가 정상적으로 떠야하는데,</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://img.xxx.com/?src=http://zzzzz.com/images/upload/./repo/targetDir/p/AM/460x640/AMMP3WA9775A_118_01.png</span><br></pre></td></tr></table></figure>
+<p>프록시 서버를 통해 요청했을 경우에는 엑박이 발생하여 담당자에게 문의해보았습니다.<br>담당자의 대답은,</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">URI 에 &quot;./&quot; 이 포함되어 요청되는 경우. 해당 client application (Web browser, web query, etc) 에서 &quot;./&quot; 을 제거하여 요청합니다.</span><br><span class="line"></span><br><span class="line">즉, 서버측에서 제거해주는게 아닙니다. 그리고 param 에 포함된 값 &quot;./&quot;은 browser 에서 제거해주지 않습니다.</span><br><span class="line"></span><br><span class="line">가능하다면 request 시 ./ 이 없는 param value 로 사용 해 주시길 바랍니다.</span><br><span class="line">param value 에서 &quot;./&quot; 을 무조건 제거 해야 하는지도 확인 바랍니다.</span><br></pre></td></tr></table></figure>
+<p>클라이언트의 어플리케이션 문제랍니다. 이런걸 사용자 이슈라고 하지요.<br>우선 전화로 이야기를 드렸습니다.</p>
+<p>해당 이미지를 보내주는 광고주가 상대경로로 이미지를 잡아서 제공해주는 것으로 보이니,<br>정상적인 상황이며, 이것은 브라우져의 어플리케이션 문제가 아니므로,</p>
+<p>CDN 프록시 서버에서 대응해주셔야한다는 이야기를 반복했지만,</p>
+<p>이야기가 안통했습니다.<br>테스트한 사람의 브라우져 문제고, 사용자 이슈이므로, 프록시 서버에서 대응 해줄 수 없으므로,<br>프록시 서버에 이미지를 보낼때 ‘./‘ 를 제거해서 보내달라고 합니다.</p>
+<hr>
+<p>개발자는 개발적인 이야기 말고는 언변에서 약하다는 것을 다시 한번 느끼며,<br>코딩을 시작했습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">public class ProxyApi extends HttpServlet &#123;</span><br><span class="line">	private static final long serialVersionUID = -1501736936092164738L;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected void doGet(HttpServletRequest request, HttpServletResponse response)</span><br><span class="line">			throws ServletException, IOException &#123;</span><br><span class="line">		String imgUrl = request.getParameter(&quot;imgUrl&quot;);</span><br><span class="line"></span><br><span class="line">		response.setContentType(&quot;image/jpeg&quot;);</span><br><span class="line">		double len = 0;</span><br><span class="line">		byte[] buffer = new byte[1024];</span><br><span class="line">		BufferedOutputStream outs = null;</span><br><span class="line">		InputStream inputStream = null;</span><br><span class="line">		URL url = null;</span><br><span class="line">		// out.flush(); // 미리 에러나 여러가지 상황 때문에 flush 시킨다.</span><br><span class="line">		try &#123;</span><br><span class="line">			url = new URL(imgUrl); // 요청 url</span><br><span class="line">			inputStream = url.openStream();</span><br><span class="line">			outs = new BufferedOutputStream(response.getOutputStream());</span><br><span class="line">			while ((len = inputStream.read(buffer)) != -1) &#123;</span><br><span class="line">				outs.write(buffer, 0, (int) len);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; catch (MalformedURLException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; catch (IOException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; catch (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; finally &#123;</span><br><span class="line">			if (outs != null)</span><br><span class="line">				outs.close();</span><br><span class="line">			if (inputStream != null)</span><br><span class="line">				inputStream.close();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>개발자는 말로 싸우면 안되는 것을 느낍니다.<br>쉽고 빠르게 서블릿 API를 만들어 개인서버에 뛰웠습니다.</p>
+<p>그리고 문의글을 남겼습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">안녕하세요.</span><br><span class="line">개발팀의 XXXX입니다.</span><br><span class="line"></span><br><span class="line">제 개인서버에 단순히 이미지를 프록시하는 기능을 만들어 테스트 해보았습니다.</span><br><span class="line"></span><br><span class="line">http://ttttt/test/ProxyApi?imgUrl=http://zzzzz.com/images/upload/./repo/targetDir/p/AF/460x640/AFMP3EB9882A_001_05.png</span><br><span class="line"></span><br><span class="line">잘 뜹니다.</span><br><span class="line"></span><br><span class="line">client application (Web browser, web query, etc) 에서 &quot;./&quot; 을 제거하는 것과 별개로,</span><br><span class="line"></span><br><span class="line">단순히 ./ 는 상대경로로 해당 광고주의 같은 경로의 이미지를 가져오기 위해 사용된 것이므로,</span><br><span class="line"></span><br><span class="line">/ : 루트</span><br><span class="line">./ : 현재 위치</span><br><span class="line">../ : 현재 위치의 상단 폴더</span><br><span class="line"></span><br><span class="line">를 의미하여 해당 경로의 이미지를 가져오는 것으로 보입니다.</span><br><span class="line"></span><br><span class="line">그러므로, 브라우져와는 상관없는 이슈로, 다시 한번 확인해주시기 바랍니다.</span><br></pre></td></tr></table></figure>
+<p>만약, 전화로 니가 맞네, 내가 맞네 서로 핑퐁하다가 하루를 보내기에 그때 당시 너무나 바쁘고 멘탈이 나갔기 때문에 오히려 빨리 처리해야겠다 싶어 개발을 하여 증명했던 것인데,<br>다른 이슈보다 더 빨리 클리어했던 걸로 기억이 납니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">안녕하세요.</span><br><span class="line"></span><br><span class="line">해당건은 &quot;./&quot; 에 대한 문제로 보였으나 실제 zzzzz.com 에서 Request 에 포함되는 일부 Header 에 대하여 필터링 하고 있습니다.</span><br><span class="line"></span><br><span class="line">CDN 에서 External Origin 으로 보내는 일부 Request custom header 가 해당 hfashionmall 에서 필터링 되고 있었습니다.</span><br><span class="line"></span><br><span class="line">필터되는 Header 모두 Origin 요청시 제거되도록 하였으며, 모두 정상 응답 되고 있습니다.</span><br><span class="line"></span><br><span class="line">혼선을 드려 죄송합니다.</span><br><span class="line"></span><br><span class="line">감사합니다.</span><br></pre></td></tr></table></figure>
+<p>지금도, 가끔가다가 나는 모르겠고, 어찌되었건 니네 문제니까 해결해라는 식의 담당자를 만나게 되어 그대로 이슈가 허공에 증발하는 경우가 있기 때문에, 어찌되었건 도메인 주도에 의한 개발일이라는 것은 참 힘든 것을 느낍니다.</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="../../2018/06/2018-06-07-GSON/">net.sf.json.JSONObject 와 com.google.gson.Gson 비교</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-07</time><div class="content"><h2 id="JSONObject-사용"><a href="#JSONObject-사용" class="headerlink" title="JSONObject 사용"></a>JSONObject 사용</h2><p>OpenRTB 연동시 body 에 json 형태로 오는 데이터를 읽을 때 JSONObject를 사용합니다.</p>
+<p>3년전 전체 솔류션에 대한 검증을 할 때,<br>총 3개의 JSON을 사용하는 라이브러리가 존재했으며,<br>그 중 가장 건드리기 어려운 레거시 코드에서 사용하는 JSONObject를 제외하고,<br>나머지를 전부 JSONObject으로 변경하는 작업을 하였습니다.</p>
+<p>해당 작업을 진행한 이유는,<br>라이브러리를 무분별하게 사용하지 않고,<br>소스에 대한 수정과 객체에 대한 직관성을 높이는 게 좋아보였기 때문에,<br>개인적인 독단으로 일을 저질렀던 건데, 그 때 당시에는 레거시 코드를 못건드리다보니 속도와 성능에 대해서 확인하지 못했던 부분이 있습니다.</p>
+<h2 id="문제점"><a href="#문제점" class="headerlink" title="문제점"></a>문제점</h2><p>OpenRTB 시스템은 100 ms 안에 응답하는 것을 목표로 합니다.<br>이번 pinpoint 로 검증해본 결과 JSONObject의 경우 간혈적으로 지연이 발생했습니다.</p>
+<p>그래서, 실제 서로간의 입찰요청(Bid Request) 와 입찰(Bid Try)를 비교하여, 해당 데이터의 속도를 1000만건 돌려보았습니다.<br>Gson 의 경우 해당 데이터가 완료되는 데 35초 가량 걸린 반면,<br>기존의 JSONObject의 경우 73초 가량이 더 걸리는 것으로 확인되었습니다.</p>
+<p>다른 라이브러리를 가지고 여러가지 경우의 수를 확인했을 때 GSON 이 가장 좋은 것으로 파악이 되었으며,<br>결론적으로 여러 라이브러리의 평균을 인터넷으로 찾아보는 것도 좋지만,<br>자신의 솔류션에 맞춰서 사용해야한다는 것을 다시금 느꼈습니다.</p>
+<p>2018-06-18 일 기준<br>현재 전체 속도가 10ms ~ 15ms 로 매우 안정적으로 변경되었으며,<br>간혈적으로 300ms ~ 500ms 로 띄는 현상이 Json-lib 에서 발생하지 않는 것을 확인했습니다.</p>
+<hr>
+<h1 id="참조"><a href="#참조" class="headerlink" title="참조"></a>참조</h1><hr>
+<ul>
+<li><a href="https://djkeh.github.io/articles/The-fastest-way-to-parse-json-data-to-java-kor/" rel="external nofollow noopener noreferrer" target="_blank">JSON 데이터를 자바로 파싱하는 가장 빠른 방법</a></li>
+<li><a href="http://www.yunsobi.com/blog/646" rel="external nofollow noopener noreferrer" target="_blank">java json 라이브러리 별 parser 속도 비교.</a></li>
+</ul>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="../../2018/06/2018-06-04-ATOM/">비개발자도 Atom Text Editor를 사용하여 github 에 jekyll 과 makdown 문법으로 blog를 만들어 Google Analytics와 Google Adsense 까지 활용</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-04</time><div class="content"><!--
+# 비개발자도 Atom Text Editor를 사용하여 github 에 jekyll 과 makdown 문법으로 blog를 만들어 Google Analytics와 Google Adsense 까지 활용
+-->
+<p><a href="https://youngclown.github.io/2018/05/FASTCAMPUS">개발자 커리어 컨퍼런스</a>를 듣고,<br>자기가 가지고 있는 지식을 공유하는 것 또한 자신이 아는 것을 정리하는 데 도움이 되는 하나의 방법이라는 이야기를 듣고,<br>사내강사를 신청합니다.</p>
+<h2 id="부제-세중-github-Copy-amp-Paste-하기"><a href="#부제-세중-github-Copy-amp-Paste-하기" class="headerlink" title="부제 : 세중 github Copy &amp; Paste 하기"></a>부제 : 세중 github Copy &amp; Paste 하기</h2><h2 id="준비물"><a href="#준비물" class="headerlink" title="준비물"></a>준비물</h2><ol>
+<li>노트북</li>
+<li>wifi 속도를 위해 미리 download 받아 오기!<ul>
+<li>노트북에 ATOM download(145mb) : <a href="https://atom.io/" rel="external nofollow noopener noreferrer" target="_blank">링크</a></li>
+<li>노트북에 git download(38.7mb) : <a href="https://git-scm.com/download" rel="external nofollow noopener noreferrer" target="_blank">링크</a></li>
+</ul>
+</li>
+<li>git 에 사용할 계정아이디 고민하기 : <a href="https://github.com/" rel="external nofollow noopener noreferrer" target="_blank">링크</a></li>
+<li>자신에 알맞는 지킬 테마 고민하기 : <a href="http://jekyllthemes.org/" rel="external nofollow noopener noreferrer" target="_blank">링크</a><br>(강의시 획일화하기 위해 <a href="https://sejoung.github.io" rel="external nofollow noopener noreferrer" target="_blank">세중 github</a> 를 fork 받을 예정입니다.)</li>
+</ol>
+<h2 id="1일차"><a href="#1일차" class="headerlink" title="1일차"></a>1일차</h2><ul>
+<li>시작하며(20분)</li>
+<li>git 설명(40~1시간)</li>
+<li>github 계정 생성(5분)</li>
+<li>jekyll 설명(10분)</li>
+<li>jekyll thema 설명(5분), 어차피 세중 github fork!!, star 주는법!</li>
+</ul>
+<h2 id="2일차"><a href="#2일차" class="headerlink" title="2일차"></a>2일차</h2><ul>
+<li>Atom 설치(5분)</li>
+<li>Atom 설명(20분)</li>
+<li><p>git 설치(10분)<br>설치후</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\bymin&gt;git config --global user.email &apos;useremail&apos;</span><br><span class="line">C:\Users\bymin&gt;git config --global user.name &apos;username&apos;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>jekyll thema fork(20~30분) : <a href="https://sejoung.github.io" rel="external nofollow noopener noreferrer" target="_blank">세중 github</a> 를 fork</p>
+</li>
+</ul>
+<h2 id="3일차"><a href="#3일차" class="headerlink" title="3일차"></a>3일차</h2><ul>
+<li>jekll markdown 설명(20분)</li>
+<li>git commit, push(git config username 등등 설정하기) 20~30분</li>
+<li>git blog 완성 20~30분</li>
+<li>Google Analytics 계정 생성 및 스크립트 발급 10분 (회원가입)</li>
+</ul>
+<h2 id="4일차"><a href="#4일차" class="headerlink" title="4일차"></a>4일차</h2><ul>
+<li>최종적으로 자신의 github blog를 posting 하는 방법 설명 (10~20분)</li>
+<li>Google Analytics 유입 확인 및 설명 (10~20분)</li>
+<li>Google Adsense 생성 및 스크립트 설치 등록 (10~20분)</li>
+</ul>
+<h1 id="Git-이-뭔가요"><a href="#Git-이-뭔가요" class="headerlink" title="Git 이 뭔가요?"></a>Git 이 뭔가요?</h1><p>기트, 깃 이이라고 부름. 분산 형상 관리 시스템.</p>
+<ul>
+<li>리눅스 개발 커뮤니티에서 리눅스커널 프로젝트를 위해 자체 개발하며 시작됨<ul>
+<li>리눅스의 아버지라 불리는 리누스 토발즈가 만든 완벽한 분산 형상 관리 시스템</li>
+</ul>
+</li>
+<li>라이선스: GPLv2, LGPL2.1<ul>
+<li>GPLv2 : GNU General Public License<ul>
+<li>컴퓨터 프로그램을 어떤 목적으로든지 사용할 수 있다</li>
+<li>컴퓨터 프로그램의 복사를 언제나 프로그램의 코드와 함께 판매 또는 무료로 배포할 수 있다</li>
+<li>컴퓨터 프로그램의 코드를 용도에 따라 결정할 수 있다</li>
+<li>변경된 컴퓨터 프로그램 역시 프로그램의 코드와 함께 자유로이 배포할 수 있다</li>
+</ul>
+</li>
+<li>LGPL2.1 : Lesser General Public License<ul>
+<li>LGPL로 배포되는 library를 수정하는 경우 → 이를 다시 LGPL로 공개</li>
+<li>LGPL library를 바탕으로 수정된 library를 만들 경우<ul>
+<li>파일 수정 시 수정했다는 사실과 수정일자를 명시</li>
+<li>library 전체를 다시 LGPL로 공개</li>
+<li>library에 포함된 모든 함수는 프로그램의 도움 없이도 수행 가능해야 함.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>스냅샷 스타일의 버전 정보 저장</li>
+<li>무결성 검사는 SHA-1 해시 체크섬</li>
+<li>파일은 다음 3가지 상태 중 하나<ul>
+<li>Committed: 로컬DB에 저장됨</li>
+<li>Modified: 수정파일이 로컬DB에 커밋되지 않음</li>
+<li>Staged: 수정파일이 곧 커밋예정</li>
+</ul>
+</li>
+<li>프로젝트 폴더의 3가지 단계<ul>
+<li>Working Driectory: 파일 수정 공간</li>
+<li>Staging Area: 곧 커밋예정 정보 저장</li>
+<li>.git directory (Repository): 영구적 스냅샷 저장</li>
+</ul>
+</li>
+</ul>
+<h2 id="목표"><a href="#목표" class="headerlink" title="목표"></a>목표</h2><ul>
+<li>빠른 속도</li>
+<li>단순한 구조</li>
+<li>비선형적인 개발 (수천 개의 동시다발 브랜치)</li>
+<li>완벽한 분산</li>
+<li>Linux 커널 같은 대형 프로젝트에도 유용할 것 (속도, 데이터 크기 측면)</li>
+</ul>
+<h2 id="장점"><a href="#장점" class="headerlink" title="장점"></a>장점</h2><ul>
+<li>로컬 저장소를 보유하는 분산 환경이 가능하기 때문에 offline 개발이 많다면 유리합니다.</li>
+<li>git 기반의 Open Source 개발의 참여가 가능합니다.</li>
+<li>Github를 사용 할 수 있습니다.</li>
+</ul>
+<h2 id="단점"><a href="#단점" class="headerlink" title="단점"></a>단점</h2><ul>
+<li>다른 형상관리 시스템에 비해 복잡하기 때문에 진입 장벽이 높습니다.</li>
+</ul>
+<h2 id="1일차-1"><a href="#1일차-1" class="headerlink" title="1일차"></a>1일차</h2><p>github 계정 <a href="https://github.com/" rel="external nofollow noopener noreferrer" target="_blank">생성</a>하기</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GitHub은 가장 큰 Git 저장소 호스트입니다.</span><br><span class="line">수백만 개발자가 모여서 수백만 프로젝트를 수행하는 중추기도 합니다.</span><br><span class="line">Git 저장소를 GitHub에 만들어 운영하는 비율이 높습니다.</span><br><span class="line">많은 오픈 소스 프로젝트는 GitHub을 이용해서 Git 호스팅, 이슈 트래킹, 코드 리뷰, 등등의 일을 합니다.</span><br><span class="line">Git을 많이 사용하다 보면 Git 프로젝트 자체에는 참여하지 않더라도 GitHub을 꼭 써야 하는 상황이 오거나 스스로 쓰고 싶어질 것입니다.</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="Github-란-무엇인가"><a href="#Github-란-무엇인가" class="headerlink" title="Github 란 무엇인가?"></a>Github 란 무엇인가?</h1><p>기트허브, 깃허브, 깃헙 이라고 합니다.</p>
+<ul>
+<li>Git 웹호스팅 중 하나입니다.</li>
+<li>소스코드 호스팅서비스의 일종입니다.</li>
+<li>공개용은 무료, 비공개용은 유료.</li>
+<li>버전관리 + 협업을 위한 공간.</li>
+<li>소셜 코딩 공간.</li>
+<li>Git 기반 개발자 네트워크.</li>
+<li>Git 기반 오픈소스 SNS.</li>
+</ul>
+<h2 id="소스코드-호스팅서비스"><a href="#소스코드-호스팅서비스" class="headerlink" title="소스코드 호스팅서비스?"></a>소스코드 호스팅서비스?</h2><p>.io 도메인</p>
+<ul>
+<li>국가코드 최상위도메인(ccTLD)의 하나</li>
+<li>영국령 인도양 지역(Indian Ocean Territory)에 할당되어 있습니다.</li>
+<li>1997년 도입되었으며, 웹앱, 컴퓨터과학 분야에서 “입출력(Input/Output))”이라는 의미로 선호되고 있습니다.</li>
+<li>2013년, GitHub 프로젝트 페이지 도메인을 username.github.io 로 제공(웹호스팅)하게되었습니다.</li>
+</ul>
+<h2 id="소셜-코딩-공간-–-퍼블리셔-개발자를-위한-참고-사항"><a href="#소셜-코딩-공간-–-퍼블리셔-개발자를-위한-참고-사항" class="headerlink" title="소셜 코딩 공간(?) – (퍼블리셔 개발자를 위한 참고 사항)"></a>소셜 코딩 공간(?) – (퍼블리셔 개발자를 위한 참고 사항)</h2><table>
+<thead>
+<tr>
+<th style="text-align:left">웹사이트명</th>
+<th style="text-align:center">주소</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">CodePen</td>
+<td style="text-align:center"><a href="http://codepen.io" rel="external nofollow noopener noreferrer" target="_blank">http://codepen.io</a></td>
+</tr>
+<tr>
+<td style="text-align:left">CSS Deck</td>
+<td style="text-align:center"><a href="http://cssdeck.com" rel="external nofollow noopener noreferrer" target="_blank">http://cssdeck.com</a></td>
+</tr>
+<tr>
+<td style="text-align:left">dabblet</td>
+<td style="text-align:center"><a href="http://dabblet.com" rel="external nofollow noopener noreferrer" target="_blank">http://dabblet.com</a></td>
+</tr>
+<tr>
+<td style="text-align:left">CodeMirror</td>
+<td style="text-align:center"><a href="http://codemirror.net" rel="external nofollow noopener noreferrer" target="_blank">http://codemirror.net</a></td>
+</tr>
+<tr>
+<td style="text-align:left">Liveweave</td>
+<td style="text-align:center"><a href="http://liveweave.com" rel="external nofollow noopener noreferrer" target="_blank">http://liveweave.com</a></td>
+</tr>
+<tr>
+<td style="text-align:left">Plunker</td>
+<td style="text-align:center"><a href="http://plnkr.co" rel="external nofollow noopener noreferrer" target="_blank">http://plnkr.co</a></td>
+</tr>
+<tr>
+<td style="text-align:left">JSFiddle</td>
+<td style="text-align:center"><a href="http://jsfiddle.net" rel="external nofollow noopener noreferrer" target="_blank">http://jsfiddle.net</a></td>
+</tr>
+<tr>
+<td style="text-align:left">SOLOLEARN</td>
+<td style="text-align:center"><a href="https://www.sololearn.com/Codes/" rel="external nofollow noopener noreferrer" target="_blank">https://www.sololearn.com/Codes/</a></td>
+</tr>
+<tr>
+<td style="text-align:left">JS Bin</td>
+<td style="text-align:center"><a href="http://jsbin.com" rel="external nofollow noopener noreferrer" target="_blank">http://jsbin.com</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="그렇다면-기획자는-–-기획자-참고-사항"><a href="#그렇다면-기획자는-–-기획자-참고-사항" class="headerlink" title="그렇다면 기획자는? – (기획자 참고 사항)"></a>그렇다면 기획자는? – (기획자 참고 사항)</h2><p><a href="http://germweapon.tistory.com/301" rel="external nofollow noopener noreferrer" target="_blank">훌륭한 기획자가 되려면 먼저 뛰어난 블로거가 되라</a></p>
+<ul>
+<li>IT트렌드에 관심을 갖게 됩니다.</li>
+<li>글을 쓰며 자연스레 공부가 됩니다.</li>
+<li>글쓰기 실력이 향상됩니다.</li>
+<li>CSS와 개발을 이해할 수 있습니다.</li>
+<li>기획자에게 블로그는 최고의 테스트베드 입니다.</li>
+<li>취업 등의 커리어 관리에 도움이 됩니다.<ul>
+<li>블로그로 본인의 전문성도 높일 수 있는데다 좋은 곳으로 이직할 기회도 생길 수 있습니다.</li>
+</ul>
+</li>
+<li>꼭 git 이 아니더라도, 좋은 기획자가 되기 위해 블로그를 운영!!!?<br><a href="http://germweapon.tistory.com/" rel="external nofollow noopener noreferrer" target="_blank">참고주소</a></li>
+</ul>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>그냥 어렵게 생각하지 않고, git이라는 특정 명령어를 사용하는 github 블로그라고 생각합시다.</p>
+<h2 id="jekyll-설명"><a href="#jekyll-설명" class="headerlink" title="jekyll 설명"></a>jekyll 설명</h2><p>지킬(Jekyll)은 개발자/연구자들이 가장 좋아하는 브랜드(?) 중 하나인 깃허브(Github)에서 개발한 사이트 개발 툴입니다.<br>지킬은 정적 사이트이며, 정적 사이트의 단점과 장점은 다음과 같습니다.</p>
+<p>Static website의 장점  </p>
+<ul>
+<li>개발하기가 쉽고 개발 비용도 쌉니다.</li>
+<li>용량이 적어 호스트 비용이 쌉니다.</li>
+</ul>
+<p>Static website의 단점</p>
+<ul>
+<li>사이트를 업데이트 하기 위해선 전문 지식이 필요합니다.</li>
+<li>일반 유저가 접근하기 쉽지 않습니다.</li>
+<li>컨텐츠가 고립될 수 있습니다.</li>
+</ul>
+<p>지킬은 정적 사이트이기 때문에 PHP 언어 등을 이용한 서버 소프트웨어 없이<br>HTML, CSS 등의 정적파일들 만으로 사용자의 컴퓨터에서 사이트 생성이 가능합니다.<br>따라서 매우 빠르고, 가볍습니다.</p>
+<p>특히 지킬은 Markdown이라는 온라인 문서 편집 표준 양식을 따르는데,<br>위키, 깃허브 ReadMe 파일 등을 작성하듯 글을 작성할 수 있습니다.<br>따라서 Markdown에 익숙한 사용자라면 기존 블로그보다 오히려 글 작성에 편안함을 느낄 수도 있으며,<br>반대로, 지킬의 Markdown 문법을 읽혀두면, 위키 같은 마크다운 문법을 사용하는 서비스에서도 손쉽게 사용할 수 있습니다.</p>
+<p>지킬은 일반 블로그들 처럼 웹에디터에서 글을 작성하는 방식이 아닌,<br>Markdown과 같은 정적파일들을 미리 생성한 후 업로드(또는 서브밋! commit, push….)하는 방식을 취하기 때문에, 일반인들에겐 매번 코드를 서브밋해야하는 것이 번거롭고 어렵게 느껴질 수 있겠지만,<br>오히려 개발자/연구자들에겐 이것이 더욱 재미있을 수 있습니다.</p>
+<h2 id="jekyll-thema-선택"><a href="#jekyll-thema-선택" class="headerlink" title="jekyll thema 선택  "></a>jekyll thema 선택  </h2><p><a href="http://jekyllthemes.org/" rel="external nofollow noopener noreferrer" target="_blank">지킬 테마 사이트 선택</a><br>해당 사이트에서 자신이 원하는 테마를 fork 받아 사용하면됩니다.</p>
+<h2 id="2일차-1"><a href="#2일차-1" class="headerlink" title="2일차"></a>2일차</h2><h1 id="Atom"><a href="#Atom" class="headerlink" title="Atom?"></a>Atom?</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">아톰은 코딩, 디버그, 컴파일, 배포 등을 모두 수행하는</span><br><span class="line">통합개발툴(IDE, Integrated Development Environment)은 아닙니다.</span><br><span class="line">오직 codding만을 위한 text editor 입니다.</span><br><span class="line"></span><br><span class="line">GitHub에서 제작하였으며,</span><br><span class="line">Sublime Text처럼 패키지들을 개별적으로 설치하거나 삭제할 수 있고,</span><br><span class="line">심지어 Atom의 코어기능도 패키지들로 구성되어 있어 이들에 대해서도 on/off할 수 있는 등,</span><br><span class="line">커스터마이징의 자유도가 매우 높습니다.</span><br><span class="line">‘이런 기능이 있으면 좋겠다’</span><br><span class="line">싶은 것들은 검색만 잘 하면 얼추 비슷한 패키지를 찾을 수 있을 만큼 패키지 제작 참여가</span><br><span class="line">활발히 이뤄지고 있습니다.</span><br></pre></td></tr></table></figure>
+<hr>
+<p><a href="https://atom.io/" rel="external nofollow noopener noreferrer" target="_blank">다운로드</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">아톰(Atom) 일반적으로 웹 디자인을 할 때 많이 사용됩니다.</span><br><span class="line">아톰은 깃허브(GitHub)와 연동해서 편하게 다른 사람들과 함께 개발을 할 수 있습니다.</span><br><span class="line">사실 처음에 설정하는 과정만 귀찮지 한 번 하고 나면 함께 개발하는 과정이</span><br><span class="line">굉장히 편해지기 때문에 미리 하는 방법을 익혀 놓으시는 게 좋습니다.</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="아쉬운점"><a href="#아쉬운점" class="headerlink" title="아쉬운점"></a>아쉬운점</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">오픈 소스이고, 플러그인으로 기능을 쉽게 확장할 수 있으며, 윈도우즈, 리눅스, macOS를 모두 지원하며, HTML, CSS, JavaScript와 같은 웹 기술로 화면을 구현했기 때문에 웹 페이지를 편집하듯이 UI를 제어할 수 있는 특징이 있습니다. 실제로도 웹 관련 스크립트 언어를 작성할 때 많이 사용됩니다.</span><br><span class="line"></span><br><span class="line">텍스트 에디터치고는 실행 속도가 다소 느리며, 소스 파일의 용량이 좀 크다 싶으면 Sublime Text에 비해 자주 뻗어버리는 문제가 있긴합니다.</span><br><span class="line">이 때문인지 최근에는 Visual Studio Code로 넘어가는 경우도 많아졌습니다.</span><br><span class="line"></span><br><span class="line">깃허브에서 만든게 ATOM 이라는 단순한 이유 때문에 이걸 사용합니다.</span><br></pre></td></tr></table></figure>
+<h1 id="Atom-설치-후-package-추가-방법"><a href="#Atom-설치-후-package-추가-방법" class="headerlink" title="Atom 설치 후 package 추가 방법"></a>Atom 설치 후 package 추가 방법</h1><p><a href="http://stevenjsmin.tistory.com/162" rel="external nofollow noopener noreferrer" target="_blank">단축키 모음</a> 사이트<br>맥과 윈도우의 차이는 ctrl 키와 command 키 이 두개의 차이라고 생각하고,<br>나머지는 같다라고 생각하고 사용하면 편합니다.<br>대부분은 Command Palette 이라고 하는 기능을 써서 불러와서 사용하므로,<br>커맨드패널!! 매우 유용한 명령어. [컨트롤(커맨드) + 쉬프트 + P] !!</p>
+<h2 id="package-설치하는-법"><a href="#package-설치하는-법" class="headerlink" title="package 설치하는 법"></a>package 설치하는 법</h2><p>단축키<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">윈도우의 경우 : 컨트롤 + 쉬프트 + P -&gt; 입력후 install packages 입력후 엔터</span><br><span class="line">맥의 경우 : 커맨드 + 쉬프트 + P -&gt; 입력후 install packages 입력후 엔터</span><br></pre></td></tr></table></figure></p>
+<p>직접 경로<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">File &gt; Settings &gt; install</span><br></pre></td></tr></table></figure></p>
+<p>github 을 위해 설치해야하는 최소 패키지</p>
+<p>꼭 필요한 것은 아니며, 기본 설정으로도 충분히 처리 가능함.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- git-plus  : 우측 마우스 버튼을 눌러 메뉴 호출시 git 관련 메시지 확인가능.</span><br><span class="line">- git-clone  : github의 내용을 download 받음.</span><br></pre></td></tr></table></figure></p>
+<h2 id="jekyll"><a href="#jekyll" class="headerlink" title="jekyll"></a>jekyll</h2><p>평범한 텍스트 파일을 정적 웹사이트 또는 블로그로 변신!<br>간단한 지킬에 대한 소개 <a href="https://jekyllrb-ko.github.io/" rel="external nofollow noopener noreferrer" target="_blank">사이트</a></p>
+<hr>
+<h2 id="Markdown-Preview-package"><a href="#Markdown-Preview-package" class="headerlink" title="Markdown Preview package"></a>Markdown Preview package</h2><p>This is a <a href="https://atom.io/packages/markdown-preview" rel="external nofollow noopener noreferrer" target="_blank">link</a></p>
+<p>Show the rendered HTML markdown to the right of the current editor using ctrl-shift-m.</p>
+<ul>
+<li>Ctrl-Shift-M<ul>
+<li>현재 편집기의 오른쪽에 렌더링 된 HTML markdown을 표시</li>
+</ul>
+</li>
+</ul>
+<p>atom 이 설치될때 자동으로 같이 설치되어있습니다.<br>atom 이라는 작은 코어에 얼마만큼 여러가지 플로그인(패키지)가 붙어있는지 설명가능한 부분입니다.</p>
+<hr>
+<ul>
+<li>파일명으로 찾아 열기<ul>
+<li>Ctrl+T 및 Ctrl+B를 누르면 나오는 Fuzzy Finder</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>3일차</p>
+<h1 id="마크다운-Markdown-사용법"><a href="#마크다운-Markdown-사용법" class="headerlink" title="마크다운(Markdown) 사용법"></a>마크다운(Markdown) 사용법</h1><p>마크다운 문법에 대해 간략하게 설명.</p>
+<h2 id="제목-Heading"><a href="#제목-Heading" class="headerlink" title="제목(Heading)"></a>제목(Heading)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">문서를 작성할 때 가장 기본이 되는 제목은 HTML의 &lt;h1&gt;~&lt;h6&gt; 태그와 유사합니다.</span><br><span class="line">#의 개수에 따라 글자의 크기가 달라집니다. #은 &lt;h1&gt;, ###은 &lt;h3&gt; ######은 &lt;h6&gt;</span><br></pre></td></tr></table></figure>
+<h1 id="Heading"><a href="#Heading" class="headerlink" title="Heading"></a>Heading</h1><h3 id="Heading-1"><a href="#Heading-1" class="headerlink" title="Heading"></a>Heading</h3><h6 id="Heading-2"><a href="#Heading-2" class="headerlink" title="Heading"></a>Heading</h6><hr>
+<h2 id="인용-Blockquotes"><a href="#인용-Blockquotes" class="headerlink" title="인용(Blockquotes)"></a>인용(Blockquotes)</h2><p>인용은 &gt;를 넣어서 작성합니다.<br>인용안에 인용은 &gt;&gt; 를 넣어 작성합니다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; Lorem ipsum dolor sit amet, consectetur adipisicing elit</span><br><span class="line">&gt;&gt; Lorem ipsum dolor sit amet, consectetur adipisicing elit</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
+<blockquote>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
+</blockquote>
+</blockquote>
+<hr>
+<h1 id="리스트"><a href="#리스트" class="headerlink" title="리스트"></a>리스트</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* 또는 -를 사용해서 순서가 없는 리스트를 작성할 수 있습니다.</span><br><span class="line">tab 또는 2칸 띄어쓰기를 통해 중첩된 항목을 작성할 수 있습니다.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">* Frontend</span><br><span class="line">  * HTML</span><br><span class="line">  * CSS</span><br><span class="line">  * JavaScript</span><br><span class="line">    * Vue.js</span><br><span class="line"></span><br><span class="line">- Frondend</span><br><span class="line">  - HTML</span><br><span class="line">  - CSS</span><br><span class="line">  - JavaScript</span><br><span class="line">    - Vue.js</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Frontend<ul>
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript<ul>
+<li>Vue.js</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Frondend<ul>
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript<ul>
+<li>Vue.js</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="순서가-있는-리스트-Ordered-List"><a href="#순서가-있는-리스트-Ordered-List" class="headerlink" title="순서가 있는 리스트(Ordered List)"></a>순서가 있는 리스트(Ordered List)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">1. HTML</span><br><span class="line">2. CSS</span><br><span class="line">3. JavaScript</span><br><span class="line">* * *</span><br><span class="line">1. HTML</span><br><span class="line">1. CSS</span><br><span class="line">1. JavaScript</span><br><span class="line">* * *</span><br><span class="line">1. Frontend</span><br><span class="line">    1. HTML</span><br><span class="line">    2. CSS</span><br><span class="line">    3. JavaScript</span><br><span class="line">        1. Vue.js</span><br><span class="line">2. Backend</span><br></pre></td></tr></table></figure>
+<ol>
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+</ol>
+<hr>
+<ol>
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+</ol>
+<hr>
+<ol>
+<li>Frontend<ol>
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript<ol>
+<li>Vue.js</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Backend</li>
+</ol>
+<hr>
+<h2 id="수평선-Horizontal-Rules"><a href="#수평선-Horizontal-Rules" class="headerlink" title="수평선(Horizontal Rules)"></a>수평선(Horizontal Rules)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">문단과 문단 사이를 나눌 때 등 사용되는 수평선은 HTML의 &lt;hr /&gt;과 같이 동작합니다.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* * *</span><br><span class="line">***</span><br><span class="line">*****</span><br><span class="line">- - -</span><br></pre></td></tr></table></figure>
+<hr>
+<hr>
+<hr>
+<hr>
+<hr>
+<h2 id="강조-Emphasis"><a href="#강조-Emphasis" class="headerlink" title="강조(Emphasis)"></a>강조(Emphasis)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HTML의 &lt;em&gt;과 같은 동작을 하는 강조는 *, _가 있고 &lt;strong&gt;은 **와 __를 사용합니다.</span><br><span class="line">취소선은 ~~을 사용합니다.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">*강조*한 텍스트  </span><br><span class="line">__강조__한 텍스트  </span><br><span class="line">**강조**한 텍스트  </span><br><span class="line">~~취소~~한 텍스트</span><br></pre></td></tr></table></figure>
+<p><em>강조</em>한 텍스트<br><strong>강조</strong>한 텍스트<br><strong>강조</strong>한 텍스트<br><del>취소</del>한 텍스트</p>
+<h1 id="이미지-삽입-Images"><a href="#이미지-삽입-Images" class="headerlink" title="이미지 삽입(Images)"></a>이미지 삽입(Images)</h1><hr>
+<p>이미지는 역시 HTML의 <img>태그와 동일하게 작동합니다. 대체 택스트를 삽입할 수 있으며, 링크 또는 로컬의 이미지파일을 연결할 수 있습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">![대체 텍스트](/경로/example.jpg)  </span><br><span class="line">![megacat](https://octodex.github.com/images/megacat-2.png)</span><br><span class="line">&lt;img src=&quot;https://octodex.github.com/images/megacat-2.png&quot; width=&quot;200px&quot;&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="https://github-atom-io-herokuapp-com.global.ssl.fastly.net/assets/index-octonaut-4e00f2f8624e8075ff8aa84b51e3a446.svg" alt="대체 텍스트"><br><img src="https://github-atom-io-herokuapp-com.global.ssl.fastly.net/assets/index-octonaut-4e00f2f8624e8075ff8aa84b51e3a446.svg" width="200px"></p>
+<h2 id="작업-목록"><a href="#작업-목록" class="headerlink" title="작업 목록"></a>작업 목록</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- [x] 완료 아이템</span><br><span class="line">- [ ] 아직 미완료 아이템</span><br></pre></td></tr></table></figure>
+<ul>
+<li style="list-style: none"><input type="checkbox" checked> 완료 아이템</li>
+<li style="list-style: none"><input type="checkbox"> 아직 미완료 아이템</li>
+</ul>
+<h2 id="이모티콘"><a href="#이모티콘" class="headerlink" title="이모티콘"></a>이모티콘</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">www.emoji-cheat-sheet.com 참조</span><br><span class="line">:+1: :tada: :octocat:</span><br></pre></td></tr></table></figure>
+<p><a href="http://www.emoji-cheat-sheet.com" rel="external nofollow noopener noreferrer" target="_blank">www.emoji-cheat-sheet.com</a> 참조<br>:+1: :tada: :octocat:</p>
+<hr>
+<h2 id="Tables-삽입"><a href="#Tables-삽입" class="headerlink" title="Tables 삽입"></a>Tables 삽입</h2><p><table><tr><td>hellow</td><td>world</td></tr></table><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">| test | Test |</span><br><span class="line">| ---- : ------- |</span><br><span class="line">| hellow | world |</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">| Left-Aligned  | Center Aligned  | Right Aligned |</span><br><span class="line">| :------------ |:---------------:| -----:|</span><br><span class="line">| col 3 is      | some wordy text | $1600 |</span><br><span class="line">| col 2 is      | centered        |   $12 |</span><br><span class="line">| zebra stripes | are neat        |    $1 |</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Left-Aligned</th>
+<th style="text-align:center">Center Aligned</th>
+<th style="text-align:right">Right Aligned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">col 3 is</td>
+<td style="text-align:center">some wordy text</td>
+<td style="text-align:right">$1600</td>
+</tr>
+<tr>
+<td style="text-align:left">col 2 is</td>
+<td style="text-align:center">centered</td>
+<td style="text-align:right">$12</td>
+</tr>
+<tr>
+<td style="text-align:left">zebra stripes</td>
+<td style="text-align:center">are neat</td>
+<td style="text-align:right">$1</td>
+</tr>
+</tbody>
+</table>
+<p>위와같은 기본적인 마크다운 문법을 알고 있으면, 기본적인 기능은 끝났다고 보여집니다.</p>
+<h1 id="atom에서-git사용기"><a href="#atom에서-git사용기" class="headerlink" title="atom에서 git사용기"></a>atom에서 git사용기</h1><hr>
+<h2 id="git-plus설치합니다"><a href="#git-plus설치합니다" class="headerlink" title="git plus설치합니다."></a>git plus설치합니다.</h2><ul>
+<li>atom 프로그램을 실행한다.</li>
+<li>file → settings → install → install packages 에서 ‘git plus’를 검색합니다.</li>
+<li>git plus를 설치합니다.</li>
+<li>사용 방법<ul>
+<li>ctrl+shift+h 를 누르면 git bash처럼 명령어를 칠수 있습니다.<br>(마우스 우측 버튼을 누르고 git 명령어를 사용할 수 있습니다.)</li>
+</ul>
+</li>
+</ul>
+<p>명령어 add or commit를 누르면 오른쪽에 새로운 창이 뜨면서 add시킨 파일에 관해 summary할 수 있는 부분이 나옵니다.<br>summary 작성 후 ctrl+s 하면, 해당 메시지가 자동으로 저장됩니다.<br>github에서 commit시키는 것과 같습니다.<br>명령어 push를 누릅니다.<br>push가 성공적으로 이루어지면 페이지 하단에 어디에 저장이 되었는지 확인 됩니다.</p>
+<h1 id="Jekyll-에-대한-구조-설명"><a href="#Jekyll-에-대한-구조-설명" class="headerlink" title="Jekyll 에 대한 구조 설명"></a>Jekyll 에 대한 구조 설명</h1><p>등장 배경</p>
+<ul>
+<li>웹 사이트의 발전: static -&gt; dynamic</li>
+<li><p>static  </p>
+<ul>
+<li>DB 통신 없이 html, css 등의 정적 파일의 text를 바로 전달.</li>
+<li>단순해서 빠르지만 자체 기능이 부족하고, 콘텐츠 수정이 힘듭니다.</li>
+</ul>
+</li>
+<li><p>dynamic</p>
+<ul>
+<li>DB와 연동하여 댓글, 좋아요 등 다양한 기능이 가능</li>
+<li>콘텐츠 수정, 추가가 용이</li>
+</ul>
+</li>
+<li><p>개인 블로그나 간단한 사이트의 경우 필요로 하는 기능이 많지 않고, 대표적인 추가 기능들(댓글, form, 글 검색 등)이 각각 서비스화되면서(disqus, wufoo, typeform, google 등등) 정적 사이트로 블로그를 만들더라도 원하는 대부분의 기능을 충족할 수 있게 됩니다.</p>
+</li>
+<li>Jekyll 창시자가 GitHub의 창업자이자 전 CEO인 Tom Preston-Werner 라서 GitHub에서 호스팅도 제공하고 GitHub Pages에서도 자주 사용되는 등의 연결고리가 있음<br>(현재는 Parker Moore(GitHub 직원)가 리딩)</li>
+<li>Jekyll은 ruby 언어 기반이지만 엔진을 커스텀해서 사용할 것이 아니라면 루비 문법을 알 필요는 없으며,<br>웹디자인에 관심이 있다면, <a href="http://nomad.works/study/server/jekyll/syntax/" rel="external nofollow noopener noreferrer" target="_blank">기본문법</a> 정도만 알면 무리없이 사용 가능.</li>
+</ul>
+<hr>
+<h2 id="config-yml"><a href="#config-yml" class="headerlink" title="_config.yml"></a>_config.yml</h2><p>Jekyll내의 모든 설정은 _config.yml을 통해서 관리합니다.<br>환경설정을 관리한다고 생각하시면 됩니다.<br>선택한 테마에서 데모를 위해 설정되어 있는 내용을 블로그를 위해 별도의 추가 수정을 하시면됩니다.</p>
+<h2 id="Footer"><a href="#Footer" class="headerlink" title="Footer"></a>Footer</h2><p>링크를 위한 소셜아이콘의 추가와 간단한 문구가 담긴 Footer를 위해 footer.html를 아래와 같이 수정합니다.</p>
+<hr>
+<p>3일차 마지막 시간에는 미리 가입하여 스크립트를 BLOG에 삽입.</p>
+<ol>
+<li>구글 애널리틱스에 가입합니다<br><a href="https://analytics.google.com/" rel="external nofollow noopener noreferrer" target="_blank">https://analytics.google.com/</a><br>(TIP: 회사에서 쓸 용도라면 회사 개인 메일계정 말고, ‘<a href="mailto:smartstudy@smartstudy.com" rel="external nofollow noopener noreferrer" target="_blank">smartstudy@smartstudy.com</a>’처럼 회사 공식 계정으로 가입하시기 바랍니다. 소유권 이전이 되지 않는다는 설이 있기 때문입니다.)</li>
+</ol>
+<ol start="2">
+<li>가입하고 새 컨테이너를 만듭니다.<br>설치하면 바로 ‘추적 코드’가 나오는데, 이는 관리 &gt; 추적 정보 &gt; 추적 코드에서도 다시 볼 수 있습니다.<br>이 코드를 사이트 소스코드 바로 위에 붙여넣으시면 됩니다. 추적하고 싶은 모든 페이지에 첨부되어 있어야 합니다.<br>footer 에 등록함.</li>
+</ol>
+<p>4일차</p>
+<h1 id="Why-Google-Analytics"><a href="#Why-Google-Analytics" class="headerlink" title="Why Google Analytics?"></a>Why Google Analytics?</h1><p>이번에 오픈한 우리 쇼핑몰엔 어떤 사람들이 많이 들어올까요. 남자가 많을까요, 여자가 많을까요?<br>예상외로 30대가 많이 들어온다면 마케팅의 방향이 달라지지 않을까요.<br>또 사이트에 들어와 가장 먼저 누르는 곳은 어디일까요, 3페이지에 위치해 있는데 메인에 노출되어 있는 상품보다 잘 팔린다면 그 제품을 어떻게 해야할까요?</p>
+<p>이를 위하여 고객의 행동 패턴과 전자상거래 기록을 수집하는 툴 중 하나가 ‘Google Analytics‘입니다. 사이트 소스코드에 간단히 설치해두면, 구글 애널리틱스 홈페이지에 들어가 구글이 사용자 행태를 분석해 모아둔 데이터를 볼 수 있습니다.</p>
+<h1 id="Google-Analytics란-무엇인가"><a href="#Google-Analytics란-무엇인가" class="headerlink" title="Google Analytics란 무엇인가?"></a>Google Analytics란 무엇인가?</h1><p>GA는 ‘문지기‘입니다. store.pinkfong.com 사이트 코드에 GA 코드 조각을 모두 붙여두면 접속한 사람들이 하는 행태를 모두 기록해 GA 서버에 보냅니다.</p>
+<p>뿐만 아니라 접속한 사람들의 나이, 성별, 그리고 이 페이지에서 평균 몇 분 머물렀는지도 알 수 있습니다.</p>
+<p>또한 여러 가지 조합을 통하여</p>
+<ol>
+<li>모바일 접속자인가 데스크톱 접속자인가?</li>
+<li>신규 방문자인가 재방문자인가?</li>
+<li>이번 달 무슨 상품이 가장 많이 팔렸는가?</li>
+<li>카테고리 목록에서 가장 많이 클릭되는 버튼은?</li>
+<li>페이스북에 올린 링크 중 무엇이 가장 도달률이 높은가?</li>
+<li>몇시에 가장 활발히 접속하는가?</li>
+<li>무슨 광고배너가 가장 인기가 많지?</li>
+<li>구매자는 어떤 결제 스텝에서 가장 이탈률이 높은가?</li>
+</ol>
+<p>등의 무궁무진한 통계들을 알 수 있습니다.</p>
+<p>결국 블로그나 홈페이지를 운영할 때, 실제적으로 얼마나 많은 사람들이 오고, 어떤 페이지를 보고 얼마나 페이지뷰가 있는지, 블로그나 홈페지를 방문하는 사람들을 분석할 수 있는 구글에서 제공하고 있는 분석툴이라고 생각하시면 됩니다.</p>
+<h2 id="애드센스와-애널리틱스-연결-하기"><a href="#애드센스와-애널리틱스-연결-하기" class="headerlink" title="애드센스와 애널리틱스 연결 하기"></a>애드센스와 애널리틱스 연결 하기</h2><p>구글 애드센스(Google Adsense)를 달고 광고를 하면서 블로그를 하는 분들은 꼭 가입해서 분석하는걸 추천합니다.</p>
+<p>애널리틱스 설정에서 애드센스와 연결하려는 사이트를 선택하고, 속성에 있는 애드센스 연결을 클릭합니다.<br>애드센스 서비스를 선택하고, 계속을 클릭합니다.</p>
+<p>어떤 글에서 얼마나 수익이 났는지 알려주는 보고서는 [행동 – 게시자 – 게시자 페이지]를 보면,<br>글 별로 노출 수, 클릭수, 수익, RPM 등을 볼 수 있습니다.</p>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="../../2018/06/2018-06-04-PINPOINT/">PINPOINT로 원인 분석</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-04</time><div class="content"><h3 id="TCP-로-DB-문제-확인하기-3"><a href="#TCP-로-DB-문제-확인하기-3" class="headerlink" title="TCP 로 DB 문제 확인하기 - 3"></a>TCP 로 DB 문제 확인하기 - 3</h3><p><a href="https://github.com/scouter-project/scouter/blob/master/README_kr.md" rel="external nofollow noopener noreferrer" target="_blank">SCOUTER</a> 는 어플리케이션 성능 모니터링 툴로 오픈소스 APM 입니다.<br>해당 현상을 분석하기 위해 저번주에 계속 모니터링 한 경과 최종적으로 3가의 의심스러운 패턴을 찾을 수 있었는데,</p>
+<ol>
+<li>Protocol.read 시에 지연이 발생.</li>
+<li>DB에서 지연이 발생.</li>
+<li>레디스의 데이러를 JSON Mapper 를 통해 객체를 할 때 지연이 발생.</li>
+</ol>
+<p>SCOUTER 에서 지연되는 내역이 다음과 같이 나왔는데, 해당 현상에 대해서는 확신을 할 수없어,<br>또다른 APM 인 네이버 <a href="http://naver.github.io/pinpoint/" rel="external nofollow noopener noreferrer" target="_blank">pinpoint</a>로 분석하고자 했습니다.</p>
+<p>설치하는 방법은 <a href="https://github.com/naver/pinpoint/blob/master/quickstart/README.md" rel="external nofollow noopener noreferrer" target="_blank">QuickStart</a>를 참고했습니다.</p>
+<p>예전에 서버에 바로 올렸다가, 1분마다 8기가의 데이터가 쌓이는 공포를 겪었기 때문에, 반영하는 모든 log4j.xml 의 DEBUG를 ERROR 로 변경하였습니다.<br>혹시 나중에 또 필요할 수 있어 간단하게 설정한 내역을 정리합니다.</p>
+<h2 id="JAVA-설치"><a href="#JAVA-설치" class="headerlink" title="JAVA 설치"></a>JAVA 설치</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/profile</span><br><span class="line"></span><br><span class="line">export JAVA_6_HOME=/usr/lib/jvm/java-1.6.0</span><br><span class="line">export JAVA_7_HOME=/usr/lib/jvm/java-1.7.0</span><br><span class="line">export JAVA_8_HOME=/usr/lib/jvm/java-1.8.0</span><br><span class="line">export JAVA_9_HOME=/usr/lib/jvm/java-1.9.0</span><br></pre></td></tr></table></figure>
+<p>하단에 JAVA_6_HOME 및 추가된 jdk 경로 설정합니다.<br>jdk 가 없을 시 download 하거나 yum install 로 설치합니다. 수정 후 꼭 ssh 재접속해야합니다.<br>실제로 가이드 문서에는 jdk 9 (JAVA_9_HOME) 을 넣으라는 글이 없었는데, 해당 버젼이 없으면, 에러가 나네요.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[INFO] -------------------------------------------------------------</span><br><span class="line">[ERROR] COMPILATION ERROR : </span><br><span class="line">[INFO] -------------------------------------------------------------</span><br><span class="line">[ERROR] javac: invalid target release: 9</span><br><span class="line">Usage: javac &lt;options&gt; &lt;source files&gt;</span><br><span class="line">use -help for a list of possible options</span><br></pre></td></tr></table></figure>
+<p>jdk9 가 없어 도중에 에러가 납니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">[DEBUG] Goal:          org.apache.maven.plugins:maven-enforcer-plugin:1.4.1:enforce (enforce-pinpoint-build-requirements)</span><br><span class="line">[DEBUG] Style:         Regular</span><br><span class="line">[DEBUG] Configuration: &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">  &lt;fail default-value=&quot;true&quot;&gt;true&lt;/fail&gt;</span><br><span class="line">  &lt;failFast default-value=&quot;false&quot;&gt;$&#123;enforcer.failFast&#125;&lt;/failFast&gt;</span><br><span class="line">  &lt;ignoreCache default-value=&quot;false&quot;&gt;$&#123;enforcer.ignoreCache&#125;&lt;/ignoreCache&gt;</span><br><span class="line">  &lt;mojoExecution default-value=&quot;$&#123;mojoExecution&#125;&quot;/&gt;</span><br><span class="line">  &lt;project default-value=&quot;$&#123;project&#125;&quot;/&gt;</span><br><span class="line">  &lt;rules&gt;</span><br><span class="line">    &lt;requireMavenVersion&gt;</span><br><span class="line">      &lt;version&gt;3.2&lt;/version&gt;</span><br><span class="line">    &lt;/requireMavenVersion&gt;</span><br><span class="line">    &lt;requireJavaVersion&gt;</span><br><span class="line">      &lt;version&gt;1.7&lt;/version&gt;</span><br><span class="line">    &lt;/requireJavaVersion&gt;</span><br><span class="line">    &lt;requireEnvironmentVariable&gt;</span><br><span class="line">      &lt;variableName&gt;JAVA_6_HOME&lt;/variableName&gt;</span><br><span class="line">    &lt;/requireEnvironmentVariable&gt;</span><br><span class="line">    &lt;requireEnvironmentVariable&gt;</span><br><span class="line">      &lt;variableName&gt;JAVA_7_HOME&lt;/variableName&gt;</span><br><span class="line">    &lt;/requireEnvironmentVariable&gt;</span><br><span class="line">    &lt;requireEnvironmentVariable&gt;</span><br><span class="line">      &lt;variableName&gt;JAVA_8_HOME&lt;/variableName&gt;</span><br><span class="line">    &lt;/requireEnvironmentVariable&gt;</span><br><span class="line">    &lt;requireEnvironmentVariable&gt;</span><br><span class="line">      &lt;variableName&gt;JAVA_9_HOME&lt;/variableName&gt;</span><br><span class="line">    &lt;/requireEnvironmentVariable&gt;</span><br><span class="line">  &lt;/rules&gt;</span><br><span class="line">  &lt;session default-value=&quot;$&#123;session&#125;&quot;/&gt;</span><br><span class="line">  &lt;skip default-value=&quot;false&quot;&gt;$&#123;enforcer.skip&#125;&lt;/skip&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br><span class="line">[DEBUG] -----------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+<p>JAVA_9_HOME 가 필수적으로 필요했는데, 해당 내용이 없어서, pom.xml 을 변경하려다가 그냥 jdk 9 를 설치해버렸습니다.</p>
+<h2 id="MAVEN-설치"><a href="#MAVEN-설치" class="headerlink" title="MAVEN 설치"></a>MAVEN 설치</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://maven.apache.org/download.cgi 에서 최신 maven 다운로드</span><br><span class="line">설치 경로에서 tar xvf apache-maven-3.5.0-bin.tar.gz</span><br></pre></td></tr></table></figure>
+<p>MAVEN 홈페이지에 가서, maven 을 설치합니다. 저는 그냥 최신 버젼 설치했습니다.<br>maven 로 yum install 로 설정하려고 했는데 기존 설치되어있는 거랑 뭔가 안맞아서, 강제로 환경설정을 셋팅했습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># vi /etc/profile.d/maven.sh</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#!/bin/bash</span><br><span class="line">MAVEN_HOME=/설치경로/apache-maven-3.5.0 /usr/local/maven/bin/mvn</span><br><span class="line">PATH=$MAVEN_HOME/bin:$PATH</span><br><span class="line">export PATH MAVEN_HOME</span><br><span class="line">export CLASSPATH=.</span><br></pre></td></tr></table></figure>
+<p>쉘스크립트 작성후, 해당 쉘스크립트에 실행권한을 부여했습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># chmod +x /etc/profile.d/maven.sh</span><br><span class="line"># source /etc/profile.d/maven.sh</span><br></pre></td></tr></table></figure>
+<p>설치여부 확인<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost apache-maven-3.5.3]# mvn -version</span><br><span class="line">Apache Maven 3.5.3 (3383c37e1f9e9b3bc3df5050c29c8aff9f295297; 2018-02-25T04:49:05+09:00)</span><br><span class="line">Maven home: /home/pinpoint/apache-maven-3.5.3</span><br><span class="line">Java version: 1.8.0_161, vendor: Oracle Corporation</span><br><span class="line">Java home: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64/jre</span><br><span class="line">Default locale: ko_KR, platform encoding: UTF-8</span><br><span class="line">OS name: &quot;linux&quot;, version: &quot;3.10.0-693.17.1.el7.x86_64&quot;, arch: &quot;amd64&quot;, family: &quot;unix&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="GIT-설치"><a href="#GIT-설치" class="headerlink" title="GIT 설치"></a>GIT 설치</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[root@localhost pinpoint]# git --version</span><br><span class="line">git version 1.8.3.1</span><br><span class="line">[root@localhost pinpoint]# java -version</span><br><span class="line">openjdk version &quot;1.8.0_161&quot;</span><br><span class="line">OpenJDK Runtime Environment (build 1.8.0_161-b14)</span><br><span class="line">OpenJDK 64-Bit Server VM (build 25.161-b14, mixed mode)</span><br><span class="line">[root@localhost pinpoint]#</span><br></pre></td></tr></table></figure>
+<p>git 은 그냥 귀찮아서 yum install 로 설치했습니다.</p>
+<h2 id="설치-완료-후"><a href="#설치-완료-후" class="headerlink" title="설치 완료 후 "></a>설치 완료 후 </h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./mvnw install -Dmaven.test.skip=true</span><br></pre></td></tr></table></figure>
+<p>해당 파일을 설치합니다.</p>
+<p>저는 서버에 설치된 파일과, 클라이언트 서버가 틀리므로, quickstart 폴더의 agent 폴더를 다운받아, 클라이언트 서버에 해당 파일을 올립니다.<br>물론 log4j.xml 의 모든 내용은 DEBUG -&gt; ERROR, INFO -&gt; ERROR 로 바꿉니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./quickstart/lib/log4j.xml</span><br></pre></td></tr></table></figure>
+<p>해당 파일의 내용을 수정합니다.<br>[QuickStart]에서 알려준 대로, 순서대로 실행합니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">quickstart/bin/start-hbase.sh</span><br><span class="line">quickstart/bin/init-hbase.sh</span><br><span class="line">quickstart/bin/start-collector.sh</span><br><span class="line">quickstart/bin/start-web.sh</span><br></pre></td></tr></table></figure>
+<p><a href="http://host:28080" rel="external nofollow noopener noreferrer" target="_blank">http://host:28080</a> 로 해당 web 페이지가 정상적으로 뜨는지 확인합니다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>scouter 의 hook_method_patterns 로 분석하였던 내용과 비슷한 내용이 pinpoint 에도 나왔습니다.</p>
+<blockquote>
+<p>레디스의 Json 형태의 String을 Json 라이브러리를 통해 객체화 하는 대서 200 (ms) 의 지연이 간혈적으로 발생. </p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Method</th>
+<th style="text-align:center">Gap(ms)</th>
+<th style="text-align:right">Class</th>
+<th style="text-align:right">Api</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">toJSON(Object object, JsonConfig jsonConfig)</td>
+<td style="text-align:center">211</td>
+<td style="text-align:right">JSONSerializer</td>
+<td style="text-align:right">JSON-LIB</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<blockquote>
+<p>mysql 의 excute 에서 미약한 지연 발생 </p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Method</th>
+<th style="text-align:center">Gap(ms)</th>
+<th style="text-align:right">Class</th>
+<th style="text-align:right">Api</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">execute()</td>
+<td style="text-align:center">139</td>
+<td style="text-align:right">PreparedStatement</td>
+<td style="text-align:right">MYSQL(xxxx)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<blockquote>
+<p>레디스에서 해당 데이터를 읽을 때 지연이 발생</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Method</th>
+<th style="text-align:center">Argument</th>
+<th style="text-align:right">Gap(ms)</th>
+<th style="text-align:right">Class</th>
+<th style="text-align:right">Api</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">exists(String key)</td>
+<td style="text-align:center">write: 0ms, read: 587ms</td>
+<td style="text-align:right">585</td>
+<td style="text-align:right">Jedis</td>
+<td style="text-align:right">REDIS</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>위 3가지 항목으로 우선적으로 redis 서버를 증설 및 분리했습니다.<br>분리됨에 따라 레디스에서 해당 데이터를 읽을 때 지연이 발생하는 현상에 대한 해결은 어느정도 된 것으로 파악됩니다.<br>이제 Redis 에 해당 데이터를 write 할떄, Json 이 아니라 Object를 바이너리화하여 바로 넣고 사용하는 형태로 변경하는 작업을 진행하고자 합니다.</p>
+<p>변경할 작업은 다음과 같습니다.</p>
+<ol>
+<li>JSONObject를 그냥 Object 로 바이너리로 레디스 저장.</li>
+<li>kakao 에 맞는 성능의 별도의 JSON-Lib 적용 <a href="http://www.yunsobi.com/blog/646" rel="external nofollow noopener noreferrer" target="_blank">참고 주소</a></li>
+<li>레디스 및 ehcache 시간 및 기능 변경</li>
+</ol>
+<hr>
+<h1 id="참조"><a href="#참조" class="headerlink" title="참조"></a>참조</h1><hr>
+<ul>
+<li><a href="http://javaworld.co.kr/81" rel="external nofollow noopener noreferrer" target="_blank">Pinpoint QuickStart</a></li>
+<li><a href="http://dev2.prompt.co.kr/33" rel="external nofollow noopener noreferrer" target="_blank">Naver Pinpoint 소개 및 설치</a></li>
+<li><a href="http://jamcode.tistory.com/31" rel="external nofollow noopener noreferrer" target="_blank">Pinpoint agent</a></li>
+</ul>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="../../2018/06/2018-06-05-PINPOINT_INSTALL/">PINPOINT quickstart 설치시 유의했던 점</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-04</time><div class="content"><h2 id="외부-인터넷이-막혀있는-환경"><a href="#외부-인터넷이-막혀있는-환경" class="headerlink" title="외부 인터넷이 막혀있는 환경"></a>외부 인터넷이 막혀있는 환경</h2><p>해당 서버에는 내부 IP는 허용하나 외부 IP를 차단한 경우로,<br>quickstart의 s<br>tart-collector,<br>start-web,<br>start-testapp 스크립트 모두 mvnw를 통해 실행되도록 되어 있어,<br>mvn 실행하도록 수정해서 처리해합니다.</p>
+<p>start-collector.sh 예)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pid=`nohup $&#123;bin&#125;/../../mvnw -f $COLLECTOR_DIR/pom.xml clean package tomcat7:run -D$IDENTIFIER -Dmaven.pinpoint.version=$version &gt; $LOGS_DIR/$LOG_FILE 2&gt;&amp;1 &amp; echo $!`</span><br><span class="line">-&gt;</span><br><span class="line">pid=`nohup mvn -f $COLLECTOR_DIR/pom.xml clean package tomcat7:run -D$IDENTIFIER -Dmaven.pinpoint.version=$version &gt; $LOGS_DIR/$LOG_FILE 2&gt;&amp;1 &amp; echo $!`</span><br></pre></td></tr></table></figure></p>
+<h2 id="log4j-LOG-수정"><a href="#log4j-LOG-수정" class="headerlink" title="log4j LOG 수정"></a>log4j LOG 수정</h2><p>quickstart 시 생성되는 모든 log4j.xml 은 debug 옵션으로 보여지게 되어있습니다.<br>그걸 그대로 agent 및 서버에서 동작시키면, 1분에 8기가의 데이터가 쌓이는 아주 놀라운 경험을 할수 있었습니다.<br>해당 옵션을 자신의 상황에 맞게 수정하시면 됩니다.<br>저는 단순한 지연현상을 찾기 위해서, DEBUG &gt; ERROR, INFO &gt; ERROR 로 변경하였습니다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./agent/lib/log4j.xml</span><br><span class="line">./web/src/main/resources/log4j.xml</span><br></pre></td></tr></table></figure></p>
+<p>형태의 모든 xml 을 수정 했습니다.<br>혹시 몰라 logs 폴더 또한 /data/ 폴더로 심볼릭 링크를 걸었습니다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./quickstart/hbase/hbase/logs</span><br><span class="line">./quickstart/logs</span><br></pre></td></tr></table></figure></p>
+<p>추가적으로 필요하면 hbase 에 대한 data 용량도 확인하는 것이 좋을 거 같습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./quickstart/data</span><br></pre></td></tr></table></figure>
+<p>테스트 시 특정 서버의 경우 하루에 5G까지 쌓이는 경우를 봐서, 초기화 관련된 부분도 고민해봐야할 거 같습니다.<br>우선은 scouter를 대체하는 용도는 아니었기 때문에, 여기까지만 정의했습니다.  </p>
+<h2 id="jdk-버젼-추가"><a href="#jdk-버젼-추가" class="headerlink" title="jdk 버젼 추가"></a>jdk 버젼 추가</h2><p>하단에 JAVA_6_HOME 및 추가된 jdk 경로 설정합니다.<br>jdk 가 없을 시 download 하거나 yum install 로 설치합니다.<br>수정 후 꼭 ssh 재접속해야합니다.<br>실제로 가이드 문서에는 jdk 9 (JAVA_9_HOME) 을 넣으라는 글이 없었는데, 해당 버젼이 없으면, 에러가 납니다.  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/profile</span><br><span class="line"></span><br><span class="line">export JAVA_6_HOME=/usr/lib/jvm/java-1.6.0</span><br><span class="line">export JAVA_7_HOME=/usr/lib/jvm/java-1.7.0</span><br><span class="line">export JAVA_8_HOME=/usr/lib/jvm/java-1.8.0</span><br><span class="line">export JAVA_9_HOME=/usr/lib/jvm/java-1.9.0</span><br></pre></td></tr></table></figure>
+</div><hr></div><div class="recent-post-item article-container"><a class="article-title" href="../../2018/05/2018-05-28-TCPREDIS/">SCOUTER 로 원인 분석</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-05-29</time><div class="content"><h3 id="TCP-로-DB-문제-확인하기-2"><a href="#TCP-로-DB-문제-확인하기-2" class="headerlink" title="TCP 로 DB 문제 확인하기 - 2"></a>TCP 로 DB 문제 확인하기 - 2</h3><p>서버가 튀는 순간 SCOUTER 를 사용하여, 해당 클래스의 위치를 찾습니다.</p>
+<p><a href="https://github.com/scouter-project/scouter/blob/master/scouter.document/use-case/Method-Profiling_kr.md" rel="external nofollow noopener noreferrer" target="_blank">hook_method_patterns</a><br>를 참고하여 찾습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hook_method_patterns=net.sf.ehcache.*.*,redis.clients.jedis.*.*</span><br></pre></td></tr></table></figure>
+<p>redis와 ehcache 문제로 접근하고자 해당 클래스와 그 클래스의 모든 클래스를 찾도록 했습니다.<br>위와같은 명령을 날렸을 때 다음과 같은 메시지가 출력되었습니다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">    -    [000227] 20:42:33.042        0      0  JedisCluster#exists() [293ms] -- redis.clients.jedis.JedisCluster.exists(Ljava/lang/String;)Ljava/lang/Boolean;</span><br><span class="line">[000227] [000228] 20:42:33.042        0      0   JedisClusterCommand#run() [293ms] -- redis.clients.jedis.JedisClusterCommand.run(Ljava/lang/String;)Ljava/lang/Object;</span><br><span class="line">[000228] [000229] 20:42:33.042        0      0    JedisFactory#activateObject() [0ms] -- redis.clients.jedis.JedisFactory.activateObject(Lorg/apache/commons/pool2/PooledObject;)V</span><br><span class="line">[000228] [000230] 20:42:33.042        0      0    JedisCluster$4#execute() [293ms] -- redis.clients.jedis.JedisCluster$4.execute(Lredis/clients/jedis/Jedis;)Ljava/lang/Object;</span><br><span class="line">[000230] [000231] 20:42:33.042        0      0     JedisCluster$4#execute() [293ms] -- redis.clients.jedis.JedisCluster$4.execute(Lredis/clients/jedis/Jedis;)Ljava/lang/Boolean;</span><br><span class="line">[000231] [000232] 20:42:33.042        0      0      Jedis#exists() [293ms] -- redis.clients.jedis.Jedis.exists(Ljava/lang/String;)Ljava/lang/Boolean;</span><br><span class="line">[000232] [000233] 20:42:33.042        0      0       BinaryClient#isInMulti() [0ms] -- redis.clients.jedis.BinaryClient.isInMulti()Z</span><br><span class="line">[000232] [000234] 20:42:33.042        0      0       Client#exists() [0ms] -- redis.clients.jedis.Client.exists(Ljava/lang/String;)V</span><br><span class="line">[000234] [000235] 20:42:33.042        0      0        BinaryClient#exists() [0ms] -- redis.clients.jedis.BinaryClient.exists([[B)V</span><br><span class="line">[000235] [000236] 20:42:33.042        0      0         BinaryClient#connect() [0ms] -- redis.clients.jedis.BinaryClient.connect()V</span><br><span class="line">[000236] [000237] 20:42:33.042        0      0          Connection#isConnected() [0ms] -- redis.clients.jedis.Connection.isConnected()Z</span><br><span class="line">[000235] [000238] 20:42:33.042        0      0         Protocol#sendCommand() [0ms] -- redis.clients.jedis.Protocol.sendCommand(Lredis/clients/util/RedisOutputStream;Lredis/clients/jedis/Protocol$Command;[[B)V</span><br><span class="line">[000232] [000239] 20:42:33.043        1      0       Protocol#read() [292ms] -- redis.clients.jedis.Protocol.read(Lredis/clients/util/RedisInputStream;)Ljava/lang/Object;</span><br><span class="line">[000228] [000240] 20:42:33.335      292      0    Jedis#close() [0ms] -- redis.clients.jedis.Jedis.close()V</span><br><span class="line">~~~~~~~~~~~~~~~~~~ 중략</span><br><span class="line">    -    [000253] 20:42:33.568      232      0  Cache#put() [0ms] -- net.sf.ehcache.Cache.put(Lnet/sf/ehcache/Element;)V</span><br></pre></td></tr></table></figure></p>
+<p>ehcache의 경우 T-GAP이 발생했으나, 실질적인 ehcahe 는 0ms 이므로, 그 앞단의 뭔가가 지연이 된 것으로 보이며,<br>우선은 바로 나온 redis 에 대해 확인하고자 했습니다.<br>결국 ehcache 보다 jedis에 지연이 되는 건이 많은 것을 확인하고, 해당 내용을 조금더 상세하게 확인하고자 호출을 변경하였습니다.<br>RedisInputStream 의 read 를 사용하는 부분을 보기 위해 Java의 io 쪽까지 포함한 hook_method를 셋팅했습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hook_method_patterns=java.io.InputStream.*,redis.clients.util.RedisInputStream.*,redis.clients.util.RedisOutputStream.*,java.io.OutputStream.*</span><br></pre></td></tr></table></figure>
+<p>해당 메소드를 체크했을 때 결과적으로 다음과 같은 지연이 발생했습니다.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-    [000017] 11:32:33.820        0      0  RedisInputStream#readByte() [220ms] -- redis.clients.util.RedisInputStream.readByte()B</span><br><span class="line">-    [000018] 11:32:34.040      220      0  RedisInputStream#readLongCrLf() [0ms] -- redis.clients.util.RedisInputStream.readLongCrLf()J</span><br></pre></td></tr></table></figure>
+<p>혹시 몰라 java.io.InputStream.* 를 적용했으나 상속받은 RedisInputStream Method 만 scouter xLog에 나왔습니다.<br>RedisOutputStream 은 빠르나, read 발생할때 지연되는 것을 확인할 수 있었습니다.</p>
+<h2 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h2><p>불필요한 레디스 삭제 및, 클러스터 서버 추가, 레디스 사용을 최소화할 방안 고민으로 결론이 났습니다.<br>실제로, 레디스는 대부분을 GET, SET 을 json 형태로 저장하는 용도로만 사용하고 있으며,<br>해당 HGET Key field 는 (Time complexity: O(1)) 로 복잡도 자체가 1:1 인데, read 하는데 지연이 발생하는 부분은 확인이 필요하나,<br>실서버에서의 이슈를 계속 확인하기 위해 내버려둘 수 없어, 언발의 오줌누기 스킬을 써야할 거 같습니다.</p>
+</div><hr></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="../4/"><i class="fa fa-chevron-left"></i></a><a class="page-number" href="../../">1</a><span class="space">&hellip;</span><a class="page-number" href="../4/">4</a><span class="page-number current">5</span><a class="page-number" href="../6/">6</a><span class="space">&hellip;</span><a class="page-number" href="../11/">11</a><a class="extend next" rel="next" href="../6/"><i class="fa fa-chevron-right"></i></a></div></nav></div></div><footer><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2019 By bymin</div><div class="framework-info"><span>Driven - </span><a href="http://hexo.io" rel="external nofollow noopener noreferrer" target="_blank"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme - </span><a href="https://github.com/Molunerfinn/hexo-theme-melody" rel="external nofollow noopener noreferrer" target="_blank"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"><i class="fa fa-user"></i><span id="busuanzi_value_site_uv"></span><span></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i><span id="busuanzi_value_site_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@latest/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-ui-pack@latest/velocity.ui.min.js"></script><script src="../../js/utils.js?version=1.6.1"></script><script src="../../js/fancybox.js?version=1.6.1"></script><script src="../../js/sidebar.js?version=1.6.1"></script><script src="../../js/copy.js?version=1.6.1"></script><script src="../../js/fireworks.js?version=1.6.1"></script><script src="../../js/transition.js?version=1.6.1"></script><script src="../../js/scroll.js?version=1.6.1"></script><script src="../../js/head.js?version=1.6.1"></script><script>if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+}</script></body></html>
