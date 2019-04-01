@@ -1,0 +1,33 @@
+<div class="sidebar well">
+{{ site.description }}
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        {% for post in site.posts limit:10 %}
+          <li><a href="{{ site.baseurl}}{{ post.url }}">{{ post.title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+
+<ins class="kakao_ad_area" style="display:none;"
+ data-ad-unit    = "DAN-trz41a29r8l5"
+ data-ad-width   = "250"
+ data-ad-height  = "250"></ins>
+<script type="text/javascript" src="//t1.daumcdn.net/adfit/static/ad.min.js" async></script>
+
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-7078161006200071"
+     data-ad-slot="8769632746"
+     data-ad-format="auto"></ins>
+<script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<div class="sidebar well">
+{% include links-list.html %}
+</div>

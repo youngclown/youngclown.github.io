@@ -1,0 +1,44 @@
+# Jekyll configuration
+
+name: bymin
+description: 잘따라하자, 잘정리하자
+
+# url is currently only used only for the RSS feed in feed.xml
+url: https://youngclown.github.io
+
+# baseurl will often be '', but for a project page on gh-pages, it needs to
+# be the project name.
+# *** IMPORTANT: If your local "jekyll serve" throws errors change this to '' or
+#     run it like so: jekyll serve --baseurl=''
+baseurl: ''
+
+# This can be '' to hide the Github nav button
+github: 'youngclown'
+
+# Set this to your UA-# value, or '' to disable the block completely
+gaaccount: 'UA-87353572-1'
+
+# The 'comments' setting enables comments. You'll need to select either
+# disqus or isso below to choose a comment system. Individual posts can
+# override 'comments' to disable on a post-by-post basis.
+comments: true
+
+# Set this to your public isso URL to enable comments via isso. Set to '' to disable isso.
+isso: ''
+
+# Set this to your disqus shortname to enable comments via disqus. Set to '' to disable disqus.
+disqus: ''
+
+permalink: /:year/:month/:title
+paginate: 3
+
+highlighter: rouge
+markdown: kramdown
+gems: ['jekyll-paginate']
+
+exclude: ['README.md', 'LICENSE']
+
+theme: jekyll-theme-leap-day
+
+plugins:
+  - jekyll-sitemap
