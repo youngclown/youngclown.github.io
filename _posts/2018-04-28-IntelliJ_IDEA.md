@@ -17,6 +17,9 @@ UML을 볼때 연관 Class들을 source explorer 에서 선택한 상태에서 �
 
 Nyan Progress Bar : 고양이 Progress Bar
 -----
+ - https://plugins.jetbrains.com/plugin/8575-nyan-progress-bar
+
+
 
 ctrl + E : 최근 작업 소스
 
@@ -49,7 +52,6 @@ Version Control > Subversion 의 경로를,
 C:\Program Files\SlikSvn\bin\svn.exe
 ```
 로 설정합니다.
-
 
 
 프로퍼티 에디터
@@ -120,6 +122,18 @@ Exception in thread "main" java.lang.NoClassDefFoundError: javax/servlet/http/Ht
 servlet 을 provided로 설정했을 경우, intelliJ에서는 별도의 Main class 에서 동작시에는,
 IntelliJ 설정에서
 include dependencies with "Providd" scope 체크를 해야합니다.
+
+폰트설정
+---
+Ctrl+Alt+S > 키워드: Font를 친 후
+
+
+Gradle 5.0 version 이슈
+----
+Gradle 5.0 이상의 경우 인텔리J 2019.1 버전으로 올리지 않으면 에러가 발생합니다.
+
+
+
 
 -----
 # 참조
