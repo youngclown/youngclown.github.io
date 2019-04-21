@@ -7,7 +7,7 @@ comments: true
 
 특수문자를 HTML TAG로 변환하는 방법
 ---
-```$xslt
+```
 1. " : &quot;
 2. & :  &amp;
 3. < : &lt;
@@ -18,7 +18,7 @@ comments: true
 문제
 ---
 
-```$xslt
+```
 ㄱ. <input type=text name=n value="">">
 ㄴ. alert("">");
 ```
@@ -42,14 +42,14 @@ DB에 넣을 때는 신경쓰지 않아도 되지만, 빼올 때 어떻게 처�
 HTML 출력시 혹은 디바이스에서 처리할 때 문제가 발생하면,
 
  ( ", &, <) 와 같은 문자열을 (&quot;, &amp;, &lt;)로 변환시켜주면 됩니다.
-```$xslt
+```
 ㄷ. <input type=text name=n value="&quot;&lt;">
 ㄹ. alert("&quot;&lt;");
 ```
 위와 같은 경우에도 실제로는 메시지 창에서 "> 란 값이 출력될 수도 있으므로 고민을 해봐야합니다.
 아무때나 변경시키면 곤란하다는 의미입니다.
 
-```$xslt
+```java
 <!-- 상세 소스-->
  public static String escapeHtmlString(String s)
  {

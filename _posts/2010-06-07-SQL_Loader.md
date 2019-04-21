@@ -21,7 +21,7 @@ comments: true
  
 
 3. 새로운 메모장으로 SQL*Loader 컨트롤 파일을 작성해줍니다.
-```$xslt
+```
 LOAD DATA
 INFILE 'c:\biotest.csv'  // 파일 경로
 APPEND                       // 저장 옵션 (기존의 행에 추가, 이외에 REPLACE, INSERT, TRUNCATE 가 있음)

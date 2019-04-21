@@ -11,7 +11,7 @@ sqlMapConfig
 properties resource="데이타베이스 설정한 곳 주소"  
 알바티스를 위한 셋팅, 정의는 되어있으나 특별하게 셋팅할 필요는 없습니다.  
 
-```$xslt
+```xml
 <settings
 cacheModelsEnabled="true"
 enhancementEnabled="true"
@@ -32,19 +32,19 @@ useStatementNamespaces : 여러개의 sqlMap의 namespace 가 BlogUser 라 할�
 JDBC, SIMPLE 같은 경우에는 iBATIS가 별칭으로 해당 명칭을 매칭시켜줍니다.
 
 
-```$xslt
+```xml
 <transactionManager type="JDBC" >
 <dataSource type="SIMPLE">
 <property name="url을 읽어옴.">
 ```
 
-```$xslt
+```
 JDBC : 트랙젝션을 그대로 사용
 EXTERNAL : 사용자가 직접
 JTA :  2기종간의 데이터베이스 여러가지의 DB를 하나로 관리가능
 ```
 
-```$xslt
+```
 SIMPLE : (내가 집적) 알바티스 설정 문서 안에서 DB 커넥션을 얻거나, 데이터 소스 설정을 얻을 수 있습니다.
 JNDI : 컨테이너가 제공하는 WAS가 제공해주는 DB 소스를 사용
 DBCP : 자카르타의 DBCP
@@ -52,7 +52,7 @@ DBCP : 자카르타의 DBCP
 
 최종적으로 소스에 가장 상위에는
 
-```$xslt
+```
 SqlMapConfig.xml
 SqlMap.xml .. . .. . . . ...
 ```

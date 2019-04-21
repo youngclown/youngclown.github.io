@@ -6,7 +6,7 @@ comments: true
 ---
 
 극단적인 예  
-```
+```java
 String s= new String("테스트");
 ->String s = "테스트";
 ```

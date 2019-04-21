@@ -6,7 +6,7 @@ comments: true
 Native Ad Request Markup object
 ----
 
-타불라 네이비트 광고의 Request 요청 처리안
+타불라 네이비트 광고의 Request 요청 처리안 스펙정의값
 ----
 
 The Native Object defines the native advertising opportunity available for bid via this bidrequest.   
