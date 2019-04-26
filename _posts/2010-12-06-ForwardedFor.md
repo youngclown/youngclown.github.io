@@ -16,7 +16,7 @@ L4 에서는 IP 를 Remapping 하면서 Client IP 를 아예 없애버리는 게
 참고로 해당 값은 LP VIP 을 통해 들어갈 때만 생기며, 클라이언트에서 보내주는 헤더값이 아니라 L4 VIP 를 통해 들어갈때 L4에서 헤더에 넣어주는 헤더값을 의미합니다.
 
 자바내의 처리로직 :
-```
+```java
     HttpServletRequest request
 
     String ip = request.getHeader("HTTP_X_FORWARDED_FOR");

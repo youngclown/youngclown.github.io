@@ -6,7 +6,7 @@ comments: true
 Native Link object (adm object)
 ----
 
-타불라 네이비트 광고의 Response 요청 처리안
+타불라 네이비트 광고의 Response 요청 처리안 스펙정의값
 ----
 
 The native ad markup object is the top level JSON object which identifies a native response. Each asset within the asset array corresponds to the Asset Object in the request. The main container object for each asset requested or supported by Exchange on behalf of the rendering client. Out

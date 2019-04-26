@@ -5,7 +5,7 @@ date: 2017-05-08 15:57:00 +0900
 comments: true
 ---
 
-```
+```java
 import java.io.File;
 
 public class phpAndJpg {
@@ -14,7 +14,7 @@ public class phpAndJpg {
     fileDirectory(filePath);
   }
 
-  
+
   public static void fileDirectory(String filePath) {
     File f1 = new File(filePath);
     String[] list = f1.list();

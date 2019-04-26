@@ -9,7 +9,7 @@ FLASHBACK TABLE 테이블명 TO BEFORE DROP;
 
 DROP 해서 날려버린 테이블을 복구하려고 할때 사용됩니다.
 
-```$xslt
+```
 1. 쓰레기통 비워져있으면,
  -> 그날로 짐싸야합니다.
 
@@ -28,7 +28,7 @@ FLASHBACK TABLE 테이블명 TO BEFORE DROP RENAME TO 변경 테이블 명;
 
 원래 테이블명과 동일한 테이블이 존재할 경우에 제약조건만 없다면,
 
-```$xslt
+```
 INSERT INTO DEPT SELECT * FROM "BIN$W7Q+R0EGy9rgQAB/AQA02Q==$0";
 ```
 위와같은 명령어로 복구가 가능합니다.
