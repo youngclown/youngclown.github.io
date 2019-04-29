@@ -8,17 +8,20 @@ comments: true
 ----
 
 
-[github](https://github.com/google/openrtb)에 올라온 google openrtb 를 적용해봅니다.
+[github](https://github.com/google/openrtb)에 올라온 google openrtb 를 정리해봅니다. google openRTB 연동에 관한 여러 고민이 있었습니다.
+
 
 The OpenRTB specification
 ----
+
+
 
 This library implements the protocol / data model from the latest OpenRTB Specification, so reading that should be your first step; it's also a good introduction to the concepts of real-time bidding.
 
 OpenRTB is only specified in terms of JSON messages, so an implementation has to provide bindings for specific programming languages so you can create and manipulate its message objects in a convenient way, i.e. not needing to deal with the raw JSON representation. We do that by first translating the specification to a Protocol Buffer descriptor, which can be used to generate model classes. This library will only build a Java model out-of-the-box, but you can easily use the same Protobuf descriptor to generate the model code for many other languages. (Other features though, are only available for Java or other JVM-based languages.)
 
-해당 google openrtb는 구글 프로토콜 버퍼 (Protocol Buffer)를 사용하여,
-data model 을 구성하였습니다.
+해당 google openrtb는 구글 프로토콜 버퍼 (Protocol Buffer)를 사용하여, data model 을 구성하였습니다.
+
 
 구글 프로토콜 버퍼란?
 
