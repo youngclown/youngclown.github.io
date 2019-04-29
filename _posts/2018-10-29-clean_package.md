@@ -45,3 +45,5 @@ clean package -P
 
 위와같이 server, dev, local 등을 설정할 수 있으며 그냥 처리할 경우, activeByDefault에 의해 local 이 default 처리됩니다.
 resources-batch 와 같이 resource뒤에 접미사를 '-dev' , '-batch'등으로 두어 프로파일을 선택할 수 있도록 합니다.
+
+인텔리J에서는 자동으로 우측에 maven 의 build 타입을 찾을 수 있어, 쉽게 변경가능합니다.
