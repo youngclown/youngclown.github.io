@@ -31,10 +31,3 @@ HOSTNAME=xxxx-WAS-05
 ```
 라는 오류가 발생하는 경우가 생겨서 입니다.
 localhost 가 등록이 되지 않아 못찾는 것이므로 /etc/hosts에 해당 내용을 수정해야합니다.
-
-
------
-# 참조
------
-
-* [의식적인 TDD, 리팩토링](https://sejoung.github.io/2019/04/2019-04-25-tdd/#more)
