@@ -16,7 +16,7 @@ HOSTNAME=xxxx-WAS-05
 
 호스트 네임 변경.
 
-2. hostname adfit-WAS-05
+2. hostname xxxx-WAS-05
 
 3. vi /etc/hosts
 ```
