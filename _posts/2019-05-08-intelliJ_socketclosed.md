@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "톰켓 버추얼 호스팅 설정하기"
+title: "IntelliJ_IDEA"
 comments: true
 ---
 
-server.xml 을 오픈합니다.
+서버 재시작이 안되며 에러문구
 ---
 
 ```
@@ -56,4 +56,5 @@ netstat -a -o
 taskkill /f /pid PID번호
 ```
 
-를 사용하면, 바로 해당 프로세스가 종료됩니다. 저는 해당 프로세스를 킬하기보다는 JMX Port 를 변경하는 식으로 작업을 합니다.
+를 사용하면, 바로 해당 프로세스가 종료됩니다.   
+저는 해당 프로세스를 킬하기보다는 JMX Port 를 변경하는 식으로 작업을 합니다.  
