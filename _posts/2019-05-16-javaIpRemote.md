@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Client IP 문제(X-Forwarded-For) 해결 방안"
+title: "IP 대역폭 필터 기능"
 comments: true
 ---
 
