@@ -47,6 +47,15 @@ tomcat 의 server.xml 을 보면,
 http (80) 은 수정이 되어있었는데 https(443) 은 인증키를 바꾸는 과정에서 누군가, 해당 maxHttpHeaderSize 를 지운 것으로 확인되어,
 해당값을 늘리면서 해결할 수 있었습니다.
 
+```xml
+         <Connector port="443" keystoreFile="keystore_path"                
+                keystorePass="password" protocol="org.apache.coyote.http11.Http11NioProtocol"
+               maxThreads="4000" SSLEnabled="true" scheme="https" secure="true"
+               clientAuth="false" connectionTimeout="8000" maxHttpHeaderSize="40960" />
+```
+maxHttpHeaderSize="40960" 로 설정하여,
+문제를 해결했습니다.
+
 -----
 # 참조
 -----
