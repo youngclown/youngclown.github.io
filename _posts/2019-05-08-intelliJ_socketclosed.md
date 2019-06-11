@@ -7,6 +7,7 @@ comments: true
 서버 재시작이 안되며 에러문구
 ---
 
+
 ```
 오전 11:23	Error running 'Tomcat': Address localhost:2099 is already in use
 오전 11:23	Error running 'Tomcat': Unable to open debugger port (127.0.0.1:6662): java.net.SocketException "socket closed"
@@ -58,3 +59,16 @@ taskkill /f /pid PID번호
 
 를 사용하면, 바로 해당 프로세스가 종료됩니다.   
 저는 해당 프로세스를 킬하기보다는 JMX Port 를 변경하는 식으로 작업을 합니다.  
+
+실전예제
+---
+
+
+```
+오후 2:31	Error running 'Tomcat': Address localhost:2088 is already in use
+```
+가 다시 발생했습니다.
+
+![clusternodeImg](/images/20190611effectivejava.PNG)
+
+인텔리j에서 제공하는 Terminal 에서 바로 명령어를 입력하여, 프로세스를 킬한 후 톰캣을 재시작하면 됩니다.
