@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "이펙티브 자바_01"
+title: "아키텍쳐 자바_01"
 comments: true
 ---
 
