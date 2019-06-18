@@ -56,6 +56,17 @@ apt install openjdk-8-jdk-headless
 openjdk 를 설치합니다.
 
 
+Ubuntu에서 Windows 파일 시스템에 접근
+---
+
+```
+/mnt/d
+```
+```
+/mnt/c
+```
+/mnt/d/ 와 /mnt/c/ 등으로 실제 윈도우 경로로 접속가능합니다.  
+
 -----
 # 참조
 -----
