@@ -28,3 +28,9 @@ sudo yum install gcc-
    make hiredis jemalloc linenoise lua geohash-int
 ```
 
+```
+
+make distclean
+
+make
+```
