@@ -163,3 +163,27 @@ root@DESKTOP-RNJILIO:/usr/local/redis/redis-stable/src# redis-server
 3963:M 19 Jun 2019 11:57:22.706 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
 3963:M 19 Jun 2019 11:57:22.713 * Ready to accept connections
 ```
+
+
+```
+root@DESKTOP-RNJILIO:/usr/local/redis/redis-stable/src# nohup ./redis-server &
+[1] 3982
+root@DESKTOP-RNJILIO:/usr/local/redis/redis-stable/src# nohup: ignoring input and appending output to 'nohup.out'
+
+root@DESKTOP-RNJILIO:/usr/local/redis/redis-stable/src#
+root@DESKTOP-RNJILIO:/usr/local/redis/redis-stable/src#
+root@DESKTOP-RNJILIO:/usr/local/redis/redis-stable/src# ps -ef|grep redis
+root      3982    16  0 12:00 tty1     00:00:00 ./redis-server
+root      3987    16  0 12:00 tty1     00:00:00 grep --color=auto redis
+root@DESKTOP-RNJILIO:/usr/local/redis/redis-stable/src# redis-cli
+127.0.0.1:6379> set key 'melong'
+OK
+127.0.0.1:6379> get key
+"melong"
+127.0.0.1:6379>
+```
+
+nohup 을 이용해, redis-server 를 실행시킵니다.  
+redis-cli 를 이용해 간단한 테스트를 진행해봅니다.  
+
+정상적으로 key와 value 가 찍히는 것을 확인할 수 있었습니다.
