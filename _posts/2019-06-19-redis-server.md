@@ -186,4 +186,4 @@ OK
 nohup 을 이용해, redis-server 를 실행시킵니다.  
 redis-cli 를 이용해 간단한 테스트를 진행해봅니다.  
 
-정상적으로 key와 value 가 찍히는 것을 확인할 수 있었습니다.
+정상적으로 key와 value 가 찍히는 것을 확인할 수 있었습니다.  

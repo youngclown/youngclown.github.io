@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "아키텍쳐 자바_01"
+title: "자바 아키텍쳐 공부"
 comments: true
 ---
 
