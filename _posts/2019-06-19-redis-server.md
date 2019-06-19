@@ -66,55 +66,100 @@ apt-get update
 ```
 apt-get 을 update 합니다.
 
+```
+apt install gcc
+```
+업데이트 후 gcc를 설치하면 404 Not Found 가 발생하지 않고 정상적으로 잘 설치가 됩니다.
+
+
+
+
 gcc 설치 후, 다시 make를 치면 다음과 같은 에러가 납니다.
 
 ```
 root@DESKTOP-RNJILIO:/usr/local/redis/redis-stable# make
 cd src && make all
 make[1]: Entering directory '/usr/local/redis/redis-stable/src'
-    CC Makefile.dep
     CC adlist.o
-/bin/sh: 1: cc: not found
+In file included from adlist.c:34:0:
+zmalloc.h:50:10: fatal error: jemalloc/jemalloc.h: No such file or directory
+ #include <jemalloc/jemalloc.h>
+          ^~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
 Makefile:248: recipe for target 'adlist.o' failed
-make[1]: *** [adlist.o] Error 127
+make[1]: *** [adlist.o] Error 1
 make[1]: Leaving directory '/usr/local/redis/redis-stable/src'
 Makefile:6: recipe for target 'all' failed
 make: *** [all] Error 2
-
 ```
 
-/bin/sh: 1: cc: not found 가 없다고 합니다.
-gcc를 다시 설치합니다.
+최초 설치시 gcc가 없어 실패하면서, 무언가 제대로 설치가 안된거 같습니다.
 
-```
-apt install gcc++
-```
-
-
-
+단순하게 distclean 후 다시 설치하도록 하겠습니다.
 ```
 make distclean
 ```
 
+```
+sudo make install
+```
+
+그럼 이제 정상적으로 redis 가 compile 되기 시작합니다.  
+
+설치가 완료되면, src 폴더로 이동합니다.
+```
+cd src
+
+-rwxr-xr-x 1 root    root    5216008 Jun 19 11:14 redis-cli
+-rwxr-xr-x 1 root    root    8770008 Jun 19 11:14 redis-server
+```
+
+redis-server 실행을 합니다.
+근데 실행이 안됩니다. ㅠ-ㅜ
+
+deps 폴더에 가서, 별도의 명령어를 치는 방법.
+```
+cd deps
+make hiredis jemalloc linenoise lua geohash-int
+```
+deps 로 가서 jemalloc 가 기타 등등을 실행시킵니다.
+
+그리고 다시 make 로 설치를 진행합니다.
 
 
 ```
-   cd redis-stable/
-   make
-   cd deps
-   make hiredis jemalloc linenoise lua geohash-int
+sudo make install
 ```
 
+그리고 다시 ./src 폴더로 가면, redis-server를 실행시킬 수 있습니다.
+
+
 ```
+root@DESKTOP-RNJILIO:/usr/local/redis/redis-stable/src# redis-server
+3963:C 19 Jun 2019 11:57:22.660 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+3963:C 19 Jun 2019 11:57:22.661 # Redis version=5.0.5, bits=64, commit=00000000, modified=0, pid=3963, just started
+3963:C 19 Jun 2019 11:57:22.662 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+3963:M 19 Jun 2019 11:57:22.663 * Increased maximum number of open files to 10032 (it was originally set to 1024).
+                _._
+           _.-``__ ''-._
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 3963
+  `-._    `-._  `-./  _.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |           http://redis.io
+  `-._    `-._`-.__.-'_.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |
+  `-._    `-._`-.__.-'_.-'    _.-'
+      `-._    `-.__.-'    _.-'
+          `-._        _.-'
+              `-.__.-'
 
-
-make
+3963:M 19 Jun 2019 11:57:22.701 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+3963:M 19 Jun 2019 11:57:22.704 # Server initialized
+3963:M 19 Jun 2019 11:57:22.706 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+3963:M 19 Jun 2019 11:57:22.713 * Ready to accept connections
 ```
-
-
-
-최신커널소스 업데이트
-```
-git clone https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git
-```
-그냥 해보고싶어서 해봤습니다.
