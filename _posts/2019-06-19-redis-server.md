@@ -187,3 +187,39 @@ nohup 을 이용해, redis-server 를 실행시킵니다.
 redis-cli 를 이용해 간단한 테스트를 진행해봅니다.  
 
 정상적으로 key와 value 가 찍히는 것을 확인할 수 있었습니다.  
+
+이제 레디스를 종료하기 위해, 레디스를 종료했습니다.
+
+```
+^C4004:signal-handler (1560924252) Received SIGINT scheduling shutdown...
+4004:M 19 Jun 2019 15:04:12.255 # User requested shutdown...
+4004:M 19 Jun 2019 15:04:12.256 * Saving the final RDB snapshot before exiting.
+4004:M 19 Jun 2019 15:04:12.263 * DB saved on disk
+4004:M 19 Jun 2019 15:04:12.263 # Redis is now ready to exit, bye bye...
+```
+라는 메시지가 뜨며 종료가 되었으나, client 에서 여전히 서버에 접속이 되는 것을 확인했습니다.  
+
+```
+root@DESKTOP-RNJILIO:/usr/local/redis/redis-stable/src# netstat -tnlp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+```
+현재 열려있는 port 를 확인해봤으나 검색이 되지 않습니다.....
+
+혹시... 윈도우의 cmd 창을 띄운 후에 ,
+
+```
+C:\Users\bymin>netstat -a -o | find ":6379"
+```
+를 실행해봤습니다.
+맙소사 윈도우 10 프로세스에 떠있습니다.
+
+```
+C:\WINDOWS\system32>taskkill /f /pid 4176
+성공: 프로세스(PID 4176)가 종료되었습니다.
+```
+관리자 권한으로 프로세스를 강제로 킬했습니다.  
+이제 서버가 강제로 중지되었으며 해당 redis-server에 접속이 안되는 것을 확인했습니다.   
+
+윈도우 10에서 완벽하게 우분투를 설치해서 실제로 우분투 환경의 테스트를 하기는 아직 힘든거 같네요.
+관련 프로세스를 리눅스에 온전히 띄우는 방법을 찾으면 다시 정리해서 올리도록 하겠습니다.  
