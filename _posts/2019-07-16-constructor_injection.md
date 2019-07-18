@@ -54,9 +54,6 @@ Constructor Injection에서는 멤버 객체가 순환 의존성을 가질 경�
 의존 객체 중 필수는 Constructor Injection을 옵션인 경우는 Setter Injection을 활용할 수 있습니다.  
 
 
--- test
-
-
 -----
 # 참조
 -----
