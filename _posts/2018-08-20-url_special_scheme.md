@@ -9,7 +9,7 @@ http://,ftp://,market://과 같은 문자열을 url scheme이라 부릅니다.
 [url special scheme](https://sejoung.github.io/2018/08/url_special_scheme) 에서 처리된 내용을 첨부합니다.
 
 위키피디아에 대한 내용입니다.
-```aidl
+```
 //americanbilliardclub.com/about/history/
 http://americanbilliardclub.com/about/history/
 ```
@@ -19,17 +19,17 @@ http://americanbilliardclub.com/about/history/
 강제로 http를 넣으면 잘되지만,
 // 만 넣고 스키마를 넣지 않은 도메인에서는 위키피디아의 https 를 그대로 사용하기 때문에,
 
-```aidl
+```
 이 페이지를 표시할 수 없습니다.
 ```
 라는 메시지가 뜨게 됩니다.
-// 만 사용할 경우, Protocol-Relative URL로 현재 쓰고있는 프로토콜을 명시합니다. 
+// 만 사용할 경우, Protocol-Relative URL로 현재 쓰고있는 프로토콜을 명시합니다.
 현재 접속한 페이지는 https 이니 https://와 동일해집니다.
 만약 접속한 페이지가 http 면 자동으로 http로 변환해줍니다.
 
 여지까지 개발시, 동적 https 와 http를 판단하기 위해서는,
 
-```aidl
+```javascript
     var url = ('https:' == document.location.protocol ? 'https:' : 'http:') + "//xxx";
 ```
 document.location.protocol 을 사용하여 판단하거나 java 단에서는 헤더정보를 이용하여 판단했습니다.
@@ -37,7 +37,7 @@ document.location.protocol 을 사용하여 판단하거나 java 단에서는 �
 어떤 매체, 어떤 광고주에 우리 스크립트가 삽입되는지, 개발자가 일일이 신경쓰지 못할 경우,
 사용자에 따라 http, https 가 다양하게 들어올 경우에 대한 대응 책으로,
 
-```aidl
+```javascript
 <script src="//code.jquery.com/jquery-2.2.3.min.js"></script>
 ```
 가 우선적으로 처리되고 있지만, 해당 기술은 2010년도에 나온 little trick 입니다.  
@@ -54,7 +54,7 @@ http 일지 https 일지 모르는 브라우져에서,
 정확하게 보안이슈가 아닌 어찌해서 안되는 지에 대한 부분을 조금 더 찾아봐야할 거 같습니다.
 좀더 좋지 않았을 까 싶은데, 해당 내용을 찾기가 어렵네요.
 
-```aidl
+```
 https://url.spec.whatwg.org/#special-scheme
 ```
 어디에도 '//'를 사용해도 좋다라는 글은 없으며, 테스트할 때,
@@ -64,7 +64,7 @@ https://url.spec.whatwg.org/#special-scheme
 a, link element, href attribute 정도로 국한해서 처리되었으면 합니다.
 
 
-```aidl
+```html
 <iframe src="about:blank" width="300" height="120" ></iframe>
 ```
 

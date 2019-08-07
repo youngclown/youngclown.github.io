@@ -19,7 +19,7 @@ db는 MariaDB 를 사용하고 있고, 현재 확인하는 것은 마스터 서�
 치솟기(뒤기) 전에는 CLOSE_WAIT 가 24~27 정도를 유지하고 있다가, 튀기 바로 직전에 0~1로 변경됩니다.
 치솟는 순간 250번 DB의 커넥션이 전부 ESTABLISHED 상태로 변경되는 것까지 눈으로 확인했습니다.
 
-```aidl
+```
 tcp      196      0 xx.xxx.x.x:54330            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (6587.96/0/0)
 tcp        7      0 xx.xxx.x.x:38082            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (5745.34/0/0)
 tcp        0      0 xx.xxx.x.x:50672            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (7039.22/0/0)
@@ -72,7 +72,7 @@ tcp        0    667 xx.xxx.x.x:56624            192.168.2.250:3306          ESTA
 실제 server.xml 에서, minimumIdle="100", maximumPoolSize="100" 으로 되어있으며, 해당 셋팅을 한 이유는,
 minmunIdle 와 maximumPoolSize의 수를 같게 하여, 항상 커넥션을 유지하게 하기 위한 설정으로 알고 있습니다.
 
-```aidl
+```
 <Resource name="dreamdb" auth="Container"
      factory="com.zaxxer.hikari.HikariJNDIFactory"
      type="javax.sql.DataSource"
@@ -110,7 +110,7 @@ DB 쪽에서 강제적으로 3분 간격으로 커넥션을 끊는다고 합니�
 ---
 
 DB 쪽 이슈라고만 하기에는,
-```aidl
+```
 while true; do date; netstat -an | grep '.250:3306' | grep ESTABLISHED | wc -l; sleep 1; done
 ```
 해당 명령어를 호출할 때 sleep 을 1초에 걸렸음에도 12~14초가 걸리도록 서버에 지연이 있는 상태였으므로,
@@ -129,15 +129,15 @@ while true; do date; netstat -an | grep '.250:3306' | grep ESTABLISHED | wc -l; 
 
 [리눅스 서버의 TCP 네트워크 성능을 결정짓는 커널 파라미터 이야기 - 1편]을 통해 위의 설정으로 실제 tcp 메모리가 얼마만큼을 사용하는지 확인해봤습니다.
 
-```aidl
-[dream-WAS-03:root]/root>#sysctl net.ipv4.tcp_mem
+```
+[WAS-03:root]/root>#sysctl net.ipv4.tcp_mem
 net.ipv4.tcp_mem = 3067296	4089728	6134592
 ```
 
 min / pressure / max 값을 지정할 수 있다고 하는데, 현재 우리 서버의 메모리는 32기가로 참고한 내용에 별 문제 없음을 확인할 수 있었습니다.
 
-```aidl
-[dream-WAS-03:root]/root>#sysctl fs.file-nr
+```
+[WAS-03:root]/root>#sysctl fs.file-nr
 fs.file-nr = 5984	0	3251359
 ```
 세 값은 각각 현재 열려 있는 파일의 수, 현재 열려 있으나 사용되지 않는 파일의 수, 열 수 있는 파일의 최대 개수를 뜻합니다.
@@ -147,8 +147,8 @@ fs.file-nr = 5984	0	3251359
 
 
 [리눅스 서버의 TCP 네트워크 성능을 결정짓는 커널 파라미터 이야기 - 3편]에서 볼때,
-```aidl
-[dream-WAS-03:root]/root>#sysctl net.ipv4.tcp_max_tw_buckets
+```
+[WAS-03:root]/root>#sysctl net.ipv4.tcp_max_tw_buckets
 net.ipv4.tcp_max_tw_buckets = 262144
 ```
 TIME_WAIT 상태의 소켓은 위 설정된 값 보다 많아질 수 없다고 합니다.

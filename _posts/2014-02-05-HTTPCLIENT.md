@@ -5,7 +5,7 @@ date: 2014-02-05 14:41:00 +0900
 comments: true
 ---
 
-관련주소 : http://javacan.tistory.com/60 를 보고 따라한 
+관련주소 : http://javacan.tistory.com/60 를 보고 따라한
 관련주소 : http://hyunisjolly.blogspot.kr/2012/04/http-client.html
 를 따라함.
 
@@ -15,20 +15,20 @@ comments: true
 서버to서버 파일 전송 Class 입니다.
 기존 소스에서 MultipartFile 을 받아서 처리할 수 있도록 작업하였습니다.
 
-```aidl
+```
 /**
- * 
+ *
  * HTTP 요청을 전송한 후, 응답을 받아오는 유틸리티 클래스
- * 
+ *
  * GET 방식과 POST 방식으로 데이터를 전송해주며
  * POST 방식의 경우 multipart/form-date 인코딩 방식도 지원해준다.
  * </pre>
- * @history : 
+ * @history :
  * ------------------------------------------------------------------
  * 변경일  작성자   변경내용
  * ------------------------------------------------------------------
  * 2013. 11. 25. 젊은광대 최초작성
- * 
+ *
  * ------------------------------------------------------------------
  */
 
@@ -57,14 +57,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class HttpRequest {
 
     public static final String CRLF = "\r\n";
-    
+
     protected URL targetURL; // 연결할 URL
     protected String encoding = "UTF-8";   // String encoding
-    
+
     /** HTTP HEADER **/
     private ArrayList<Object> requestHeader;
 //    private ArrayList<Object> responseHeader;
-    
+
     /**
      * 파라미터 목록을 저장하고 있다.
      * 파라미터 이름과 값이 차례대로 저장된다.
@@ -72,12 +72,12 @@ public class HttpRequest {
     private ArrayList<Object> params;    
     private int responseCode;  // 응답코드
     private String responseMessage; // 응답메시지
-   
+
 
     public HttpRequest(){
      reset();
     }
-    
+
     /**
      * CONSTRUCTOR
      */
@@ -85,7 +85,7 @@ public class HttpRequest {
      reset();
      this.targetURL  = target;
     }
-    
+
     public void setTargetUrl(String targetURL) {
      try {
    this.targetURL = new URL(targetURL);
@@ -93,7 +93,7 @@ public class HttpRequest {
    e.printStackTrace();
   }
     }
-    
+
     /**
      * CONSTRUCTOR
      *
@@ -103,7 +103,7 @@ public class HttpRequest {
      reset();
      this.targetURL  = target;
      if ( encoding != null && encoding.equals("") == false ) { this.encoding  = encoding; }
-     
+
     }
 
     /**
@@ -126,7 +126,7 @@ public class HttpRequest {
      this.responseCode  = -1;
      this.responseMessage = "";
     }
-    
+
     /**
      * INITIALIZE
      * @param target
@@ -135,7 +135,7 @@ public class HttpRequest {
      reset();
      this.targetURL  = target;
     }
-    
+
     /**
      * INITIALIZE
      * @param target
@@ -146,9 +146,9 @@ public class HttpRequest {
      this.targetURL  = target;
      if ( encoding != null && encoding.equals("") == false ) { this.encoding  = encoding; }
     }
-    
+
     /*****************************************************/
-    
+
     public void addHeader(String parameterName, String parameterValue)
     {
         if (parameterValue == null)
@@ -157,7 +157,7 @@ public class HttpRequest {
         requestHeader.add(parameterName);
         requestHeader.add(parameterValue);     
     }
-    
+
     /**
      * 파라미터를 추가한다.
      * @param parameterName 파라미터 이름
@@ -211,7 +211,7 @@ public class HttpRequest {
          params.add(parameterValue);
         }
     }
-    
+
     /**
      * 지금까지 지정한 파라미터를 모두 삭제한다.
      */
@@ -220,14 +220,14 @@ public class HttpRequest {
     }
 
     /*****************************************************/
-    
+
     /**
      * GET 방식으로 대상 URL에 파라미터를 전송한 후
      * 응답을 InputStream으로 리턴한다.
      * @return InputStream
      */
     public InputStream sendGet() throws Exception {
-     
+
         String paramString = null;
         if (params.size() > 0)
             paramString = "?" + encodeString(params);
@@ -235,7 +235,7 @@ public class HttpRequest {
             paramString = "";
 
         URL url = new URL(targetURL.toExternalForm() + paramString);
-        
+
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();     
         conn.setRequestMethod("GET");
 
@@ -252,10 +252,10 @@ public class HttpRequest {
          }
         }
         conn.connect();
-       
+
         this.responseCode   = conn.getResponseCode();
         this.responseMessage  = conn.getResponseMessage();
-        
+
         for (int i=0; ; i++) {
             String headerName  = conn.getHeaderFieldKey(i);
             String headerValue  = conn.getHeaderField(i);
@@ -269,7 +269,7 @@ public class HttpRequest {
              break;
             }
         }
-        
+
         return conn.getInputStream();
     }
 
@@ -288,7 +288,7 @@ public class HttpRequest {
         HttpURLConnection conn = (HttpURLConnection)targetURL.openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        
+
         if (requestHeader != null && requestHeader.size() > 0) {
          for(int i=0, j=requestHeader.size(); i<j; i++) {
           String name = (String)requestHeader.get(i);
@@ -297,13 +297,13 @@ public class HttpRequest {
           conn.setRequestProperty(name, value);
          }
         }
-        
+
         conn.setDoInput(true);
         conn.setDoOutput(true);
         conn.setUseCaches(false);
 
         DataOutputStream out = null;
-        
+
         try {
             out = new DataOutputStream(conn.getOutputStream());
             out.writeBytes(paramString);
@@ -311,11 +311,11 @@ public class HttpRequest {
         } finally {
             if (out != null) out.close();
         }
-        
-        
+
+
         this.responseCode   = conn.getResponseCode();
         this.responseMessage  = conn.getResponseMessage();
-        
+
         for (int i=0; ; i++) {
             String headerName  = conn.getHeaderFieldKey(i);
             String headerValue  = conn.getHeaderField(i);
@@ -329,11 +329,11 @@ public class HttpRequest {
              break;
             }
         }
-        
+
         //conn.getResponseCode();
         //conn.getResponseMessage();
         //conn.getErrorStream();
-        
+
         return conn.getInputStream();
     }
 
@@ -344,7 +344,7 @@ public class HttpRequest {
      * @return InputStream
      */
     public InputStream sendMultipartPost() throws IOException {
-     
+
         HttpURLConnection conn = (HttpURLConnection)targetURL.openConnection();
 
         // Delimeter 생성
@@ -360,7 +360,7 @@ public class HttpRequest {
 
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "multipart/form-data; boundary="+delimeter);
- 
+
         if (requestHeader != null && requestHeader.size() > 0) {
          for(int i=0, j=requestHeader.size(); i<j; i++) {
           String name = (String)requestHeader.get(i);
@@ -369,7 +369,7 @@ public class HttpRequest {
           conn.setRequestProperty(name, value);
          }
         }
-        
+
         conn.setDoInput(true);
         conn.setDoOutput(true);
         conn.setUseCaches(false);
@@ -469,7 +469,7 @@ public class HttpRequest {
         } finally {
             if (out != null) out.close();
         }
-        
+
         this.responseCode   = conn.getResponseCode();
         this.responseMessage  = conn.getResponseMessage();
 
@@ -486,10 +486,10 @@ public class HttpRequest {
              break;
             }
         }
-        
+
         return conn.getInputStream();
     }
-    
+
     /**
      * 응답 코드를 얻는다.
      * @return
@@ -506,19 +506,19 @@ public class HttpRequest {
     {
      return this.responseMessage;
     }
-    
-    
+
+
     /**
      * Response Stream을 읽어 String으로 리턴한다.
      * @param is
      * @return
      */
-    public static String readResponseToString(InputStream is, String encoding) 
+    public static String readResponseToString(InputStream is, String encoding)
     {  
      if ( encoding == null || encoding.equals("") ) {
       encoding = "UTF-8";
      }
-     
+
      StringWriter  out  = null;
   BufferedReader  br   = null;
   String response = "";
@@ -526,8 +526,8 @@ public class HttpRequest {
 
    br = new BufferedReader(new InputStreamReader(is, encoding));
    out = new StringWriter();
-   
-   String temp; 
+
+   String temp;
    while ((temp = br.readLine()) != null) {
     out.write(temp+CRLF);
    }
@@ -545,10 +545,10 @@ public class HttpRequest {
     if (is != null ) { is.close(); }
    } catch (Exception e){}
      }
-  
+
   return response;
     }
-    
+
     /**
      * 지정한 ArrayList에 저장되어 있는 파라미터&값 목록을
      * application/x-www-form-urlencoded MIME에 맞춰서 인코딩한다.
@@ -583,7 +583,7 @@ public class HttpRequest {
      * <p>
      * 임의로 생성하지 않고 매번 같은 딜리미터를 생성한다.
      */
-    protected static String makeDelimeter() 
+    protected static String makeDelimeter()
     {
         return "---------------------------7d115d2a20060c";
     }
@@ -601,7 +601,7 @@ public class HttpRequest {
 
 }
 
- 
+
 ```
 
 
@@ -617,43 +617,39 @@ public class HttpRequest {
    httpRequest.addParameter((String)entry.getKey(), entry.getValue());
   }
   httpRequest.addFile(FILE_ID, file);
-  
+
   InputStream is = null;
   BufferedReader br = null;
   Map<String, Object> result = new HashMap<String, Object>();
   StringBuffer json = new StringBuffer();
-  
+
   try {
    is = httpRequest.sendMultipartPost();
    br = new BufferedReader(new InputStreamReader(is));
       String jsonString = "";
-      
+
       while ((jsonString = br.readLine()) != null) {
        json.append(jsonString);
    }
   } catch (IOException e) {
    e.printStackTrace();
   }
-//     JSONObject paramJson = (JSONObject) JSONSerializer.toJSON( json.toString() ); 
+//     JSONObject paramJson = (JSONObject) JSONSerializer.toJSON( json.toString() );
      JSONObject paramJson = (JSONObject) JSONObject.fromObject( json.toString() );
-     
+
      String errorMessage = (String) paramJson.get(ERROR_MESSAGE);
      String errorCode = (String) paramJson.get(ERROR_CODE);
-     
-     
+
+
      if (!SUCCESS_CODE.equals(errorCode)) {
       logger.debug("ErrorCode :::::: " + errorCode);
       logger.debug("ErrorMessage :::::: " + errorMessage);
-      
+
       result.put("errorMessage", errorMessage);
       result.put("errorCode", errorCode);
      }
-     
+
   return result;
  }
 
 ```
-
- 
-
- 
