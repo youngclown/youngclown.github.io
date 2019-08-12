@@ -19,4 +19,6 @@ cd /home/data/public_html
 tar cfpz /data/source_backup/WEB-INF_${DATE}.tar.gz ./WEB-INF/*
 ```
 
-특정 폴더에 있는 파일을 백업하는 shellscript 를 만들어 대응합니다. 
+
+
+특정 폴더에 있는 파일을 백업하는 shellscript 를 만들어 대응합니다.
