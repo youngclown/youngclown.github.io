@@ -29,6 +29,8 @@ imptrackers : Array of impression tracking URLs, expected to return a
 Native Link object
 ----
 
+
+
 URL : Landing URL of the clickable link.
 clicktrackers : List of third-party tracker URLs to be fired on click of the URL.
     - Taboola Open RTB Exchange will replace macros defined within the URL as specified under table 4.2.5 in this specification, or with an empty string if unavailable. Up to 3 tracking URLs will be allowed. If more than three exist, only the first 3 will be fired.
