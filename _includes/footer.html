@@ -10,7 +10,8 @@
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-const live2d_path = "https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/";
+//const live2d_path = "https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/";
+const live2d_path =  "https://youngclown.github.io";
 $("<link>").attr({ href: live2d_path + "waifu.css", rel: "stylesheet" }).appendTo("head");
 
 $.ajax({
@@ -20,12 +21,12 @@ $.ajax({
 });
 
 $.ajax({
-	url: live2d_path + "waifu-tips.js",
+	url: live2d_path + "/js/waifu-tips.js",
 	dataType: "script",
 	cache: true
 });
 $(window).on("load", function() {
-	initWidget("https://youngclown.github.io/css/waifu-tips.json?123", "https://live2d.fghrsh.net/api");
+	initWidget(live2d_path + "/css/waifu-tips.json", "https://live2d.fghrsh.net/api");
 });
 
 console.log(`
