@@ -22,7 +22,7 @@ String hostAddr = null;
                 }
             }
         } catch (SocketException e) {
-            logger.error("######### OpenRTB Memory Load #########",e);
+            logger.error("######### Memory Load #########",e);
         }
 ```
 
