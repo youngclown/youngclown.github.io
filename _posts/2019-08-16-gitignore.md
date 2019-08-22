@@ -16,7 +16,7 @@ git status 사용시에 변경되는 파일 목록을 볼수있습니다.
 그러나, 타툴을 사용하시는 분들의 경우 (이클립스, 소스트리 등등)에는 해당 기능이 없어 git 순수한 명령어를 통해 커밋을 제외할 수 있습니다.
 그렇기 때문에 기본적인 git 명령어를 통해 커밋 된 파일의 수정 사항 무시하는 방법은 다음과 같습니다.
 
-특정 파일의 수정사항 무시하기
+특정 파일의 수정사항 무시
 ----
 ```
 git update-index --assume-unchanged [file path]
@@ -27,7 +27,7 @@ git update-index --assume-unchanged [file path]
 ```
 처럼 특정파일(위의 예제는 datasource.properties) 와같이 위와같은 형태로 등록하시면, 커밋목록에서 삭제됩니다.
 
-특정 파일의 수정사항 무시 취소하기
+특정 파일의 수정사항 무시 취소
 ---
 ```
 git update-index --no-assume-unchanged [file path]
@@ -41,4 +41,4 @@ git update-index --no-assume-unchanged [file path]
 
 위 방법을 사용하는 것은 로컬의 계정이 다 틀리기 때문에 발생하는 이슈입니다.
 
-로컬 설정값이 실수로 올라가게 되는 경우를 방지하기 위한 목적이므로, 해당 방법이 좋아보입니다. 
+로컬 설정값이 실수로 올라가게 되는 경우를 방지하기 위한 목적이므로, 해당 방법이 좋아보입니다.
