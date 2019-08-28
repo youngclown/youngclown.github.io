@@ -7,11 +7,15 @@ comments: true
 
 # 인텔리제이 설정
 
-플러그인
 
-Camelcase : 카멜케이스 변환 플러그인
+<H1>1. 플러그인 설치</H1>
 
-Java Method Reference Diagram :
+Camelcase
+---
+카멜케이스 변환 플러그인
+
+Java Method Reference Diagram
+---
 기본적으로 Ctrl+ALt+U(윈도우기반 단축키 기준)을 하면 UML을 보여주는데 이 플러그인을 설치하면 메소드 레퍼런스도 볼 수 있음
 UML을 볼때 연관 Class들을 source explorer 에서 선택한 상태에서 보면 유용합니다.
 
@@ -21,19 +25,32 @@ Nyan Progress Bar : 고양이 Progress Bar
 
 
 
-ctrl + E : 최근 작업 소스
+ <H1>2. 단축키</H1>
 
-shift + shift : 만능 서치
+ctrl + E
+---
+최근 작업 소스
+
+shift + shift
 -----
+만능 서치
+
+VM 용량 변경작업
+---
 windows
-
+```
 IDE_HOME\bin\<product>[bits][.exe].vmoptions
-
+```
 mac
-
+```
 /Applications/<Product>.app/Contents/bin
+```
+
 -----
-SVN checkout 에러
+
+
+SVN checkout 시 에러날 경우
+---
 
 ```
 Cannot load supported formats: Cannot run program "svn": CreateProcess error=2, The system cannot find the file specified
@@ -44,7 +61,7 @@ _Settings -> Version Controll -> Subversion -> Use command line client
 ```
 위와 같은 내용을 체크 해제하라는 글을 봤는데, 2018.01 버전에서는 해당 옵션이 보이지않습니다.
 
-결국 svn 설치를 하여 해결했습니다.   
+결국 svn 재설치를 하여 해결했습니다.   
 [Slik-Subversion-1.9.7-x64.msi](https://sliksvn.com/pub/)설치합니다.
 
 Version Control > Subversion 의 경로를,
@@ -60,6 +77,9 @@ C:\Program Files\SlikSvn\bin\svn.exe
 Settings -> Editor -> file encoding -> Transparent native-to-ascii conversion 체크
 ```
 ![이미지](/images/20180428intelliJ_idea.PNG){: width="100%"}
+
+해당 기능을 체크하면, 한글이 유니코드로 깨져서 보여지는 것이 한글로 변환되어 보여지게 됩니다.
+
 
 VM 파라미터
 -----
