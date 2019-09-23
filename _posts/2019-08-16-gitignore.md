@@ -42,3 +42,25 @@ git update-index --no-assume-unchanged [file path]
 위 방법을 사용하는 것은 로컬의 계정이 다 틀리기 때문에 발생하는 이슈입니다.
 
 로컬 설정값이 실수로 올라가게 되는 경우를 방지하기 위한 목적이므로, 해당 방법이 좋아보입니다.
+
+
+
+git ignore Plugins
+---
+
+1. 인텔리J의 플러그인 설치
+
+```
+Settings > Plugins > Browse repositories…
+```
+에서 '.ignore' 검색 후 install 실행 후 재시작하면, 제외할 파일을 우측메뉴에서 하나씩하나씩 추가할 수 있습니다.
+회색음영으로 변경되며 커밋리스트에 나타나지 않는다.
+
+
+2. 이클립스의 메뉴
+이클립스 메뉴를 통해서도 설정가능합니다.  
+이클립스의 경우, assume 자체를 메뉴 명령어를 통해 등록하고 해지할 수 있는 것으로 확인됩니다.  
+Assume 등록할 경우, 해당 파일은 체크 이미지가 붙게 되며, 마우스 우측 버튼을 통해 해지할 수 있습니다.  
+```
+Team > Advanced > No Assume Unchanged
+```
