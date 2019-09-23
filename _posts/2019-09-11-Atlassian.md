@@ -122,4 +122,4 @@ www.emoji-cheat-sheet.com 에 사용할 수 있는 여러가지 이모티콘이 
 Atlassian 쓰시는 분들은 참고하시기 바랍니다.
 
 
-----
+--------
