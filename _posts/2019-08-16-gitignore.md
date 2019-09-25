@@ -62,5 +62,11 @@ Settings > Plugins > Browse repositories…
 이클립스의 경우, assume 자체를 메뉴 명령어를 통해 등록하고 해지할 수 있는 것으로 확인됩니다.  
 Assume 등록할 경우, 해당 파일은 체크 이미지가 붙게 되며, 마우스 우측 버튼을 통해 해지할 수 있습니다.  
 ```
+Team > Advanced > Assume Unchanged
+```
+
+반대의 경우에는
+```
 Team > Advanced > No Assume Unchanged
 ```
+으로 해지하면됩니다.
