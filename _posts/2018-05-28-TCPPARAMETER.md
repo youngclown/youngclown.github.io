@@ -20,17 +20,17 @@ db는 MariaDB 를 사용하고 있고, 현재 확인하는 것은 마스터 서�
 치솟는 순간 250번 DB의 커넥션이 전부 ESTABLISHED 상태로 변경되는 것까지 눈으로 확인했습니다.
 
 ```
-tcp      196      0 xx.xxx.x.x:54330            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (6587.96/0/0)
-tcp        7      0 xx.xxx.x.x:38082            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (5745.34/0/0)
-tcp        0      0 xx.xxx.x.x:50672            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (7039.22/0/0)
-tcp        0      0 xx.xxx.x.x:50670            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (7039.17/0/0)
-tcp        0      0 xx.xxx.x.x:50642            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (7038.88/0/0)
-tcp        0      0 xx.xxx.x.x:51210            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (7043.51/0/0)
-tcp        0      0 xx.xxx.x.x:50488            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (7037.79/0/0)
-tcp        0     57 xx.xxx.x.x:38166            192.168.2.250:3306          ESTABLISHED 22388/java          on (0.19/0/0)
-tcp        0      0 xx.xxx.x.x:50688            192.168.2.250:3306          ESTABLISHED 22388/java          keepalive (7039.35/0/0)
-tcp        0     11 xx.xxx.x.x:57636            192.168.2.250:3306          ESTABLISHED 20882/java          on (0.20/0/0)
-tcp        0    667 xx.xxx.x.x:56624            192.168.2.250:3306          ESTABLISHED 20882/java          on (0.19/0/0)
+tcp      196      0 xx.xxx.x.x:54330            xxx.xxx.x.250:3306          ESTABLISHED 22388/java          keepalive (6587.96/0/0)
+tcp        7      0 xx.xxx.x.x:38082            xxx.xxx.x.250:3306          ESTABLISHED 22388/java          keepalive (5745.34/0/0)
+tcp        0      0 xx.xxx.x.x:50672            xxx.xxx.x.250:3306          ESTABLISHED 22388/java          keepalive (7039.22/0/0)
+tcp        0      0 xx.xxx.x.x:50670            xxx.xxx.x.250:3306          ESTABLISHED 22388/java          keepalive (7039.17/0/0)
+tcp        0      0 xx.xxx.x.x:50642            xxx.xxx.x.250:3306          ESTABLISHED 22388/java          keepalive (7038.88/0/0)
+tcp        0      0 xx.xxx.x.x:51210            xxx.xxx.x.250:3306          ESTABLISHED 22388/java          keepalive (7043.51/0/0)
+tcp        0      0 xx.xxx.x.x:50488            xxx.xxx.x.250:3306          ESTABLISHED 22388/java          keepalive (7037.79/0/0)
+tcp        0     57 xx.xxx.x.x:38166            xxx.xxx.x.250:3306          ESTABLISHED 22388/java          on (0.19/0/0)
+tcp        0      0 xx.xxx.x.x:50688            xxx.xxx.x.250:3306          ESTABLISHED 22388/java          keepalive (7039.35/0/0)
+tcp        0     11 xx.xxx.x.x:57636            xxx.xxx.x.250:3306          ESTABLISHED 20882/java          on (0.20/0/0)
+tcp        0    667 xx.xxx.x.x:56624            xxx.xxx.x.250:3306          ESTABLISHED 20882/java          on (0.19/0/0)
 ~~~~~ 중략 ~~~~~~~~~~
 ```
 
