@@ -39,4 +39,6 @@ nohup java -Xms4g -Xmx4g -XX:+UseG1GC -server -Dcom.sun.management.jmxremote -Dc
 
 crontab 에 등록하여 동작시키면, 스크립트가 백그라운드로 실행됩니다.
 
-ps : 앞서 작성한 ->  [프로세스 재시작]:(https://youngclown.github.io/2020/02/batch_shell)에서 제대로 된 jar파일이 실행안되는 문제가 발생하여 처리함.
+ps : 앞서 작성한
+[프로세스 재시작]:(https://youngclown.github.io/2020/02/batch_shell)
+에서 제대로 된 jar파일이 실행안되는 문제가 발생하여 처리함.
