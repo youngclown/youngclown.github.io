@@ -4,6 +4,8 @@ title: "레디스 설치 및 실행"
 comments: true
 ---
 
+centos 6.9에 레디스를 설치해보고자합니다.
+
 레디스를 설치합니다. wget 이 없으므로 먼저 yum install wget으로 wget을 설치합니다.
 ```
 [root@localhost ~]# yum install wget
@@ -155,4 +157,95 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 yum install gcc-c++
 로 c++ 까지 설치합니다.
 
-make distclean 처리한 후 다시 make 처리를 합니다. 
+make distclean 처리한 후 다시 make 처리를 합니다.
+
+그래도 안됩니다.
+
+...centos 6.9 의 경우 yum install 로 설치히 4.4.7 ... 버전으로 밖에 설치가 안됩니다.
+
+gcc update를 업데이트 해야합니다.
+
+.... 업데이트를 해보았으나 결국 실패했습니다.
+
+그렇다면 이제 남은 방법은 ....
+레디스를 그냥 6.9에 맞춰서 깔아보겠습니다.
+
+```
+[root@localhost redis_1]# wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+--2020-05-19 10:21:44--  http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+Resolving dl.fedoraproject.org... 209.132.181.23, 209.132.181.25, 209.132.181.24
+Connecting to dl.fedoraproject.org|209.132.181.23|:80... connected.
+HTTP request sent, awaiting response... 404 Not Found
+2020-05-19 10:21:45 ERROR 404: Not Found.
+```
+
+음... 404 Not Found가 떨어져버립니다....
+
+```
+[root@localhost redis_1]# rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm(을)를 복구합니다
+경고: /var/tmp/rpm-tmp.RqmtU4: Header V3 RSA/SHA256 Signature, key ID 0608b895: NOKEY
+준비 중...               ########################################### [100%]
+   1:epel-release           ########################################### [100%]
+```
+
+우선 레디스를 다시 설치해보도록 하겠습니다!!!
+
+```
+[root@localhost redis_1]# yum --enablerepo=epel,remi install redis
+Loaded plugins: fastestmirror
+Setting up Install Process
+Loading mirror speeds from cached hostfile
+epel/metalink                                                                                                                                                                                                                                          | 6.8 kB     00:00     
+ * base: ftp.riken.jp
+ * centos-sclo-rh: ftp.riken.jp
+ * centos-sclo-sclo: ftp.riken.jp
+ * epel: mirror.telkomuniversity.ac.id
+ * extras: ftp.tsukuba.wide.ad.jp
+ * remi: merlin.fit.vutbr.cz
+ * remi-safe: merlin.fit.vutbr.cz
+ * updates: ftp.tsukuba.wide.ad.jp
+https://mirror.telkomuniversity.ac.id/epel/6/x86_64/repodata/repomd.xml: [Errno 14] Peer cert cannot be verified or peer cert invalid
+Trying other mirror.
+It was impossible to connect to the CentOS servers.
+This could mean a connectivity issue in your environment, such as the requirement to configure a proxy,
+or a transparent proxy that tampers with TLS security, or an incorrect system clock.
+You can try to solve this issue by using the instructions on https://wiki.centos.org/yum-errors
+
+```
+
+레디스를 직접 설치하겠습니다... ㅠㅜ
+```
+chkconfig redis on
+```
+
+```
+[root@localhost redis_1]# netstat -nap | grep LISTEN
+tcp        0      0 0.0.0.0:22                  0.0.0.0:*                   LISTEN      1141/sshd           
+tcp        0      0 127.0.0.1:25                0.0.0.0:*                   LISTEN      1220/master         
+tcp        0      0 127.0.0.1:6379              0.0.0.0:*                   LISTEN      5831/redis-server 1
+tcp        0      0 :::22                       :::*                        LISTEN      1141/sshd           
+tcp        0      0 ::1:25                      :::*                        LISTEN      1220/master     
+```
+드디어 레디스가 실행이 되었습니다.
+자동으로 6379 포트로 켜졌습니다....
+
+
+근데.......... 외부에서 접속이 안됩니다. ㅠ-ㅜ
+
+```
+vim /etc/redis.conf
+```
+
+레디스를 엽니다. 암호 설정과 외부에서 접속가능하게 처리하겠습니다.
+암호를 설정하려면 requirepass를 찾아 foobared라고 되어 있는부분을 지우고 설정하려는 암호를 넣습니다.
+외부에서 접속을 허용하기 위해서는 bind를 찾아 127.0.0.1로 되어있는 부분을 지우고 0.0.0.0으로 수정합니다.
+redis.conf 파일을 저장하고 redis를 재시작해 줍니다.
+```
+requirepass 암호
+bind 0.0.0.0
+```
+
+netstat 명령으로 redis-server가 외부에서 접속하능 하도록 되어 있는지 확인해 봅니다. redis의 포느는 6379입니다.
+
+잘 접속되는거 확인 완료!!!
