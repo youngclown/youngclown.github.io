@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Docker와 VirtualBox 동시 사용 불가"
+title: "centos 6"
 comments: true
 ---
 
