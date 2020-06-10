@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Mybatis에서 IndexOutOfBoundsException이 나왔을 경우"
+title: "memcached 기능 설정"
 comments: true
 ---
 
