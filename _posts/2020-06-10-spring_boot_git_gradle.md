@@ -159,3 +159,6 @@ project(':xxxApi') {
 }
 ```
 로 설정하면 설정이 끝나게 됩니다.
+
+
+참고주소 : https://jojoldu.tistory.com/123
