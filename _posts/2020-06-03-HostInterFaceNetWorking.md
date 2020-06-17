@@ -43,3 +43,6 @@ Interface ('VirtualBox Host-Only Ethernet Adapter') is not a Host-Only Adapter i
 
 ```
 이제 다른 에러가 나네요  ^-^
+새로 수정한 VirtualBox Host-Only Ethernet Adapter 를 설정하지 않았기 때문입니다!
+
+잘 수정하니 정상적으로 동작하네요.
