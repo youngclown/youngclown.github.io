@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Mybatis에서 IndexOutOfBoundsException이 나왔을 경우"
+title: "WSL 2 기능 적용"
 comments: true
 ---
 
