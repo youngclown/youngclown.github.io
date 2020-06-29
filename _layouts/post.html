@@ -16,6 +16,9 @@
              <br/>
             </div>
           </div>
+          {% if page.comments != false %}
+            {% include disqus_comments.html %}
+          {% endif %}
           <div class="pagination">
               {% if page.next %}
                 <a class="btn btn-default" href="{{ site.baseurl}}{{ page.next.url }}" class="next">Newer Post</a>
