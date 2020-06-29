@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "스프링부트 다중 모듈"
+title: "스프링부트 다중 모듈 아키텍쳐"
 comments: true
 ---
 
