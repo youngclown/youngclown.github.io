@@ -42,3 +42,5 @@ theme: jekyll-theme-leap-day
 
 plugins:
   - jekyll-sitemap
+
+disqus_shortname: 'youngclown'
