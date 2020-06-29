@@ -36,7 +36,7 @@ eth1 인터페이스 활성화중 입니다:  Determining if ip address 192.168.
 ```
 
 
-참고주소 : https://zetawiki.com/wiki/VirtualBox_%EB%A6%AC%EB%88%85%EC%8A%A4_%EC%9D%B8%ED%84%B0%EB%84%B7_%EC%97%B0%EA%B2%B0
+참고주소 : [제타위키](https://zetawiki.com/wiki/VirtualBox_%EB%A6%AC%EB%88%85%EC%8A%A4_%EC%9D%B8%ED%84%B0%EB%84%B7_%EC%97%B0%EA%B2%B0)
 
 최종적으로 셋팅된 값은 다음과 같습니다.
 
@@ -87,4 +87,4 @@ nameserver 8.8.8.8
 
 ```
 
-해당값을 설정 후 reboot를 합니다. 
+해당값을 설정 후 reboot를 합니다.
