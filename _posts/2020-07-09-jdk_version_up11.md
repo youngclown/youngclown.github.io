@@ -7,6 +7,11 @@ comments: true
 CentOS 6.9(Final) 에 jdk 11 설치
 ---
 
+단순하게, CentOS 6.9 에서,
+```
+yum list java*jdk-devel
+```
+를 호출하면, JDK 11이 보이지 않습니다. 그러므로, 직접 설치를 해야합니다.  
 
 1. jdk 11 다운로드 받아, /usr/local 로 이동시킴
 
