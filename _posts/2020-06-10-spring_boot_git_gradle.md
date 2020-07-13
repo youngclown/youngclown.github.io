@@ -89,7 +89,7 @@ new Project > gradle > Artifact Coordinates > GroupId 로,
 
 만들어진 src를 삭제합니다. 새로워진 프로젝트에는 필요하지 않습니다.  
 
-소스트리를 사용하여, 만들어진 프로젝트 경로에 앞서 말한 core와 api 를 다운받습니다.   
+소스트리(SourceTree)를 사용하여, 만들어진 프로젝트 경로에 앞서 말한 core와 api 를 다운받습니다.   
 만들진 프로젝트는 다음과 같아집니다.
 
 ```
@@ -105,9 +105,9 @@ api
 
 xxx 를 접두사로 붙여 한줄에 보이도록 조치합니다.  
 
-api 를 우측버튼을 누른 후에, new Module을 선택합니다.  
-new Module > grale > xxxCore 를 생성하면, 이미 체크아웃되어있는 git에 연결됩니다.  
-build.gradle 을 history를 보고 복원해야합니다.  
+인텔리J에서 Project Structure 를 설정한 후 Modules 에서 new Module을 선택합니다.   
+new Module > grale > xxxCore 를 생성하면(이미 해당폴더는 소스트리를 통해 clone된 상태) 이미 체크아웃되어있는 git에 연결됩니다.  
+새롭게 모듈이 생기면서 build.gradle을 새로 갱신하는데, 롤백을 하거나, history를 보고 build.gradle 을 복원해야합니다.  
 
 ```
 xxCore 는
@@ -124,7 +124,7 @@ include 'xxxApi'
 
 이렇게 자동으로 추가되어있을겁니다.
 
-이제 root 프로젝트의 build.gradle을 확인합니다.
+이제 root 프로젝트의 build.gradle을 설정해야합니다.  
 
 ```
 group 'com.ssp'
@@ -182,5 +182,21 @@ project(':xxxApi') {
 ```
 로 설정하면 설정이 끝나게 됩니다.
 
+
+추가적으로 해당값을 설정시, 실행은 되나 build용 jar 생성에 문제가 있었습니다.   
+
+xxxCore 및 실행할 어플리케이션이 필요가 없는 build.gradle에,
+bootJar와 jar의 설정이 추가로 필요합니다.   
+
+```
+bootJar {
+    enabled = false
+    archiveVersion = '0.0.1-SNAPSHOT'
+    archiveExtension = 'jar'
+}
+jar {
+    enabled = true
+}
+```
 
 참고주소 : https://jojoldu.tistory.com/123
