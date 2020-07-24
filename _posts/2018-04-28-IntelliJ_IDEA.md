@@ -30,7 +30,8 @@ grep console  : log에 색깔 입히기(특정단어만 log창에 띄울수있�
 generateAllSetter
   : 객체 생성하고, alt + enter setter 자동 생성(객체생성시 생성한 객체에 alt_enter 시 setter에 대한 메뉴등장)
 codeglance  : 스크롤 옆에 화면 파일에 대한 전체 flow 축소하여 보여줌
-Power Mode ll : 타자를 칠때 불꽃효과
+Power Mode ll : 타자를 입력시 불꽃효과
+gittoolbox : 푸시한 사람과 푸시 시간이 출력됨 (무거움)
 ```
 
 
