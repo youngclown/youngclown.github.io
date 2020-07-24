@@ -23,6 +23,18 @@ Nyan Progress Bar : 고양이 Progress Bar
 -----
  - https://plugins.jetbrains.com/plugin/8575-nyan-progress-bar
 
+```
+String manipulation : alt + m (텍스트 편집기, 카멜케이스등의 가이드 제공)
+Translation   : 번역기
+grep console  : log에 색깔 입히기(특정단어만 log창에 띄울수있음.)
+generateAllSetter
+  : 객체 생성하고, alt + enter setter 자동 생성(객체생성시 생성한 객체에 alt_enter 시 setter에 대한 메뉴등장)
+codeglance  : 스크롤 옆에 화면 파일에 대한 전체 flow 축소하여 보여줌
+Power Mode ll : 타자를 칠때 불꽃효과
+```
+
+
+
 
 
  <H1>2. 단축키</H1>
