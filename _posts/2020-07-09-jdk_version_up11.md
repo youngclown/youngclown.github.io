@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "jdk version history(jdk 버전간 차이)"
+title: "CentOS 6.9(Final) 에 jdk 11 설치"
 comments: true
 ---
 
