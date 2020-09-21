@@ -37,13 +37,26 @@ scouter client에서 변경가능합니다.
 ```properties
 trace_user_mode=0
 ```
+쿠키에 SCOUTER 가 저장되는 것을 막는 모드입니다.
+써드파티 도메인을 사용하는 분들은 쿠키에 SCOUTER를 저장하지 않게 하는 것이 더 좋습니다.  
 
 
+
+18:30분 이후 100ms 로 적용한 후, 밴드폭의 감소폭에 대한 이미지입니다. (녹색이 인바운드 파란색이 아웃바운드)
+
+![이미지](/images/20200804.PNG){: width="100%"}
+
+밴드폭(BandWidth)을 줄이는 것은 서비스 안정화에도 도움이 되어, 단순히 로그 분석용이라면 적용할 만한 가치가 있다고 생각합니다.
+
+
+참고로,
+
+```properties
 tomcat_pool_enabled=false
 hikari_pool_enabled=true
+```
 
-
-
-
-
-hook_method_patterns : 지연이 발생하는 경우 T-GAP의 정확한 위치를 찾기 위해 사용합니다!
+```properties
+hook_method_patterns=분석할메소드
+```
+위의 두가지의 경우는 해당 상황에 맞게 유동적으로 잘 사용하면 됩니다.
