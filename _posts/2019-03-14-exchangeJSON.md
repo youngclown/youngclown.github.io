@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "OpenAPI_001"
+title: "환율 API 내용 정리"
 comments: true
 ---
 
