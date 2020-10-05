@@ -1,7 +1,7 @@
 # Jekyll configuration
 
 name: bymin
-description: 우리의 기억을 믿을 수 있는가? 잘정리하자!
+description: 우리의 기억을 믿을 수 없기에, 기록을 남깁니다. 잘정리합시다!
 
 # url is currently only used only for the RSS feed in feed.xml
 url: https://youngclown.github.io
