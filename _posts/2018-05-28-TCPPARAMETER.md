@@ -12,7 +12,7 @@ comments: true
 사용한 명령어
 ---
 ```
-[dream-WAS-03:root]/root>#netstat -tonp | grep '.250:3306'
+[WAS-03:root]/root>#netstat -tonp | grep '.250:3306'
 ```
 
 db는 MariaDB 를 사용하고 있고, 현재 확인하는 것은 마스터 서버의 insert 구문으로 인한  TCP  ESTABLISHED 상태였습니다.

@@ -79,7 +79,7 @@ CMS 를 켜면 -XX:+UseParNewGC 가 같이 켜지므로, ParallelGCThreads 를 �
 ---
 
 3번 항목에서 CMS를 설정하였을 경우에 보조하기 위해 처리한 것으로 보입니다.  
-Full GC가 빈번하게 발생하던 예전 모비온 환경에서, CMS로 Full GC를 제어하려고 한 것으로 보이고,  
+Full GC가 빈번하게 발생하던 예전 플랫폼 환경에서, CMS로 Full GC를 제어하려고 한 것으로 보이고,  
 Old 영역이 너무 꽉 찾을때 CMS가 실행되면서, CMS 중에 CMS가 중단되고 Full GC등이 발생하는 경우를 제어하기 위해 적용한걸로 추정됩니다.
 
 
