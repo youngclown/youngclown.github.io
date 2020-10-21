@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "ngnix error 처리"
+title: "nginx error 처리"
 comments: true
 ---
 
@@ -43,14 +43,14 @@ proxy_set_header Host $http_host;
 nginx version: nginx/1.10.3
 ```
 
-위와 같은 ngnix 의 1.10.3 의 경우 default.conf 에 server 설정이 적용되어있어,
+위와 같은 nginx 의 1.10.3 의 경우 default.conf 에 server 설정이 적용되어있어,
 nginx.conf 에 server 설정을 정의해도,
 
 ```
 vi /etc/nginx/conf.d/default.conf
 ```
 
-위의 default 값이 강제로 설정되어, /usr/share/ngnix/html 의 경로의 url 을 matching 시키려고 하는 이슈가 있었습니다.  
+위의 default 값이 강제로 설정되어, /usr/share/nginx/html 의 경로의 url 을 matching 시키려고 하는 이슈가 있었습니다.  
 
 
 
