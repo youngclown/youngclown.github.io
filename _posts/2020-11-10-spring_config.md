@@ -114,8 +114,7 @@ curl -X POST xxx:port/actuator/refresh
 예전에는 프로퍼티 리로드라는 기능을 직접 구현해본적이 있습니다.  
 
 ```java
-private static void _loadPropertiesUsingCommonsConfiguration(Properties props, File file)
-    throws ConfigurationException {
+private static void _loadPropertiesUsingCommonsConfiguration(Properties props, File file) throws ConfigurationException {
   final PropertiesConfiguration config = new PropertiesConfiguration();
   config.setDelimiterParsingDisabled(true);
   config.setFile(file);
@@ -126,7 +125,8 @@ private static void _loadPropertiesUsingCommonsConfiguration(Properties props, F
     props.put(sKey, config.getString(sKey));
   }
 }
-``
+```
+
 로 우선 서비스가 시작할때, Properties 에 등록을 한 후,  
 수정 사항이 있을 때마다,  
 별도의 api가,
@@ -146,3 +146,22 @@ PropertyLoader.getInstance().loadProperties(asFile);
 이번에 신규프로젝트 진행하면서 욕심을 내보았는데,  
 
 역시 새로운 기술은 항상 즐거운거 같습니다!   
+
+2020-11-12 추가 내용..
+현재 서비스 적용중에 잠시 보류하게 되었습니다.  
+처음 시작 시에 해당 config 값이 잘못되어있는 경우,
+(ex : boolean 변수에 String 값 boolean a = "1234") 같은 값이 들어갈 경우, 서비스가 재시작이 안되게,  
+```
+  cloud:
+    config:
+      uri: http://xxxx:9999
+      fail-fast: true
+``` 
+
+fail-fast : true를 주어서, 에러가 나게 적용했습니다.  
+그러나 중간에 값을 변경후, 해당 클라이언트에 /actuator/refresh 할때
+boolean 변수에 String 값을 강제로 넣을 경우, 적용은 되대, 해당 값을 get 할때 타입에러가 나는 문제가 생겼습니다.  
+
+검증을 하기 위한 별도의 소스를 추가 개발을 하던가, 에러시 defalut 값이 나갈 수 있게 하여 전체 변수를 String으로 변경하여, 초기 에러가 안나게 막든지,
+아니면 이럴 경우 에러가 난 후, 적용이 안되게하든지 다양한 방법을 찾아봐야할 것으로 보입니다.  
+(기존 테스트 시에 에러가 나서 변경이 안되었던걸로 보이는데, 조금 더 테스트가 필요해보여, 실 적용은 우선 보류했습니다. Toy project로 올려야할듯..)
