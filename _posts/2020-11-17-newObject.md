@@ -45,9 +45,9 @@ ApplicationContext가 만들어서 그 안에 담고있는 객체를 의미합�
 ```
 
 
-2. 그 다음 ApplicationContext를 사용하는 BeanUtils를 생성
-```java
+2. 그 다음 ApplicationContext를 사용하는 BeanUtils를 생성  
 
+```java
 public class BeanUtils {
  
     public static Object getBean(String beanName) {
@@ -58,8 +58,10 @@ public class BeanUtils {
 }
 ```
 
-3. BeanUtils을 통해 @Autowired 없이 빈객체 호출
+3. BeanUtils을 통해 @Autowired 없이 빈객체 호출  
+
 ```java
         A a = (A) BeanUtils.getBean("xxxxx");
 ```
+
 
