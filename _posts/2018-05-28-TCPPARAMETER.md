@@ -44,8 +44,8 @@ tcp        0    667 xx.xxx.x.x:56624            xxx.xxx.x.250:3306          ESTA
 해당 명령은 250 마스터 서버의 3306 포트를 1초 간격으로 숫자를 카운트 하는 명령어를 사용하여,
 로그를 분석하고자 하였습니다.
 
-```aidl
-[dream-WAS-03:root]/root>#while true; do date; netstat -an | grep '.250:3306' | grep ESTABLISHED | wc -l; sleep 1; done
+```shell script
+[WAS-03:root]/root>#while true; do date; netstat -an | grep '.250:3306' | grep ESTABLISHED | wc -l; sleep 1; done
 ```
 
 
@@ -72,7 +72,7 @@ tcp        0    667 xx.xxx.x.x:56624            xxx.xxx.x.250:3306          ESTA
 실제 server.xml 에서, minimumIdle="100", maximumPoolSize="100" 으로 되어있으며, 해당 셋팅을 한 이유는,
 minmunIdle 와 maximumPoolSize의 수를 같게 하여, 항상 커넥션을 유지하게 하기 위한 설정으로 알고 있습니다.
 
-```
+```xml
 <Resource name="dreamdb" auth="Container"
      factory="com.zaxxer.hikari.HikariJNDIFactory"
      type="javax.sql.DataSource"
