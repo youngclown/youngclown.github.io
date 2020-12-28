@@ -165,3 +165,29 @@ boolean 변수에 String 값을 강제로 넣을 경우, 적용은 되대, 해�
 검증을 하기 위한 별도의 소스를 추가 개발을 하던가, 에러시 defalut 값이 나갈 수 있게 하여 전체 변수를 String으로 변경하여, 초기 에러가 안나게 막든지,
 아니면 이럴 경우 에러가 난 후, 적용이 안되게하든지 다양한 방법을 찾아봐야할 것으로 보입니다.  
 (기존 테스트 시에 에러가 나서 변경이 안되었던걸로 보이는데, 조금 더 테스트가 필요해보여, 실 적용은 우선 보류했습니다. Toy project로 올려야할듯..)
+
+
+2020-12-28 추가 내용..  
+
+```
+[WARN ][2020/12/28 17:10:10] o.s.c.c.c.ConfigServicePropertySourceLocator [140] 
+Could not locate PropertySource: I/O error on GET request for 
+"http://localhost:8888/xxx/ymkim": Connection refused: connect; nested exception is java.net.ConnectException: Connection refused: connect 
+```
+
+bootstrap.yml 파일의 경우 스프링부트 앱 기동시 application.yml 보다 먼저 로드되므로 src/main/resources/bootstrap.yml 파일의 설정정보를 아래와 같이 수정해줘야합니다.  
+
+```
+server:
+  port: 8081
+
+spring:
+  application:
+    name: xxx
+  cloud:
+    config:
+      uri: http://localhost:9999
+```
+
+아래와 같이 설정하면 굳이 중복되는 부분이 필요없어 application.yml 을 제거합니다.  
+
