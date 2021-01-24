@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "brew install"
+title: "multiple points"
 comments: true
 ---
 
