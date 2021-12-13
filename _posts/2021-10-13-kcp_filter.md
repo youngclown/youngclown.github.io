@@ -62,4 +62,6 @@ public class filterConfig {
 참고 주소 : https://m.blog.naver.com/PostView.nhn?blogId=duco777&logNo=220605479481&proxyReferer=https:%2F%2Fwww.google.com%2F
 
 
-
+12/13
+결과적으로 서버에서 KCP측에 한번더 검증 API 를 호출하여 서버에서 안전하게 인코딩처리함.
+(이 문제는 프론트에서 처리된 KCP 인코딩 문자를 백엔드에서 변환하여 처리하려다보니 생긴 이슈였음.)
