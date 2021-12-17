@@ -79,4 +79,5 @@ public class GraphemeStringProxy {
 ```
 위와 같이 최종적으로 처리함. 
 
-
+글자 수를 정확하게 카운트 하는 법
+[참고주소] : https://engineering.linecorp.com/ko/blog/the-7-ways-of-counting-characters/
