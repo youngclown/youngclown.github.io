@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "refresh-dependencies "
+title: "gradlew clean build "
 comments: true
 ---
 
