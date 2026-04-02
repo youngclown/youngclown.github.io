@@ -1,0 +1,431 @@
+---
+layout: fullpage
+title: 여행 일정
+permalink: /travel/
+---
+
+<style>
+  body { background: #f4f6f8; }
+
+  .travel-wrap {
+    padding-top: 60px; /* navbar offset */
+  }
+
+  /* ── 헤더 배너 ── */
+  .travel-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #fff;
+    padding: 28px 32px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .travel-hero h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .travel-hero p {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }
+  .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .btn-hero:hover { opacity: 0.85; }
+  .btn-primary-hero { background: #e94560; color: #fff; }
+  .btn-secondary-hero { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+
+  /* ── iframe 영역 ── */
+  .iframe-section {
+    position: relative;
+    background: #000;
+  }
+  .iframe-section iframe {
+    width: 100%;
+    height: 68vh;
+    min-height: 480px;
+    border: none;
+    display: block;
+  }
+  .iframe-blocked {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: #1a1a2e;
+    color: #ccc;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 16px;
+    padding: 32px;
+  }
+  .iframe-blocked.show { display: flex; }
+  .iframe-blocked .icon { font-size: 3rem; }
+  .iframe-blocked p { margin: 0; font-size: 1rem; }
+  .iframe-blocked a {
+    display: inline-block;
+    padding: 10px 24px;
+    background: #e94560;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* ── 일정표 ── */
+  .schedule-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px 48px;
+  }
+  .schedule-section h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #1a1a2e;
+    border-left: 4px solid #e94560;
+    padding-left: 12px;
+  }
+
+  /* 로딩 */
+  .loading-wrap {
+    text-align: center;
+    padding: 32px;
+    color: #888;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid #e0e0e0;
+    border-top-color: #e94560;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 일별 카드 */
+  .day-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .day-card-header {
+    background: linear-gradient(90deg, #0f3460, #16213e);
+    color: #fff;
+    padding: 12px 18px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .day-badge {
+    background: #e94560;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.8rem;
+  }
+
+  /* 테이블 */
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .schedule-table thead tr {
+    background: #f0f4f8;
+  }
+  .schedule-table th {
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e8ecf0;
+  }
+  .schedule-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+    color: #333;
+  }
+  .schedule-table tr:last-child td { border-bottom: none; }
+  .schedule-table tr:hover td { background: #fafbfc; }
+
+  .place-name { font-weight: 600; color: #1a1a2e; }
+  .place-memo { font-size: 0.82rem; color: #777; margin-top: 3px; }
+  .time-badge {
+    display: inline-block;
+    background: #e8f4fd;
+    color: #0f3460;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .order-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    background: #e94560;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .map-link {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: #0f3460;
+    text-decoration: none;
+    border: 1px solid #cdd8e8;
+    border-radius: 4px;
+    padding: 2px 8px;
+    white-space: nowrap;
+  }
+  .map-link:hover { background: #0f3460; color: #fff; text-decoration: none; }
+
+  .decode-error {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    padding: 20px 24px;
+    color: #795548;
+    text-align: center;
+  }
+  .decode-error a { color: #e94560; font-weight: 600; }
+
+  @media (max-width: 600px) {
+    .travel-hero { padding: 20px 16px; }
+    .schedule-table th:nth-child(3),
+    .schedule-table td:nth-child(3) { display: none; }
+  }
+</style>
+
+<div class="travel-wrap">
+
+  <!-- 헤더 배너 -->
+  <div class="travel-hero">
+    <div>
+      <h1>✈ 여행 일정</h1>
+      <p>지도 핀과 일정을 한 화면에서 — URL만으로 공유 가능</p>
+    </div>
+    <div class="hero-actions">
+      <a class="btn-hero btn-primary-hero" id="btn-open-new" href="https://travel.hspace.site/#eJytWH9wI2UZDthWyZ1zhyAoPz_AOVvOXnc3aZuLIOce56ECB-OozDjIKDrIjxMRQQYP2fY2vbRJL8ldtt22u2GDaZPcbWWTbJpkTFCqczAMOCOeB975h_b-APZ7dxDl-KHtnPPtbpLmpkhwnOlMN8n3vd_3vN_7Ps_z7UeuBkWCX1RxhEcwqZoTo6ibpvGhAOpDTD_IZRirIJznYSzVs_mO73QcG_3ilaH3lk7f_fp7t7nOZ7suOcKubNh7uR3EFOaRUZwnHyZVQ5NNXsNPlTEf7XV-H6vgAg-JKFREa0HrWwhJCBK8KczjpIRomnYdgHgGZuL4oGQUFBgZN2eqeE5FJlcGRcJBHld4EHgG4QgPWhZ1gxgEoYbzQVMsowFqkGa8vh43PpQ1IyqifH4PhWBBwpqElkYOOKsimvF7-50Q7jOgIqyEzbEyMmd4BLKOI1NuhmIGeilvL-3rtGYuaMHu19azVe3fZ295-s4__rXLKEbNkaKL7Vp3gF1e3v4Jexk7HUahaArzmz8oC_YwkgXG5cMV3pwYNcoaMvdyRkFBIKbwWByBXCWnZMZrMBlA3aDLyD4wU8jiWbGnZacev4dy7Zk5nbvjhguirxZO3vfq0DXNnZ4rs8unc-fAdBbHoiDE-z7wmOojjXIZ0f2uXfaOUT9e4JGR08gp9VmjMmXyjLU4SDwyI6o5okBSdzvpJeG0jJVeHOFxQV8ry14_Q42-Kd-z5Yobj0Y-c-mmk-8Eft9l6Jyhx1xs5yub2ZUdwfUwGYVaHCckfFC65gO3n9QgL4E8jnA-COKQVW_MoK-XHtjq2g1zslHWyJ_OgZYhP3oNTUIwOY_MvVGsZQm2kTAOlHE-Q7CRISCOuEGoIXpL_88ZCEmGxpNBMB1HfQiHOVMUWkEbGofHZluQ9vs91L7DT_9h3892nDe76bGbLnn98U87SDtpL0VRbNcVN7Art-69sLm8U8XdNNaEnsH2kUNIwQsW8v7BQdezkNfNIRXksvvvT4zX3ihHECgcDgwhWIhDXvK7l2IKMoUMHhdMQccBDmQR0jHUTXk8vYM-T2-_z0P3oCUujuzfyT8Y1rBaRTAdtwsChzKQ1-vIl2JJhCNhUxDxrI61rCnHcKQKaQ51N7ZpR3QwNgcYRRVkvREReBnhgg6S0pJOn5-idr976ejMzq-cNbRj-3efv-lrHV0QnMKa4GI7Swy7cvxv64GfhzQHtTikOf_7pI-XjBJnRlQrg3wOhjWSQcJJfI4gYxiv634cmYJDNQu2EESgBI18jezwoITlKk4HEYgkvwh0FcQhSHNufDCHwxzaZJVQIoxwOgFSFWc1RFbIBdosnK2d1Fa_h7rwnnTpwultL-SPvnXdxMZdyWaL_IlhV5a-taG-8yrhQH302g8F1plGKMnn7aUZ1x6QFMynYCwFtTgCvmzYUSY1kBQY1sjmF3hzKm4UVQSKAHuHEC5p7tX5Jk3LS8hpMos8zoSs8DCddZBDYhZBIghyeDV4mvZT1J2XzF_9zO07vzc794UfPXDwGcEB39FPmqbz5MvsynHlMlCiEFLtirKAEcpyqlkPD3y4fFhPeE51PdSMRfSzwDVDIgjJOFRBfdZXahVPy1gjzLJYAj5n5MNEFYKi02Num76dJsFaFqtlZK06rIJCZFnDcg0ZC2FItBw_7fFT1GsPxf51jbr90V_9eOxi-eFTp7ogJMOw6mI7N-bYla8-ew7sU2AkbFTG6TaAmoJoTmdwZArRHo_PJeCQDkFxsUSqOyginA7jYdFSoZCCKzxOSjCtIyPPgcwR3gchjkwxZhSSbjOo4kMBqOgg1BZLeDKCD2URoZtJ0SllcujDGZiJOs1DpCApISNfIx3dXgvQXr-HeuT8F3_6w-SNPZUTW9OHb9p_dqMFOlZC7MpVE-tBEQjRRObNiEq1kQYcmTKnxkkamEGf6yemIBnFeUQKXK5aXRtKWdyfHgIlhvBEBiZ0SHMkMfYiBNrIAcJVjGe3uxF7LaB2XaZiWC0blTBhOYbCC3wLyAG_h3owsHvl-et3TsT0XOef79i1v17qjFXqZ32dXT527qV4gSO6NqdCUiMGxo6LuhmiEm11vr0RKzROSoMMzgeJ2A_2u95sSyuaWHE6RdhDVLEShJBkdbFQdZ66nea3sNpsbxQUIr5WayyWDC0IFRGSGp6rkvqz2FQfJYUwlmpqCiQCJNwqaXEgr55vFDKk-Mgiq1Ijl41SlUi6rTKk3mJSfZ4lXS1nQFQlxZ-6Lj3GfjTw8Qv4OxdOP9lQlY73TrErl118XhM9JBQIiqaQYdriF8mpt8GtdC_tehSCIqEsL7WbaIIplhdLMKnjMAcT-iozQnyH7TncZ5x8K8VaWSYTHEax_DIyBZ40dfdq_mnaR4Yi-kJRR9d9--hV23d2_DLXc3Jo83163Zj02xzbtY5dPnZsA5FtYvs1u_497YCuT7FsmIdxfd6DQ5l6A21CwCuQ4I1ilJx249hwoWiUuNXWkW5pF4ayleHI1Ju3lV_ZOVG4S_n-ns1vvNhol36KYjv-cZpdfmXjJ8mZR1RSU3uHQAniORWHuf529i7rMKE7fewZ6PVQru0DhjZkigLxNkZZw7FZtAmZ4bA1NzFr6Bw5gP8uni0oGD9FzVz1wEuLz227_Nfjvz3-wpGlPS1N3_GGi12WH7iYCJKWJdq7qem9baZpy9kIQTwu4KxOysMo8MTZ0D7aNQy81HQ2rZzVd-ZCxPjgfM1xMG47ElG_AlfvNFsU64Vpa3I3iLM4Erd93WIJFB4Xig25bClG6y6jXfC5vzz2zZs3q_dP1m5O06db8_HiE-xy4vB5MJIEIUDygWMiVgh_se2QfpgjfoWIvBWgQYLIy5Cm_IahcfZ5LpZwOkj4yPLYPE7LttSvyoPH6jhid8ZSa0nZGp6GYCQ3gU-hfz79sevZDaHK-KG337o71zR06pXs8qOPXA1VHkI5k9dXs5lzHSBEOVftQd2etu4F9nCC2X6yypnZ6jrR5r3Amh0UyanbvG5OP2FdD1btrOnyHFcfUoBXTEFC5pQEE7o5HV77jvBUmRhmWcd8qg6scTXABR2no1Cp1vXCFCSCTq3a4epXh4lZc0RBIIchJCOcnoF0rCXhg34PtfGlL739-i27TpaO3NvDesPHmneFxD3s8uOp9fbaRqEIM9H_LaUU5brLFGOQUI0iqfPwOExnjaLueCYcmSIf-iyBTEQtb6gIMBN1ryI-m-3WdMtruiOGti8ID_9AvkV8ctvv5KN9F1357mezjZul7RxOXMsuJ3svAkGBmXhrs0NFN_eL78flzculNdVqHOuJuOPdIKYgIOKS5kRxOn6xhONxUDiCqCm96SBxT-lR8gqq6f1aa6IRx9Ywc0ogt6ozXDFDE_b3UNse3HfiZd-Xd0h7Dt9-72_eWddwxf-ntzMeB7NDZkINMc7BwFzUyGnEFduv04hSTBIKuqJlk14_Rd176vhz57zFwlPKrR3XHbtrS_3FzH8A7ANE4A" target="_blank">
+        ↗ 새 탭에서 열기
+      </a>
+      <a class="btn-hero btn-secondary-hero" href="https://github.com/hyuck0221/travel-plan" target="_blank">
+        Github ↗
+      </a>
+    </div>
+  </div>
+
+  <!-- iframe 영역 -->
+  <div class="iframe-section" id="iframe-section">
+    <iframe
+      id="travel-iframe"
+      src="https://travel.hspace.site/#eJytWH9wI2UZDthWyZ1zhyAoPz_AOVvOXnc3aZuLIOce56ECB-OozDjIKDrIjxMRQQYP2fY2vbRJL8ldtt22u2GDaZPcbWWTbJpkTFCqczAMOCOeB975h_b-APZ7dxDl-KHtnPPtbpLmpkhwnOlMN8n3vd_3vN_7Ps_z7UeuBkWCX1RxhEcwqZoTo6ibpvGhAOpDTD_IZRirIJznYSzVs_mO73QcG_3ilaH3lk7f_fp7t7nOZ7suOcKubNh7uR3EFOaRUZwnHyZVQ5NNXsNPlTEf7XV-H6vgAg-JKFREa0HrWwhJCBK8KczjpIRomnYdgHgGZuL4oGQUFBgZN2eqeE5FJlcGRcJBHld4EHgG4QgPWhZ1gxgEoYbzQVMsowFqkGa8vh43PpQ1IyqifH4PhWBBwpqElkYOOKsimvF7-50Q7jOgIqyEzbEyMmd4BLKOI1NuhmIGeilvL-3rtGYuaMHu19azVe3fZ295-s4__rXLKEbNkaKL7Vp3gF1e3v4Jexk7HUahaArzmz8oC_YwkgXG5cMV3pwYNcoaMvdyRkFBIKbwWByBXCWnZMZrMBlA3aDLyD4wU8jiWbGnZacev4dy7Zk5nbvjhguirxZO3vfq0DXNnZ4rs8unc-fAdBbHoiDE-z7wmOojjXIZ0f2uXfaOUT9e4JGR08gp9VmjMmXyjLU4SDwyI6o5okBSdzvpJeG0jJVeHOFxQV8ry14_Q42-Kd-z5Yobj0Y-c-mmk-8Eft9l6Jyhx1xs5yub2ZUdwfUwGYVaHCckfFC65gO3n9QgL4E8jnA-COKQVW_MoK-XHtjq2g1zslHWyJ_OgZYhP3oNTUIwOY_MvVGsZQm2kTAOlHE-Q7CRISCOuEGoIXpL_88ZCEmGxpNBMB1HfQiHOVMUWkEbGofHZluQ9vs91L7DT_9h3892nDe76bGbLnn98U87SDtpL0VRbNcVN7Art-69sLm8U8XdNNaEnsH2kUNIwQsW8v7BQdezkNfNIRXksvvvT4zX3ihHECgcDgwhWIhDXvK7l2IKMoUMHhdMQccBDmQR0jHUTXk8vYM-T2-_z0P3oCUujuzfyT8Y1rBaRTAdtwsChzKQ1-vIl2JJhCNhUxDxrI61rCnHcKQKaQ51N7ZpR3QwNgcYRRVkvREReBnhgg6S0pJOn5-idr976ejMzq-cNbRj-3efv-lrHV0QnMKa4GI7Swy7cvxv64GfhzQHtTikOf_7pI-XjBJnRlQrg3wOhjWSQcJJfI4gYxiv634cmYJDNQu2EESgBI18jezwoITlKk4HEYgkvwh0FcQhSHNufDCHwxzaZJVQIoxwOgFSFWc1RFbIBdosnK2d1Fa_h7rwnnTpwultL-SPvnXdxMZdyWaL_IlhV5a-taG-8yrhQH302g8F1plGKMnn7aUZ1x6QFMynYCwFtTgCvmzYUSY1kBQY1sjmF3hzKm4UVQSKAHuHEC5p7tX5Jk3LS8hpMos8zoSs8DCddZBDYhZBIghyeDV4mvZT1J2XzF_9zO07vzc794UfPXDwGcEB39FPmqbz5MvsynHlMlCiEFLtirKAEcpyqlkPD3y4fFhPeE51PdSMRfSzwDVDIgjJOFRBfdZXahVPy1gjzLJYAj5n5MNEFYKi02Num76dJsFaFqtlZK06rIJCZFnDcg0ZC2FItBw_7fFT1GsPxf51jbr90V_9eOxi-eFTp7ogJMOw6mI7N-bYla8-ew7sU2AkbFTG6TaAmoJoTmdwZArRHo_PJeCQDkFxsUSqOyginA7jYdFSoZCCKzxOSjCtIyPPgcwR3gchjkwxZhSSbjOo4kMBqOgg1BZLeDKCD2URoZtJ0SllcujDGZiJOs1DpCApISNfIx3dXgvQXr-HeuT8F3_6w-SNPZUTW9OHb9p_dqMFOlZC7MpVE-tBEQjRRObNiEq1kQYcmTKnxkkamEGf6yemIBnFeUQKXK5aXRtKWdyfHgIlhvBEBiZ0SHMkMfYiBNrIAcJVjGe3uxF7LaB2XaZiWC0blTBhOYbCC3wLyAG_h3owsHvl-et3TsT0XOef79i1v17qjFXqZ32dXT527qV4gSO6NqdCUiMGxo6LuhmiEm11vr0RKzROSoMMzgeJ2A_2u95sSyuaWHE6RdhDVLEShJBkdbFQdZ66nea3sNpsbxQUIr5WayyWDC0IFRGSGp6rkvqz2FQfJYUwlmpqCiQCJNwqaXEgr55vFDKk-Mgiq1Ijl41SlUi6rTKk3mJSfZ4lXS1nQFQlxZ-6Lj3GfjTw8Qv4OxdOP9lQlY73TrErl118XhM9JBQIiqaQYdriF8mpt8GtdC_tehSCIqEsL7WbaIIplhdLMKnjMAcT-iozQnyH7TncZ5x8K8VaWSYTHEax_DIyBZ40dfdq_mnaR4Yi-kJRR9d9--hV23d2_DLXc3Jo83163Zj02xzbtY5dPnZsA5FtYvs1u_497YCuT7FsmIdxfd6DQ5l6A21CwCuQ4I1ilJx249hwoWiUuNXWkW5pF4ayleHI1Ju3lV_ZOVG4S_n-ns1vvNhol36KYjv-cZpdfmXjJ8mZR1RSU3uHQAniORWHuf529i7rMKE7fewZ6PVQru0DhjZkigLxNkZZw7FZtAmZ4bA1NzFr6Bw5gP8uni0oGD9FzVz1wEuLz227_Nfjvz3-wpGlPS1N3_GGi12WH7iYCJKWJdq7qem9baZpy9kIQTwu4KxOysMo8MTZ0D7aNQy81HQ2rZzVd-ZCxPjgfM1xMG47ElG_AlfvNFsU64Vpa3I3iLM4Erd93WIJFB4Xig25bClG6y6jXfC5vzz2zZs3q_dP1m5O06db8_HiE-xy4vB5MJIEIUDygWMiVgh_se2QfpgjfoWIvBWgQYLIy5Cm_IahcfZ5LpZwOkj4yPLYPE7LttSvyoPH6jhid8ZSa0nZGp6GYCQ3gU-hfz79sevZDaHK-KG337o71zR06pXs8qOPXA1VHkI5k9dXs5lzHSBEOVftQd2etu4F9nCC2X6yypnZ6jrR5r3Amh0UyanbvG5OP2FdD1btrOnyHFcfUoBXTEFC5pQEE7o5HV77jvBUmRhmWcd8qg6scTXABR2no1Cp1vXCFCSCTq3a4epXh4lZc0RBIIchJCOcnoF0rCXhg34PtfGlL739-i27TpaO3NvDesPHmneFxD3s8uOp9fbaRqEIM9H_LaUU5brLFGOQUI0iqfPwOExnjaLueCYcmSIf-iyBTEQtb6gIMBN1ryI-m-3WdMtruiOGti8ID_9AvkV8ctvv5KN9F1357mezjZul7RxOXMsuJ3svAkGBmXhrs0NFN_eL78flzculNdVqHOuJuOPdIKYgIOKS5kRxOn6xhONxUDiCqCm96SBxT-lR8gqq6f1aa6IRx9Ywc0ogt6ozXDFDE_b3UNse3HfiZd-Xd0h7Dt9-72_eWddwxf-ntzMeB7NDZkINMc7BwFzUyGnEFduv04hSTBIKuqJlk14_Rd176vhz57zFwlPKrR3XHbtrS_3FzH8A7ANE4A"
+      allowfullscreen
+      title="여행 일정 플래너"
+    ></iframe>
+    <!-- iframe 차단 시 fallback -->
+    <div class="iframe-blocked" id="iframe-blocked">
+      <div class="icon">🗺</div>
+      <p>보안 정책으로 인해 이 페이지에서 직접 표시할 수 없습니다.</p>
+      <a id="fallback-link" href="https://travel.hspace.site/#eJytWH9wI2UZDthWyZ1zhyAoPz_AOVvOXnc3aZuLIOce56ECB-OozDjIKDrIjxMRQQYP2fY2vbRJL8ldtt22u2GDaZPcbWWTbJpkTFCqczAMOCOeB975h_b-APZ7dxDl-KHtnPPtbpLmpkhwnOlMN8n3vd_3vN_7Ps_z7UeuBkWCX1RxhEcwqZoTo6ibpvGhAOpDTD_IZRirIJznYSzVs_mO73QcG_3ilaH3lk7f_fp7t7nOZ7suOcKubNh7uR3EFOaRUZwnHyZVQ5NNXsNPlTEf7XV-H6vgAg-JKFREa0HrWwhJCBK8KczjpIRomnYdgHgGZuL4oGQUFBgZN2eqeE5FJlcGRcJBHld4EHgG4QgPWhZ1gxgEoYbzQVMsowFqkGa8vh43PpQ1IyqifH4PhWBBwpqElkYOOKsimvF7-50Q7jOgIqyEzbEyMmd4BLKOI1NuhmIGeilvL-3rtGYuaMHu19azVe3fZ295-s4__rXLKEbNkaKL7Vp3gF1e3v4Jexk7HUahaArzmz8oC_YwkgXG5cMV3pwYNcoaMvdyRkFBIKbwWByBXCWnZMZrMBlA3aDLyD4wU8jiWbGnZacev4dy7Zk5nbvjhguirxZO3vfq0DXNnZ4rs8unc-fAdBbHoiDE-z7wmOojjXIZ0f2uXfaOUT9e4JGR08gp9VmjMmXyjLU4SDwyI6o5okBSdzvpJeG0jJVeHOFxQV8ry14_Q42-Kd-z5Yobj0Y-c-mmk-8Eft9l6Jyhx1xs5yub2ZUdwfUwGYVaHCckfFC65gO3n9QgL4E8jnA-COKQVW_MoK-XHtjq2g1zslHWyJ_OgZYhP3oNTUIwOY_MvVGsZQm2kTAOlHE-Q7CRISCOuEGoIXpL_88ZCEmGxpNBMB1HfQiHOVMUWkEbGofHZluQ9vs91L7DT_9h3892nDe76bGbLnn98U87SDtpL0VRbNcVN7Art-69sLm8U8XdNNaEnsH2kUNIwQsW8v7BQdezkNfNIRXksvvvT4zX3ihHECgcDgwhWIhDXvK7l2IKMoUMHhdMQccBDmQR0jHUTXk8vYM-T2-_z0P3oCUujuzfyT8Y1rBaRTAdtwsChzKQ1-vIl2JJhCNhUxDxrI61rCnHcKQKaQ51N7ZpR3QwNgcYRRVkvREReBnhgg6S0pJOn5-idr976ejMzq-cNbRj-3efv-lrHV0QnMKa4GI7Swy7cvxv64GfhzQHtTikOf_7pI-XjBJnRlQrg3wOhjWSQcJJfI4gYxiv634cmYJDNQu2EESgBI18jezwoITlKk4HEYgkvwh0FcQhSHNufDCHwxzaZJVQIoxwOgFSFWc1RFbIBdosnK2d1Fa_h7rwnnTpwultL-SPvnXdxMZdyWaL_IlhV5a-taG-8yrhQH302g8F1plGKMnn7aUZ1x6QFMynYCwFtTgCvmzYUSY1kBQY1sjmF3hzKm4UVQSKAHuHEC5p7tX5Jk3LS8hpMos8zoSs8DCddZBDYhZBIghyeDV4mvZT1J2XzF_9zO07vzc794UfPXDwGcEB39FPmqbz5MvsynHlMlCiEFLtirKAEcpyqlkPD3y4fFhPeE51PdSMRfSzwDVDIgjJOFRBfdZXahVPy1gjzLJYAj5n5MNEFYKi02Num76dJsFaFqtlZK06rIJCZFnDcg0ZC2FItBw_7fFT1GsPxf51jbr90V_9eOxi-eFTp7ogJMOw6mI7N-bYla8-ew7sU2AkbFTG6TaAmoJoTmdwZArRHo_PJeCQDkFxsUSqOyginA7jYdFSoZCCKzxOSjCtIyPPgcwR3gchjkwxZhSSbjOo4kMBqOgg1BZLeDKCD2URoZtJ0SllcujDGZiJOs1DpCApISNfIx3dXgvQXr-HeuT8F3_6w-SNPZUTW9OHb9p_dqMFOlZC7MpVE-tBEQjRRObNiEq1kQYcmTKnxkkamEGf6yemIBnFeUQKXK5aXRtKWdyfHgIlhvBEBiZ0SHMkMfYiBNrIAcJVjGe3uxF7LaB2XaZiWC0blTBhOYbCC3wLyAG_h3owsHvl-et3TsT0XOef79i1v17qjFXqZ32dXT527qV4gSO6NqdCUiMGxo6LuhmiEm11vr0RKzROSoMMzgeJ2A_2u95sSyuaWHE6RdhDVLEShJBkdbFQdZ66nea3sNpsbxQUIr5WayyWDC0IFRGSGp6rkvqz2FQfJYUwlmpqCiQCJNwqaXEgr55vFDKk-Mgiq1Ijl41SlUi6rTKk3mJSfZ4lXS1nQFQlxZ-6Lj3GfjTw8Qv4OxdOP9lQlY73TrErl118XhM9JBQIiqaQYdriF8mpt8GtdC_tehSCIqEsL7WbaIIplhdLMKnjMAcT-iozQnyH7TncZ5x8K8VaWSYTHEax_DIyBZ40dfdq_mnaR4Yi-kJRR9d9--hV23d2_DLXc3Jo83163Zj02xzbtY5dPnZsA5FtYvs1u_497YCuT7FsmIdxfd6DQ5l6A21CwCuQ4I1ilJx249hwoWiUuNXWkW5pF4ayleHI1Ju3lV_ZOVG4S_n-ns1vvNhol36KYjv-cZpdfmXjJ8mZR1RSU3uHQAniORWHuf529i7rMKE7fewZ6PVQru0DhjZkigLxNkZZw7FZtAmZ4bA1NzFr6Bw5gP8uni0oGD9FzVz1wEuLz227_Nfjvz3-wpGlPS1N3_GGi12WH7iYCJKWJdq7qem9baZpy9kIQTwu4KxOysMo8MTZ0D7aNQy81HQ2rZzVd-ZCxPjgfM1xMG47ElG_AlfvNFsU64Vpa3I3iLM4Erd93WIJFB4Xig25bClG6y6jXfC5vzz2zZs3q_dP1m5O06db8_HiE-xy4vB5MJIEIUDygWMiVgh_se2QfpgjfoWIvBWgQYLIy5Cm_IahcfZ5LpZwOkj4yPLYPE7LttSvyoPH6jhid8ZSa0nZGp6GYCQ3gU-hfz79sevZDaHK-KG337o71zR06pXs8qOPXA1VHkI5k9dXs5lzHSBEOVftQd2etu4F9nCC2X6yypnZ6jrR5r3Amh0UyanbvG5OP2FdD1btrOnyHFcfUoBXTEFC5pQEE7o5HV77jvBUmRhmWcd8qg6scTXABR2no1Cp1vXCFCSCTq3a4epXh4lZc0RBIIchJCOcnoF0rCXhg34PtfGlL739-i27TpaO3NvDesPHmneFxD3s8uOp9fbaRqEIM9H_LaUU5brLFGOQUI0iqfPwOExnjaLueCYcmSIf-iyBTEQtb6gIMBN1ryI-m-3WdMtruiOGti8ID_9AvkV8ctvv5KN9F1357mezjZul7RxOXMsuJ3svAkGBmXhrs0NFN_eL78flzculNdVqHOuJuOPdIKYgIOKS5kRxOn6xhONxUDiCqCm96SBxT-lR8gqq6f1aa6IRx9Ywc0ogt6ozXDFDE_b3UNse3HfiZd-Xd0h7Dt9-72_eWddwxf-ntzMeB7NDZkINMc7BwFzUyGnEFduv04hSTBIKuqJlk14_Rd176vhz57zFwlPKrR3XHbtrS_3FzH8A7ANE4A" target="_blank">
+        여행 일정 열기 →
+      </a>
+    </div>
+  </div>
+
+  <!-- 일정표 섹션 -->
+  <div class="schedule-section">
+    <h2>일정표</h2>
+    <div id="schedule-output">
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+        <div>일정 데이터를 불러오는 중...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const TRAVEL_HASH = "eJytWH9wI2UZDthWyZ1zhyAoPz_AOVvOXnc3aZuLIOce56ECB-OozDjIKDrIjxMRQQYP2fY2vbRJL8ldtt22u2GDaZPcbWWTbJpkTFCqczAMOCOeB975h_b-APZ7dxDl-KHtnPPtbpLmpkhwnOlMN8n3vd_3vN_7Ps_z7UeuBkWCX1RxhEcwqZoTo6ibpvGhAOpDTD_IZRirIJznYSzVs_mO73QcG_3ilaH3lk7f_fp7t7nOZ7suOcKubNh7uR3EFOaRUZwnHyZVQ5NNXsNPlTEf7XV-H6vgAg-JKFREa0HrWwhJCBK8KczjpIRomnYdgHgGZuL4oGQUFBgZN2eqeE5FJlcGRcJBHld4EHgG4QgPWhZ1gxgEoYbzQVMsowFqkGa8vh43PpQ1IyqifH4PhWBBwpqElkYOOKsimvF7-50Q7jOgIqyEzbEyMmd4BLKOI1NuhmIGeilvL-3rtGYuaMHu19azVe3fZ295-s4__rXLKEbNkaKL7Vp3gF1e3v4Jexk7HUahaArzmz8oC_YwkgXG5cMV3pwYNcoaMvdyRkFBIKbwWByBXCWnZMZrMBlA3aDLyD4wU8jiWbGnZacev4dy7Zk5nbvjhguirxZO3vfq0DXNnZ4rs8unc-fAdBbHoiDE-z7wmOojjXIZ0f2uXfaOUT9e4JGR08gp9VmjMmXyjLU4SDwyI6o5okBSdzvpJeG0jJVeHOFxQV8ry14_Q42-Kd-z5Yobj0Y-c-mmk-8Eft9l6Jyhx1xs5yub2ZUdwfUwGYVaHCckfFC65gO3n9QgL4E8jnA-COKQVW_MoK-XHtjq2g1zslHWyJ_OgZYhP3oNTUIwOY_MvVGsZQm2kTAOlHE-Q7CRISCOuEGoIXpL_88ZCEmGxpNBMB1HfQiHOVMUWkEbGofHZluQ9vs91L7DT_9h3892nDe76bGbLnn98U87SDtpL0VRbNcVN7Art-69sLm8U8XdNNaEnsH2kUNIwQsW8v7BQdezkNfNIRXksvvvT4zX3ihHECgcDgwhWIhDXvK7l2IKMoUMHhdMQccBDmQR0jHUTXk8vYM-T2-_z0P3oCUujuzfyT8Y1rBaRTAdtwsChzKQ1-vIl2JJhCNhUxDxrI61rCnHcKQKaQ51N7ZpR3QwNgcYRRVkvREReBnhgg6S0pJOn5-idr976ejMzq-cNbRj-3efv-lrHV0QnMKa4GI7Swy7cvxv64GfhzQHtTikOf_7pI-XjBJnRlQrg3wOhjWSQcJJfI4gYxiv634cmYJDNQu2EESgBI18jezwoITlKk4HEYgkvwh0FcQhSHNufDCHwxzaZJVQIoxwOgFSFWc1RFbIBdosnK2d1Fa_h7rwnnTpwultL-SPvnXdxMZdyWaL_IlhV5a-taG-8yrhQH302g8F1plGKMnn7aUZ1x6QFMynYCwFtTgCvmzYUSY1kBQY1sjmF3hzKm4UVQSKAHuHEC5p7tX5Jk3LS8hpMos8zoSs8DCddZBDYhZBIghyeDV4mvZT1J2XzF_9zO07vzc794UfPXDwGcEB39FPmqbz5MvsynHlMlCiEFLtirKAEcpyqlkPD3y4fFhPeE51PdSMRfSzwDVDIgjJOFRBfdZXahVPy1gjzLJYAj5n5MNEFYKi02Num76dJsFaFqtlZK06rIJCZFnDcg0ZC2FItBw_7fFT1GsPxf51jbr90V_9eOxi-eFTp7ogJMOw6mI7N-bYla8-ew7sU2AkbFTG6TaAmoJoTmdwZArRHo_PJeCQDkFxsUSqOyginA7jYdFSoZCCKzxOSjCtIyPPgcwR3gchjkwxZhSSbjOo4kMBqOgg1BZLeDKCD2URoZtJ0SllcujDGZiJOs1DpCApISNfIx3dXgvQXr-HeuT8F3_6w-SNPZUTW9OHb9p_dqMFOlZC7MpVE-tBEQjRRObNiEq1kQYcmTKnxkkamEGf6yemIBnFeUQKXK5aXRtKWdyfHgIlhvBEBiZ0SHMkMfYiBNrIAcJVjGe3uxF7LaB2XaZiWC0blTBhOYbCC3wLyAG_h3owsHvl-et3TsT0XOef79i1v17qjFXqZ32dXT527qV4gSO6NqdCUiMGxo6LuhmiEm11vr0RKzROSoMMzgeJ2A_2u95sSyuaWHE6RdhDVLEShJBkdbFQdZ66nea3sNpsbxQUIr5WayyWDC0IFRGSGp6rkvqz2FQfJYUwlmpqCiQCJNwqaXEgr55vFDKk-Mgiq1Ijl41SlUi6rTKk3mJSfZ4lXS1nQFQlxZ-6Lj3GfjTw8Qv4OxdOP9lQlY73TrErl118XhM9JBQIiqaQYdriF8mpt8GtdC_tehSCIqEsL7WbaIIplhdLMKnjMAcT-iozQnyH7TncZ5x8K8VaWSYTHEax_DIyBZ40dfdq_mnaR4Yi-kJRR9d9--hV23d2_DLXc3Jo83163Zj02xzbtY5dPnZsA5FtYvs1u_497YCuT7FsmIdxfd6DQ5l6A21CwCuQ4I1ilJx249hwoWiUuNXWkW5pF4ayleHI1Ju3lV_ZOVG4S_n-ns1vvNhol36KYjv-cZpdfmXjJ8mZR1RSU3uHQAniORWHuf529i7rMKE7fewZ6PVQru0DhjZkigLxNkZZw7FZtAmZ4bA1NzFr6Bw5gP8uni0oGD9FzVz1wEuLz227_Nfjvz3-wpGlPS1N3_GGi12WH7iYCJKWJdq7qem9baZpy9kIQTwu4KxOysMo8MTZ0D7aNQy81HQ2rZzVd-ZCxPjgfM1xMG47ElG_AlfvNFsU64Vpa3I3iLM4Erd93WIJFB4Xig25bClG6y6jXfC5vzz2zZs3q_dP1m5O06db8_HiE-xy4vB5MJIEIUDygWMiVgh_se2QfpgjfoWIvBWgQYLIy5Cm_IahcfZ5LpZwOkj4yPLYPE7LttSvyoPH6jhid8ZSa0nZGp6GYCQ3gU-hfz79sevZDaHK-KG337o71zR06pXs8qOPXA1VHkI5k9dXs5lzHSBEOVftQd2etu4F9nCC2X6yypnZ6jrR5r3Amh0UyanbvG5OP2FdD1btrOnyHFcfUoBXTEFC5pQEE7o5HV77jvBUmRhmWcd8qg6scTXABR2no1Cp1vXCFCSCTq3a4epXh4lZc0RBIIchJCOcnoF0rCXhg34PtfGlL739-i27TpaO3NvDesPHmneFxD3s8uOp9fbaRqEIM9H_LaUU5brLFGOQUI0iqfPwOExnjaLueCYcmSIf-iyBTEQtb6gIMBN1ryI-m-3WdMtruiOGti8ID_9AvkV8ctvv5KN9F1357mezjZul7RxOXMsuJ3svAkGBmXhrs0NFN_eL78flzculNdVqHOuJuOPdIKYgIOKS5kRxOn6xhONxUDiCqCm96SBxT-lR8gqq6f1aa6IRx9Ywc0ogt6ozXDFDE_b3UNse3HfiZd-Xd0h7Dt9-72_eWddwxf-ntzMeB7NDZkINMc7BwFzUyGnEFduv04hSTBIKuqJlk14_Rd176vhz57zFwlPKrR3XHbtrS_3FzH8A7ANE4A";
+
+  /* ── URL 해시 디코딩 (base64url + zlib) ── */
+  async function decodeTravelData(encoded) {
+    // URL-safe base64 → standard base64
+    const b64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+    const pad = (4 - b64.length % 4) % 4;
+    const binaryStr = atob(b64 + '='.repeat(pad));
+    const bytes = Uint8Array.from(binaryStr, c => c.charCodeAt(0));
+
+    // zlib decompress ('deflate' format includes the zlib header wrapper)
+    const ds = new DecompressionStream('deflate');
+    const writer = ds.writable.getWriter();
+    writer.write(bytes);
+    writer.close();
+
+    const chunks = [];
+    const reader = ds.readable.getReader();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+    const total = chunks.reduce((s, c) => s + c.length, 0);
+    const out = new Uint8Array(total);
+    let offset = 0;
+    for (const c of chunks) { out.set(c, offset); offset += c.length; }
+    return new TextDecoder().decode(out);
+  }
+
+  /* ── 일정표 렌더링 ── */
+  function renderSchedule(data) {
+    const el = document.getElementById('schedule-output');
+
+    // 타이틀
+    const title = data.title || data.name || '';
+    let html = title ? `<p style="color:#555;margin-bottom:18px;">📌 ${escHtml(title)}</p>` : '';
+
+    // days 배열 또는 최상위 places 배열 처리
+    const days = data.days || data.schedules || data.itinerary || (data.places ? [{ places: data.places }] : null);
+
+    if (!days || !Array.isArray(days) || days.length === 0) {
+      // 구조를 알 수 없으면 raw JSON 표시
+      el.innerHTML = `<div class="decode-error">
+        일정 구조를 자동으로 파싱하지 못했습니다.<br>
+        <a href="https://travel.hspace.site/#${TRAVEL_HASH}" target="_blank">원본 링크</a>에서 확인해주세요.
+        <details style="margin-top:12px;text-align:left">
+          <summary style="cursor:pointer;color:#888;font-size:0.8rem">원시 데이터 보기</summary>
+          <pre style="font-size:0.75rem;overflow:auto;max-height:300px;margin-top:8px">${escHtml(JSON.stringify(data, null, 2))}</pre>
+        </details>
+      </div>`;
+      return;
+    }
+
+    days.forEach(function (day, dayIdx) {
+      const dayNum   = day.day || day.date || (dayIdx + 1);
+      const dayLabel = day.label || day.name || day.title || '';
+      const places   = day.places || day.spots || day.schedule || day.items || [];
+
+      html += `<div class="day-card">
+        <div class="day-card-header">
+          <span class="day-badge">Day ${dayIdx + 1}</span>
+          ${escHtml(String(dayNum))}${dayLabel ? ' — ' + escHtml(dayLabel) : ''}
+        </div>
+        <table class="schedule-table">
+          <thead><tr>
+            <th>#</th>
+            <th>장소</th>
+            <th>시간</th>
+            <th>지도</th>
+          </tr></thead>
+          <tbody>`;
+
+      if (!Array.isArray(places) || places.length === 0) {
+        html += `<tr><td colspan="4" style="color:#aaa;text-align:center;padding:20px;">장소 정보 없음</td></tr>`;
+      } else {
+        places.forEach(function (p, pIdx) {
+          const name = p.name || p.title || p.place || '(이름 없음)';
+          const memo = p.memo || p.note || p.description || p.desc || '';
+          const time = p.time || p.startTime || p.start_time || '';
+          const lat  = p.lat  || p.latitude  || '';
+          const lng  = p.lng  || p.lon || p.longitude || '';
+
+          const mapHref = (lat && lng)
+            ? `https://www.google.com/maps?q=${encodeURIComponent(lat)},${encodeURIComponent(lng)}`
+            : '';
+
+          html += `<tr>
+            <td><span class="order-num">${pIdx + 1}</span></td>
+            <td>
+              <div class="place-name">${escHtml(name)}</div>
+              ${memo ? `<div class="place-memo">${escHtml(memo)}</div>` : ''}
+            </td>
+            <td>${time ? `<span class="time-badge">${escHtml(time)}</span>` : '<span style="color:#ccc">—</span>'}</td>
+            <td>${mapHref
+              ? `<a class="map-link" href="${mapHref}" target="_blank">지도 ↗</a>`
+              : '<span style="color:#ccc">—</span>'}</td>
+          </tr>`;
+        });
+      }
+      html += `</tbody></table></div>`;
+    });
+
+    el.innerHTML = html;
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ── iframe 차단 감지 ── */
+  function detectIframeBlock() {
+    const iframe = document.getElementById('travel-iframe');
+    // load 이벤트가 발생하면 일단 성공으로 간주 (cross-origin이라 내부 체크 불가)
+    // 3초 후에도 load가 안 됐으면 차단으로 판단
+    let loaded = false;
+    iframe.addEventListener('load', function () { loaded = true; });
+    setTimeout(function () {
+      if (!loaded) {
+        iframe.style.display = 'none';
+        document.getElementById('iframe-blocked').classList.add('show');
+      }
+    }, 5000);
+  }
+
+  /* ── 초기화 ── */
+  async function init() {
+    detectIframeBlock();
+    try {
+      const json = await decodeTravelData(TRAVEL_HASH);
+      const data = JSON.parse(json);
+      renderSchedule(data);
+    } catch (e) {
+      document.getElementById('schedule-output').innerHTML = `
+        <div class="decode-error">
+          일정 데이터를 디코딩하는 중 오류가 발생했습니다.<br>
+          <a href="https://travel.hspace.site/#${TRAVEL_HASH}" target="_blank">원본 링크</a>에서 확인해주세요.
+          <details style="margin-top:12px;text-align:left">
+            <summary style="cursor:pointer;color:#888;font-size:0.8rem">오류 내용</summary>
+            <pre style="font-size:0.75rem;margin-top:8px">${escHtml(e.message)}</pre>
+          </details>
+        </div>`;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
