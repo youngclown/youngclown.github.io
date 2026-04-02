@@ -58,10 +58,16 @@ permalink: /travel/
   }
   .iframe-section iframe {
     width: 100%;
-    height: 68vh;
-    min-height: 480px;
+    height: calc(100vh - 155px);
+    min-height: 500px;
     border: none;
     display: block;
+  }
+  @media (max-width: 768px) {
+    .iframe-section iframe {
+      height: 50vh;
+      min-height: 300px;
+    }
   }
   .iframe-blocked {
     display: none;
@@ -409,21 +415,9 @@ permalink: /travel/
   /* ── 초기화 ── */
   async function init() {
     detectIframeBlock();
-    try {
-      const json = await decodeTravelData(TRAVEL_HASH);
-      const data = JSON.parse(json);
-      renderSchedule(data);
-    } catch (e) {
-      document.getElementById('schedule-output').innerHTML = `
-        <div class="decode-error">
-          일정 데이터를 디코딩하는 중 오류가 발생했습니다.<br>
-          <a href="https://travel.hspace.site/#${TRAVEL_HASH}" target="_blank">원본 링크</a>에서 확인해주세요.
-          <details style="margin-top:12px;text-align:left">
-            <summary style="cursor:pointer;color:#888;font-size:0.8rem">오류 내용</summary>
-            <pre style="font-size:0.75rem;margin-top:8px">${escHtml(e.message)}</pre>
-          </details>
-        </div>`;
-    }
+    const json = await decodeTravelData(TRAVEL_HASH);
+    const data = JSON.parse(json);
+    renderSchedule(data);
   }
 
   document.addEventListener('DOMContentLoaded', init);
