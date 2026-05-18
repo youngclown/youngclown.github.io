@@ -425,6 +425,7 @@
       heroSword: textureLoader.load(window.ASSET_IMAGES.hero_sword),
       heroSpecial: textureLoader.load(window.ASSET_IMAGES.hero_special),
       monster: textureLoader.load(window.ASSET_IMAGES.monster),
+      minion: textureLoader.load(window.ASSET_IMAGES.minion),
       boss: textureLoader.load(window.ASSET_IMAGES.boss),
       cat: textureLoader.load(window.ASSET_IMAGES.cat),
       catHappy: textureLoader.load(window.ASSET_IMAGES.cat_happy),
@@ -552,7 +553,7 @@
       const mesh = new THREE.Sprite(material);
       mesh.scale.set(width, height, 1);
       mesh.position.set(0, y, 0);
-      mesh.renderOrder = 10;
+      mesh.renderOrder = 20;
       return mesh;
     }
 
@@ -571,12 +572,19 @@
       group.add(fist);
 
       const shieldMesh = new THREE.Mesh(
-        new THREE.SphereGeometry(0.78, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.58),
-        materials.shield
+        new THREE.SphereGeometry(0.88, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.58),
+        new THREE.MeshBasicMaterial({
+          color: 0x63cfff,
+          transparent: true,
+          opacity: 0.28,
+          depthWrite: false,
+          side: THREE.BackSide
+        })
       );
-      shieldMesh.position.set(0, 0.95, 0);
-      shieldMesh.scale.set(1, 1.08, 1);
+      shieldMesh.position.set(0, 0.95, -0.32);
+      shieldMesh.scale.set(1.05, 1.15, 0.62);
       shieldMesh.visible = true;
+      shieldMesh.renderOrder = 1;
       group.add(shieldMesh);
 
       hero.group = group;
@@ -589,24 +597,39 @@
 
     function createMonster(colorMaterial) {
       const group = new THREE.Group();
-      const body = new THREE.Mesh(new THREE.SphereGeometry(0.48, 18, 14), colorMaterial);
-      body.position.set(0, 0.58, 0);
-      body.scale.set(1, 1.15, 0.85);
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.62, 24, 18), colorMaterial);
+      body.position.set(0, 0.72, 0);
+      body.scale.set(1, 1.18, 0.92);
       body.castShadow = true;
-      const eyeL = sphere(0.08, materials.black, -0.15, 0.72, 0.38);
-      const eyeR = sphere(0.08, materials.black, 0.15, 0.72, 0.38);
-      const hornL = box(0.12, 0.28, 0.12, materials.cat, -0.22, 1.08, 0);
-      const hornR = box(0.12, 0.28, 0.12, materials.cat, 0.22, 1.08, 0);
+      const eyeL = sphere(0.09, materials.black, -0.2, 0.82, 0.46);
+      const eyeR = sphere(0.09, materials.black, 0.2, 0.82, 0.46);
+      const hornL = box(0.14, 0.34, 0.14, materials.cat, -0.3, 1.25, 0);
+      const hornR = box(0.14, 0.34, 0.14, materials.cat, 0.3, 1.25, 0);
+      const alertStem = box(0.09, 0.36, 0.09, materials.gold, 0, 1.88, 0);
+      const alertDot = sphere(0.08, materials.gold, 0, 1.58, 0);
       const shadow = new THREE.Mesh(
-        new THREE.CircleGeometry(0.56, 24),
+        new THREE.CircleGeometry(0.72, 28),
         new THREE.MeshBasicMaterial({ color: 0x173142, transparent: true, opacity: 0.18 })
       );
       shadow.rotation.x = -Math.PI / 2;
       shadow.position.y = 0.025;
-      group.add(shadow, body, eyeL, eyeR, hornL, hornR);
-      group.add(sprite(textures.monster, 1.7, 2.25, 1.1));
+      group.add(shadow, body, eyeL, eyeR, hornL, hornR, alertStem, alertDot);
       scene.add(group);
       return group;
+    }
+
+    function createMonsterMarker() {
+      const marker = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: textures.minion,
+        transparent: true,
+        alphaTest: 0.04,
+        depthTest: false,
+        depthWrite: false
+      }));
+      marker.scale.set(1.45, 1.45, 1);
+      marker.renderOrder = 200;
+      scene.add(marker);
+      return marker;
     }
 
     function createBoss() {
@@ -668,7 +691,7 @@
       const inner = new THREE.Mesh(new THREE.TorusGeometry(0.58, 0.04, 10, 64), materials.special);
       const beam = new THREE.Mesh(
         new THREE.ConeGeometry(0.9, 3.6, 32, 1, true),
-        new THREE.MeshBasicMaterial({ color: 0x58caff, transparent: true, opacity: 0.32, side: THREE.DoubleSide })
+        new THREE.MeshBasicMaterial({ color: 0x58caff, transparent: true, opacity: 0.18, depthWrite: false, side: THREE.DoubleSide })
       );
       const slashA = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.22), slashMaterial);
       const slashB = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.22), slashMaterial);
@@ -679,6 +702,9 @@
       slashB.position.y = 1.25;
       slashB.rotation.z = Math.PI / 2;
       ring.add(outer, inner, beam, slashA, slashB);
+      ring.traverse((child) => {
+        child.renderOrder = 0;
+      });
       ring.position.y = 0.08;
       ring.visible = false;
       scene.add(ring);
@@ -720,7 +746,10 @@
     }
 
     function resetGame() {
-      for (const monster of monsters) scene.remove(monster.group);
+      for (const monster of monsters) {
+        scene.remove(monster.group);
+        if (monster.marker) scene.remove(monster.marker);
+      }
       for (const item of armorItems) scene.remove(item.group);
       if (boss) scene.remove(boss.group);
       if (dragon) scene.remove(dragon.group);
@@ -753,6 +782,9 @@
       cat.healCooldown = 0;
       boss = createBoss();
       dragon = createDragon();
+      spawnMonster(-8.8, 4.1);
+      spawnMonster(-6.8, 3.2);
+      spawnMonster(-3.0, 4.0);
       score = 0;
       spawnTimer = 0;
       armorTimer = 2.5;
@@ -762,19 +794,28 @@
       updateHud();
     }
 
-    function spawnMonster() {
+    function spawnMonster(x = null, z = null) {
       const angle = Math.random() * Math.PI * 2;
       const radius = MONSTER_SPAWN_RADIUS;
       const material = Math.random() < 0.5 ? materials.monsterA : materials.monsterB;
       const monster = {
         group: createMonster(material),
-        pos: new THREE.Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius),
+        pos: new THREE.Vector3(
+          x ?? Math.cos(angle) * radius,
+          0,
+          z ?? Math.sin(angle) * radius
+        ),
         vel: new THREE.Vector3(),
-        radius: 0.42,
+        radius: 0.62,
         hp: 2,
-        speed: 2.1 + score * 0.035,
-        hitTime: 0
+        speed: 1.25 + score * 0.025,
+        hitTime: 0,
+        kind: "monster",
+        marker: null
       };
+      monster.marker = createMonsterMarker();
+      monster.group.position.copy(monster.pos);
+      monster.marker.position.set(monster.pos.x, 1.75, monster.pos.z);
       monsters.push(monster);
     }
 
@@ -886,6 +927,7 @@
       monsters = monsters.filter((monster) => {
         if (monster.hp > 0) return true;
         scene.remove(monster.group);
+        if (monster.marker) scene.remove(monster.marker);
         return false;
       });
       updateHud();
@@ -905,6 +947,7 @@
       monsters = monsters.filter((monster) => {
         if (monster.hp > 0) return true;
         scene.remove(monster.group);
+        if (monster.marker) scene.remove(monster.marker);
         return false;
       });
       updateHud();
@@ -923,6 +966,9 @@
       enemy.pos.x = Math.max(-MAP_HALF_X, Math.min(MAP_HALF_X, enemy.pos.x));
       enemy.pos.z = Math.max(-MAP_HALF_Z, Math.min(MAP_HALF_Z, enemy.pos.z));
       enemy.group.position.copy(enemy.pos);
+      if (enemy.marker) {
+        enemy.marker.position.set(enemy.pos.x, enemy.group.position.y + 1.75, enemy.pos.z);
+      }
       let walkTilt = 0;
       if (enemy.fly) {
         enemy.stomp += dt * 4.5;
@@ -933,9 +979,13 @@
         enemy.group.position.y = (enemy === boss ? Math.sin(enemy.stomp * 0.45) * 0.09 : 0) + walkBob;
         walkTilt = Math.sin(enemy.stomp) * (enemy === boss ? 0.04 : 0.12);
       }
-      enemy.group.lookAt(hero.pos.x, enemy.group.position.y, hero.pos.z);
-      enemy.group.rotateY(Math.PI);
-      enemy.group.rotateZ(walkTilt);
+      if (enemy.kind === "monster") {
+        enemy.group.rotation.set(0, 0, walkTilt);
+      } else {
+        enemy.group.lookAt(hero.pos.x, enemy.group.position.y, hero.pos.z);
+        enemy.group.rotateY(Math.PI);
+        enemy.group.rotateZ(walkTilt);
+      }
       if (enemy.hitTime > 0) enemy.hitTime -= 1;
     }
 
@@ -1020,16 +1070,23 @@
         hero.sprite.material.map = textures.heroSpecial;
         hero.sprite.scale.set(2.25, 2.42, 1);
         hero.sprite.position.y = 1.22;
+        hero.sprite.material.rotation = 0;
+        hero.sprite.renderOrder = 30;
       } else if (hero.attackTime > 0 && hero.attackKind === "sword") {
         hero.sprite.material.map = textures.heroSword;
         hero.sprite.scale.set(2.28, 2.16, 1);
         hero.sprite.position.y = 1.13;
+        hero.sprite.material.rotation = 0;
+        hero.sprite.renderOrder = 30;
       } else if (hero.attackTime > 0 && hero.attackKind === "punch") {
         hero.sprite.material.map = textures.heroPunch;
         hero.sprite.scale.set(2.1, 2.35, 1);
         hero.sprite.position.y = 1.2;
+        hero.sprite.material.rotation = 0;
+        hero.sprite.renderOrder = 30;
       } else {
         hero.sprite.material.map = textures.hero;
+        hero.sprite.renderOrder = 20;
         if (hero.moving) {
           const step = Math.sin(hero.walkTime);
           const bounce = Math.abs(step);
@@ -1044,8 +1101,9 @@
       }
       hero.sprite.material.needsUpdate = true;
       hero.shieldMesh.visible = hero.shield > 0 || hero.blockTime > 0;
-      hero.shieldMesh.material.opacity = hero.blockTime > 0 ? 0.78 : 0.36;
-      hero.shieldMesh.scale.setScalar(1 + hero.armor * 0.04);
+      hero.shieldMesh.material.opacity = hero.blockTime > 0 ? 0.46 : 0.22;
+      hero.shieldMesh.scale.set(1.05 + hero.armor * 0.04, 1.15 + hero.armor * 0.04, 0.62);
+      hero.shieldMesh.rotation.z += hero.blockTime > 0 ? 0.08 : 0.01;
       hero.group.visible = !(hero.invincible > 0 && Math.floor(hero.invincible / 5) % 2 === 0);
     }
 
