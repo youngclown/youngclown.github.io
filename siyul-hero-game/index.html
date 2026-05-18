@@ -547,10 +547,12 @@
     }
 
     function sprite(texture, width, height, y) {
-      const material = new THREE.SpriteMaterial({ map: texture, transparent: true, alphaTest: 0.08 });
+      const material = new THREE.SpriteMaterial({ map: texture, transparent: true, alphaTest: 0.04 });
+      material.depthWrite = false;
       const mesh = new THREE.Sprite(material);
       mesh.scale.set(width, height, 1);
       mesh.position.set(0, y, 0);
+      mesh.renderOrder = 10;
       return mesh;
     }
 
@@ -587,7 +589,22 @@
 
     function createMonster(colorMaterial) {
       const group = new THREE.Group();
-      group.add(sprite(textures.monster, 1.28, 1.72, 0.88));
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.48, 18, 14), colorMaterial);
+      body.position.set(0, 0.58, 0);
+      body.scale.set(1, 1.15, 0.85);
+      body.castShadow = true;
+      const eyeL = sphere(0.08, materials.black, -0.15, 0.72, 0.38);
+      const eyeR = sphere(0.08, materials.black, 0.15, 0.72, 0.38);
+      const hornL = box(0.12, 0.28, 0.12, materials.cat, -0.22, 1.08, 0);
+      const hornR = box(0.12, 0.28, 0.12, materials.cat, 0.22, 1.08, 0);
+      const shadow = new THREE.Mesh(
+        new THREE.CircleGeometry(0.56, 24),
+        new THREE.MeshBasicMaterial({ color: 0x173142, transparent: true, opacity: 0.18 })
+      );
+      shadow.rotation.x = -Math.PI / 2;
+      shadow.position.y = 0.025;
+      group.add(shadow, body, eyeL, eyeR, hornL, hornR);
+      group.add(sprite(textures.monster, 1.7, 2.25, 1.1));
       scene.add(group);
       return group;
     }
