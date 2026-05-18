@@ -1,0 +1,1232 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>시율용사와 마왕</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #86d8ff;
+      font-family: Arial, "Malgun Gothic", sans-serif;
+      color: #173142;
+      touch-action: none;
+    }
+
+    #world {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+    }
+
+    .ui {
+      position: fixed;
+      inset: 12px 12px auto 12px;
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) minmax(320px, 520px);
+      gap: 12px;
+      align-items: start;
+      pointer-events: none;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 10px 12px;
+      width: fit-content;
+      border: 3px solid #173142;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 3px 0 #173142;
+      font-size: clamp(20px, 4vw, 32px);
+    }
+
+    .panel {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 3px solid #173142;
+      border-radius: 8px;
+      background: rgba(255, 249, 214, 0.94);
+      box-shadow: 0 3px 0 #173142;
+      font-weight: 700;
+    }
+
+    .meter {
+      display: grid;
+      grid-template-columns: 74px 1fr 48px;
+      gap: 8px;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .bar {
+      height: 18px;
+      overflow: hidden;
+      border: 3px solid #173142;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .fill {
+      height: 100%;
+      width: 100%;
+      background: #39c96b;
+      transition: width 120ms linear;
+    }
+
+    #shieldFill {
+      background: #37a8ff;
+    }
+
+    #bossFill {
+      background: #ef4f4f;
+    }
+
+    #dragonFill {
+      background: #24b07a;
+    }
+
+    .stats,
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag,
+    button {
+      padding: 7px 9px;
+      border: 3px solid #173142;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 3px 0 #173142;
+      font-weight: 700;
+    }
+
+    button {
+      pointer-events: auto;
+      cursor: pointer;
+      background: #ffdc5e;
+      color: #173142;
+      font: inherit;
+    }
+
+    .touch-controls {
+      position: fixed;
+      inset: auto 14px 14px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .joystick {
+      width: 118px;
+      height: 118px;
+      border: 4px solid #173142;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.74);
+      box-shadow: 0 4px 0 #173142;
+      pointer-events: auto;
+      position: relative;
+      backdrop-filter: blur(2px);
+    }
+
+    .stick {
+      width: 46px;
+      height: 46px;
+      border: 3px solid #173142;
+      border-radius: 50%;
+      background: #ffdc5e;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .touch-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 72px);
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    .touch-buttons button {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      padding: 0;
+      font-size: 15px;
+      line-height: 1.1;
+    }
+
+    .safe-restart {
+      position: fixed;
+      left: 12px;
+      top: 86px;
+      width: 68px;
+      height: 38px;
+      z-index: 5;
+      font-size: 14px;
+      pointer-events: auto;
+    }
+
+    .message {
+      position: fixed;
+      left: 50%;
+      top: 118px;
+      transform: translateX(-50%);
+      max-width: min(620px, calc(100vw - 24px));
+      padding: 10px 14px;
+      border: 3px solid #173142;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 3px 0 #173142;
+      font-weight: 800;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    @media (max-width: 760px) {
+      .ui {
+        grid-template-columns: 1fr;
+        inset: 8px 8px auto 8px;
+      }
+
+      h1 {
+        display: none;
+      }
+
+      .panel {
+        gap: 5px;
+        padding: 8px;
+      }
+
+      .controls {
+        display: none;
+      }
+
+      .message {
+        top: 178px;
+      }
+
+      .touch-controls {
+        inset: auto 10px 10px 10px;
+      }
+
+      .safe-restart {
+        top: 132px;
+        left: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="world"></canvas>
+
+  <section class="ui">
+    <h1>시율용사와 마왕</h1>
+    <div class="panel">
+      <div class="meter">
+        <span>체력</span>
+        <div class="bar"><div class="fill" id="hpFill"></div></div>
+        <span id="hpText">5/5</span>
+      </div>
+      <div class="meter">
+        <span>방패</span>
+        <div class="bar"><div class="fill" id="shieldFill"></div></div>
+        <span id="shieldText">8/8</span>
+      </div>
+      <div class="meter">
+        <span>보스</span>
+        <div class="bar"><div class="fill" id="bossFill"></div></div>
+        <span id="bossText">20/20</span>
+      </div>
+      <div class="meter">
+        <span>드래곤</span>
+        <div class="bar"><div class="fill" id="dragonFill"></div></div>
+        <span id="dragonText">14/14</span>
+      </div>
+      <div class="stats">
+        <span class="tag">점수 <span id="scoreText">0</span></span>
+        <span class="tag">방어력 <span id="armorText">0</span></span>
+        <span class="tag">필살기 <span id="specialText">준비</span></span>
+      </div>
+      <div class="controls">
+        <span class="tag">이동 WASD/방향키</span>
+        <span class="tag">주먹 Z</span>
+        <span class="tag">검 X</span>
+        <span class="tag">필살기 C</span>
+        <button id="restart">다시 시작</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="message" id="message">방패가 자동으로 막아줘! C는 필살기!</div>
+
+  <div class="touch-controls" aria-label="모바일 조작 버튼">
+    <div class="joystick" id="joystick"><div class="stick" id="stick"></div></div>
+    <div class="touch-buttons">
+      <button id="touchPunch" type="button">주먹</button>
+      <button id="touchSword" type="button">검</button>
+      <button id="touchSpecial" type="button">필살</button>
+    </div>
+  </div>
+  <button class="safe-restart" id="touchRestart" type="button">다시</button>
+
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="assets/assets-data.js"></script>
+  <script>
+    const canvas = document.querySelector("#world");
+    const hpFill = document.querySelector("#hpFill");
+    const shieldFill = document.querySelector("#shieldFill");
+    const bossFill = document.querySelector("#bossFill");
+    const dragonFill = document.querySelector("#dragonFill");
+    const hpText = document.querySelector("#hpText");
+    const shieldText = document.querySelector("#shieldText");
+    const bossText = document.querySelector("#bossText");
+    const dragonText = document.querySelector("#dragonText");
+    const scoreText = document.querySelector("#scoreText");
+    const armorText = document.querySelector("#armorText");
+    const specialText = document.querySelector("#specialText");
+    const messageBox = document.querySelector("#message");
+    const restartButton = document.querySelector("#restart");
+    const joystick = document.querySelector("#joystick");
+    const stick = document.querySelector("#stick");
+    const touchPunch = document.querySelector("#touchPunch");
+    const touchSword = document.querySelector("#touchSword");
+    const touchSpecial = document.querySelector("#touchSpecial");
+    const touchRestart = document.querySelector("#touchRestart");
+
+    if (!window.THREE) {
+      messageBox.textContent = "3D 라이브러리를 불러오지 못했어. 인터넷 연결을 확인해줘.";
+      throw new Error("Three.js failed to load");
+    }
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x86d8ff);
+
+    const MAP_HALF_X = 29;
+    const MAP_HALF_Z = 22;
+    const MONSTER_SPAWN_RADIUS = 26;
+    const touchMove = new THREE.Vector3();
+    let joystickPointerId = null;
+
+    const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 120);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x6cad65, 2.2);
+    scene.add(hemi);
+
+    const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+    sun.position.set(8, 12, 5);
+    sun.castShadow = true;
+    sun.shadow.camera.left = -20;
+    sun.shadow.camera.right = 20;
+    sun.shadow.camera.top = 20;
+    sun.shadow.camera.bottom = -20;
+    scene.add(sun);
+
+    function createGrassTexture() {
+      const grassCanvas = document.createElement("canvas");
+      grassCanvas.width = 512;
+      grassCanvas.height = 512;
+      const g = grassCanvas.getContext("2d");
+      const base = g.createLinearGradient(0, 0, 512, 512);
+      base.addColorStop(0, "#4f9f36");
+      base.addColorStop(0.5, "#6fba43");
+      base.addColorStop(1, "#336f2c");
+      g.fillStyle = base;
+      g.fillRect(0, 0, 512, 512);
+
+      for (let i = 0; i < 7500; i += 1) {
+        const x = Math.random() * 512;
+        const y = Math.random() * 512;
+        const length = 4 + Math.random() * 13;
+        const lean = (Math.random() - 0.5) * 5;
+        const green = 70 + Math.floor(Math.random() * 90);
+        const bright = 80 + Math.floor(Math.random() * 80);
+        g.strokeStyle = `rgba(${30 + Math.random() * 35}, ${green + bright * 0.35}, ${24 + Math.random() * 40}, ${0.24 + Math.random() * 0.42})`;
+        g.lineWidth = 0.6 + Math.random() * 1.2;
+        g.beginPath();
+        g.moveTo(x, y);
+        g.lineTo(x + lean, y - length);
+        g.stroke();
+      }
+
+      for (let i = 0; i < 420; i += 1) {
+        g.fillStyle = Math.random() < 0.65 ? "rgba(230,242,135,0.45)" : "rgba(48,91,35,0.28)";
+        g.beginPath();
+        g.arc(Math.random() * 512, Math.random() * 512, 0.8 + Math.random() * 2.2, 0, Math.PI * 2);
+        g.fill();
+      }
+
+      const texture = new THREE.CanvasTexture(grassCanvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(12, 10);
+      texture.anisotropy = 8;
+      return texture;
+    }
+
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(MAP_HALF_X * 2 + 4, MAP_HALF_Z * 2 + 4, 34, 28),
+      new THREE.MeshStandardMaterial({ map: createGrassTexture(), color: 0xd8ffd2, roughness: 0.96 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    const keys = new Set();
+    const clock = new THREE.Clock();
+    const tmp = new THREE.Vector3();
+
+    const materials = {
+      heroBlue: new THREE.MeshStandardMaterial({ color: 0x3c80ff, roughness: 0.55 }),
+      skin: new THREE.MeshStandardMaterial({ color: 0xffcf9c, roughness: 0.6 }),
+      hair: new THREE.MeshStandardMaterial({ color: 0x704225, roughness: 0.75 }),
+      pants: new THREE.MeshStandardMaterial({ color: 0x26364a, roughness: 0.7 }),
+      armor: new THREE.MeshStandardMaterial({ color: 0xb8c6d9, metalness: 0.65, roughness: 0.28 }),
+      darkArmor: new THREE.MeshStandardMaterial({ color: 0x364557, metalness: 0.48, roughness: 0.34 }),
+      cape: new THREE.MeshStandardMaterial({ color: 0x8d1f2d, roughness: 0.7 }),
+      sword: new THREE.MeshStandardMaterial({ color: 0xdaf2ff, metalness: 0.75, roughness: 0.18 }),
+      gold: new THREE.MeshStandardMaterial({ color: 0xf6c24a, metalness: 0.55, roughness: 0.3 }),
+      shield: new THREE.MeshStandardMaterial({ color: 0x49b6ff, transparent: true, opacity: 0.48, roughness: 0.18 }),
+      monsterA: new THREE.MeshStandardMaterial({ color: 0x7b4fe0, roughness: 0.75 }),
+      monsterB: new THREE.MeshStandardMaterial({ color: 0xff735c, roughness: 0.75 }),
+      boss: new THREE.MeshStandardMaterial({ color: 0xd14b4b, roughness: 0.7 }),
+      hit: new THREE.MeshStandardMaterial({ color: 0xfff06a, roughness: 0.45 }),
+      cat: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7 }),
+      black: new THREE.MeshStandardMaterial({ color: 0x183142, roughness: 0.6 }),
+      pink: new THREE.MeshStandardMaterial({ color: 0xff8fc7, roughness: 0.55 }),
+      special: new THREE.MeshBasicMaterial({ color: 0xffee57, transparent: true, opacity: 0.72 })
+    };
+
+    const slashMaterial = new THREE.MeshBasicMaterial({
+      color: 0x9ee8ff,
+      transparent: true,
+      opacity: 0.7,
+      side: THREE.DoubleSide
+    });
+
+    const textureLoader = new THREE.TextureLoader();
+    const textures = {
+      hero: textureLoader.load(window.ASSET_IMAGES.hero),
+      heroPunch: textureLoader.load(window.ASSET_IMAGES.hero_punch),
+      heroSword: textureLoader.load(window.ASSET_IMAGES.hero_sword),
+      heroSpecial: textureLoader.load(window.ASSET_IMAGES.hero_special),
+      monster: textureLoader.load(window.ASSET_IMAGES.monster),
+      boss: textureLoader.load(window.ASSET_IMAGES.boss),
+      cat: textureLoader.load(window.ASSET_IMAGES.cat),
+      catHappy: textureLoader.load(window.ASSET_IMAGES.cat_happy),
+      dragon: textureLoader.load(window.ASSET_IMAGES.dragon),
+      armor: textureLoader.load(window.ASSET_IMAGES.armor)
+    };
+
+    for (const texture of Object.values(textures)) {
+      texture.colorSpace = THREE.SRGBColorSpace;
+    }
+
+    const hero = {
+      group: null,
+      sprite: null,
+      sword: null,
+      fist: null,
+      shieldMesh: null,
+      pos: new THREE.Vector3(-5, 0, 1.5),
+      face: new THREE.Vector3(1, 0, 0),
+      radius: 0.48,
+      speed: 6.2,
+      maxHp: 5,
+      hp: 5,
+      maxShield: 8,
+      shield: 8,
+      armor: 0,
+      invincible: 0,
+      blockTime: 0,
+      hitTime: 0,
+      attackTime: 0,
+      attackKind: "none",
+      specialTime: 0,
+      specialCooldown: 0,
+      walkTime: 0,
+      moving: false
+    };
+
+    let monsters = [];
+    let armorItems = [];
+    let boss;
+    let dragon;
+    let cat;
+    let score = 0;
+    let spawnTimer = 0;
+    let armorTimer = 0;
+    let gameOver = false;
+    let win = false;
+    let messageTimer = 0;
+    let specialRing;
+    let audioCtx;
+
+    function enableAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") audioCtx.resume();
+    }
+
+    function playTone(freq, start, duration, type, volume) {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime + start);
+      gain.gain.setValueAtTime(0, audioCtx.currentTime + start);
+      gain.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + start + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + start + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime + start);
+      osc.stop(audioCtx.currentTime + start + duration + 0.03);
+    }
+
+    function playSound(kind) {
+      if (!audioCtx) return;
+      if (kind === "punch") {
+        playTone(120, 0, 0.08, "square", 0.18);
+        playTone(70, 0.03, 0.07, "sawtooth", 0.1);
+      } else if (kind === "sword") {
+        playTone(720, 0, 0.07, "triangle", 0.14);
+        playTone(1040, 0.04, 0.09, "sine", 0.09);
+      } else if (kind === "block") {
+        playTone(260, 0, 0.08, "square", 0.14);
+        playTone(520, 0.04, 0.08, "triangle", 0.1);
+      } else if (kind === "hurt") {
+        playTone(190, 0, 0.12, "sawtooth", 0.16);
+        playTone(110, 0.08, 0.14, "square", 0.1);
+      } else if (kind === "special") {
+        playTone(180, 0, 0.12, "sawtooth", 0.16);
+        playTone(360, 0.08, 0.16, "triangle", 0.13);
+        playTone(720, 0.18, 0.18, "sine", 0.1);
+      } else if (kind === "armor") {
+        playTone(520, 0, 0.09, "sine", 0.12);
+        playTone(780, 0.08, 0.1, "sine", 0.12);
+        playTone(1040, 0.17, 0.13, "triangle", 0.1);
+      } else if (kind === "meow") {
+        playTone(760, 0, 0.08, "sine", 0.11);
+        playTone(980, 0.07, 0.1, "triangle", 0.1);
+        playTone(620, 0.16, 0.12, "sine", 0.08);
+      } else if (kind === "win") {
+        playTone(523, 0, 0.16, "sine", 0.14);
+        playTone(659, 0.16, 0.16, "sine", 0.14);
+        playTone(784, 0.32, 0.2, "sine", 0.14);
+        playTone(1047, 0.52, 0.34, "triangle", 0.16);
+      }
+    }
+
+    function box(w, h, d, material, x, y, z) {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+      mesh.position.set(x, y, z);
+      mesh.castShadow = true;
+      return mesh;
+    }
+
+    function sphere(r, material, x, y, z) {
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(r, 18, 14), material);
+      mesh.position.set(x, y, z);
+      mesh.castShadow = true;
+      return mesh;
+    }
+
+    function sprite(texture, width, height, y) {
+      const material = new THREE.SpriteMaterial({ map: texture, transparent: true, alphaTest: 0.08 });
+      const mesh = new THREE.Sprite(material);
+      mesh.scale.set(width, height, 1);
+      mesh.position.set(0, y, 0);
+      return mesh;
+    }
+
+    function createHero() {
+      const group = new THREE.Group();
+      const heroSprite = sprite(textures.hero, 1.85, 2.15, 1.12);
+      group.add(heroSprite);
+
+      const sword = box(0.13, 0.13, 1.55, materials.sword, 0.8, 1.08, 0.2);
+      sword.rotation.x = 0.82;
+      sword.visible = false;
+      group.add(sword);
+
+      const fist = sphere(0.25, materials.armor, 0.8, 1.08, 0.18);
+      fist.visible = false;
+      group.add(fist);
+
+      const shieldMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.78, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.58),
+        materials.shield
+      );
+      shieldMesh.position.set(0, 0.95, 0);
+      shieldMesh.scale.set(1, 1.08, 1);
+      shieldMesh.visible = true;
+      group.add(shieldMesh);
+
+      hero.group = group;
+      hero.sprite = heroSprite;
+      hero.sword = sword;
+      hero.fist = fist;
+      hero.shieldMesh = shieldMesh;
+      scene.add(group);
+    }
+
+    function createMonster(colorMaterial) {
+      const group = new THREE.Group();
+      group.add(sprite(textures.monster, 1.28, 1.72, 0.88));
+      scene.add(group);
+      return group;
+    }
+
+    function createBoss() {
+      const group = new THREE.Group();
+      group.add(sprite(textures.boss, 2.6, 2.55, 1.35));
+      scene.add(group);
+      return {
+        group,
+        pos: new THREE.Vector3(13.5, 0, -8.5),
+        vel: new THREE.Vector3(),
+        radius: 0.86,
+        maxHp: 20,
+        hp: 20,
+        speed: 1.75,
+        hitTime: 0,
+        stomp: 0
+      };
+    }
+
+    function createDragon() {
+      const group = new THREE.Group();
+      group.add(sprite(textures.dragon, 3.2, 2.95, 1.7));
+      scene.add(group);
+      return {
+        group,
+        pos: new THREE.Vector3(-15.2, 0, -12.4),
+        vel: new THREE.Vector3(),
+        radius: 0.95,
+        maxHp: 14,
+        hp: 14,
+        speed: 2.35,
+        hitTime: 0,
+        stomp: 0,
+        fly: true
+      };
+    }
+
+    function createCat() {
+      const group = new THREE.Group();
+      const catSprite = sprite(textures.cat, 1.2, 1.15, 0.6);
+      group.add(catSprite);
+      group.position.set(-7.2, 0, 4.4);
+      scene.add(group);
+      return {
+        group,
+        sprite: catSprite,
+        hop: 0,
+        roll: 0,
+        baseX: -7.2,
+        baseZ: 4.4,
+        target: new THREE.Vector3(-4, 0, 4),
+        healCooldown: 0
+      };
+    }
+
+    function createSpecialRing() {
+      const ring = new THREE.Group();
+      const outer = new THREE.Mesh(new THREE.TorusGeometry(1, 0.08, 12, 80), materials.special);
+      const inner = new THREE.Mesh(new THREE.TorusGeometry(0.58, 0.04, 10, 64), materials.special);
+      const beam = new THREE.Mesh(
+        new THREE.ConeGeometry(0.9, 3.6, 32, 1, true),
+        new THREE.MeshBasicMaterial({ color: 0x58caff, transparent: true, opacity: 0.32, side: THREE.DoubleSide })
+      );
+      const slashA = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.22), slashMaterial);
+      const slashB = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.22), slashMaterial);
+      outer.rotation.x = Math.PI / 2;
+      inner.rotation.x = Math.PI / 2;
+      beam.position.y = 1.55;
+      slashA.position.y = 1.55;
+      slashB.position.y = 1.25;
+      slashB.rotation.z = Math.PI / 2;
+      ring.add(outer, inner, beam, slashA, slashB);
+      ring.position.y = 0.08;
+      ring.visible = false;
+      scene.add(ring);
+      return ring;
+    }
+
+    function createArmorItem() {
+      const group = new THREE.Group();
+      group.add(sprite(textures.armor, 1.25, 1.12, 0.68));
+      const glow = new THREE.Mesh(
+        new THREE.TorusGeometry(0.68, 0.04, 10, 40),
+        new THREE.MeshBasicMaterial({ color: 0xfff06a, transparent: true, opacity: 0.65 })
+      );
+      glow.rotation.x = Math.PI / 2;
+      glow.position.y = 0.08;
+      group.add(glow);
+      scene.add(group);
+      return group;
+    }
+
+    function setMessage(text, frames) {
+      messageBox.textContent = text;
+      messageBox.style.display = "block";
+      messageTimer = frames;
+    }
+
+    function updateHud() {
+      hpFill.style.width = `${Math.max(0, hero.hp / hero.maxHp) * 100}%`;
+      shieldFill.style.width = `${Math.max(0, hero.shield / hero.maxShield) * 100}%`;
+      bossFill.style.width = `${Math.max(0, boss.hp / boss.maxHp) * 100}%`;
+      dragonFill.style.width = `${dragon ? Math.max(0, dragon.hp / dragon.maxHp) * 100 : 0}%`;
+      hpText.textContent = `${hero.hp}/${hero.maxHp}`;
+      shieldText.textContent = `${hero.shield}/${hero.maxShield}`;
+      bossText.textContent = `${Math.max(0, Math.ceil(boss.hp))}/${boss.maxHp}`;
+      dragonText.textContent = dragon ? `${Math.max(0, Math.ceil(dragon.hp))}/${dragon.maxHp}` : "0/14";
+      scoreText.textContent = score;
+      armorText.textContent = hero.armor;
+      specialText.textContent = hero.specialCooldown <= 0 ? "준비" : Math.ceil(hero.specialCooldown / 60);
+    }
+
+    function resetGame() {
+      for (const monster of monsters) scene.remove(monster.group);
+      for (const item of armorItems) scene.remove(item.group);
+      if (boss) scene.remove(boss.group);
+      if (dragon) scene.remove(dragon.group);
+      monsters = [];
+      armorItems = [];
+      hero.pos.set(-5, 0, 1.5);
+      hero.face.set(1, 0, 0);
+      hero.maxHp = 5;
+      hero.maxShield = 8;
+      hero.hp = hero.maxHp;
+      hero.shield = hero.maxShield;
+      hero.armor = 0;
+      hero.invincible = 0;
+      hero.blockTime = 0;
+      hero.hitTime = 0;
+      hero.attackTime = 0;
+      hero.attackKind = "none";
+      hero.specialTime = 0;
+      hero.specialCooldown = 0;
+      hero.walkTime = 0;
+      hero.moving = false;
+      cat.group.position.set(cat.baseX, 0, cat.baseZ);
+      cat.group.rotation.set(0, 0, 0);
+      cat.sprite.scale.set(1.2, 1.15, 1);
+      cat.sprite.position.set(0, 0.6, 0);
+      cat.sprite.material.map = textures.cat;
+      cat.sprite.material.rotation = 0;
+      cat.sprite.material.needsUpdate = true;
+      cat.target.set(-4, 0, 4);
+      cat.healCooldown = 0;
+      boss = createBoss();
+      dragon = createDragon();
+      score = 0;
+      spawnTimer = 0;
+      armorTimer = 2.5;
+      gameOver = false;
+      win = false;
+      setMessage("멋진 드래곤 등장! 갑옷을 먹고 버텨봐!", 180);
+      updateHud();
+    }
+
+    function spawnMonster() {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = MONSTER_SPAWN_RADIUS;
+      const material = Math.random() < 0.5 ? materials.monsterA : materials.monsterB;
+      const monster = {
+        group: createMonster(material),
+        pos: new THREE.Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius),
+        vel: new THREE.Vector3(),
+        radius: 0.42,
+        hp: 2,
+        speed: 2.1 + score * 0.035,
+        hitTime: 0
+      };
+      monsters.push(monster);
+    }
+
+    function spawnArmorItem() {
+      const item = {
+        group: createArmorItem(),
+        pos: new THREE.Vector3((Math.random() - 0.5) * MAP_HALF_X * 1.65, 0, (Math.random() - 0.5) * MAP_HALF_Z * 1.65),
+        radius: 0.7,
+        spin: Math.random() * Math.PI * 2
+      };
+      item.group.position.copy(item.pos);
+      armorItems.push(item);
+    }
+
+    function distance2D(a, b) {
+      const dx = a.x - b.x;
+      const dz = a.z - b.z;
+      return Math.hypot(dx, dz);
+    }
+
+    function pushAway(target, power) {
+      tmp.copy(target.pos).sub(hero.pos);
+      tmp.y = 0;
+      if (tmp.lengthSq() < 0.001) tmp.set(hero.face.x, 0, hero.face.z);
+      tmp.normalize().multiplyScalar(power);
+      target.vel.add(tmp);
+    }
+
+    function inAttackRange(enemy, range, width) {
+      tmp.copy(enemy.pos).sub(hero.pos);
+      tmp.y = 0;
+      const dist = tmp.length();
+      if (dist > range) return false;
+      tmp.normalize();
+      return tmp.dot(hero.face) > width;
+    }
+
+    function damageHero(damage, attacker) {
+      if (hero.invincible > 0 || gameOver || win) return;
+      if (hero.shield > 0) {
+        hero.shield = Math.max(0, hero.shield - damage);
+        hero.blockTime = 18;
+        hero.invincible = 28;
+        pushAway(attacker, attacker === boss ? 11 : 18);
+        playSound("block");
+        setMessage(hero.shield > 0 ? "방패가 자동으로 막고 튕겼어!" : "방패가 깨졌어! 이제 체력이 닳아!", 90);
+      } else {
+        const reducedDamage = Math.max(1, damage - Math.floor(hero.armor / 2));
+        hero.hp = Math.max(0, hero.hp - reducedDamage);
+        hero.hitTime = 16;
+        hero.invincible = 75;
+        pushAway(attacker, attacker === boss ? 8 : 12);
+        playSound("hurt");
+        setMessage(hero.armor > 0 ? "갑옷이 피해를 줄였어!" : "체력이 떨어졌어!", 80);
+      }
+      if (hero.hp <= 0) {
+        gameOver = true;
+        setMessage("게임 끝! R을 누르면 다시 시작.", 99999);
+      }
+      updateHud();
+    }
+
+    function hitEnemy(enemy, damage, power) {
+      enemy.hp -= damage;
+      enemy.hitTime = 14;
+      pushAway(enemy, power);
+      if (enemy === boss) {
+        score += 1;
+        if (boss.hp <= 0) {
+          win = true;
+          cat.sprite.material.map = textures.catHappy;
+          cat.sprite.scale.set(1.35, 1.78, 1);
+          cat.sprite.position.y = 0.92;
+          cat.sprite.material.needsUpdate = true;
+          playSound("win");
+          setMessage("승리! 고양이가 행복해해!", 99999);
+        }
+      } else if (enemy === dragon) {
+        score += 1;
+        if (dragon.hp <= 0) {
+          score += 6;
+          scene.remove(dragon.group);
+          dragon = null;
+          setMessage("드래곤을 물리쳤어! 엄청난 점수!", 150);
+        }
+      } else if (enemy.hp <= 0) {
+        score += 1;
+      }
+    }
+
+    function startAttack(kind) {
+      if (hero.attackTime > 0 || hero.specialTime > 0 || gameOver || win) return;
+      hero.attackKind = kind;
+      hero.attackTime = kind === "sword" ? 22 : 14;
+      playSound(kind);
+      const range = kind === "sword" ? 2.2 : 1.45;
+      const width = kind === "sword" ? 0.28 : 0.45;
+      for (const monster of monsters) {
+        if (monster.hp > 0 && inAttackRange(monster, range, width)) {
+          hitEnemy(monster, kind === "sword" ? 2 : 1, kind === "sword" ? 16 : 11);
+        }
+      }
+      if (boss.hp > 0 && inAttackRange(boss, range + 0.35, width)) {
+        hitEnemy(boss, kind === "sword" ? 1.2 : 0.6, kind === "sword" ? 11 : 8);
+      }
+      if (dragon && dragon.hp > 0 && inAttackRange(dragon, range + 0.6, width)) {
+        hitEnemy(dragon, kind === "sword" ? 1.4 : 0.7, kind === "sword" ? 13 : 9);
+      }
+      monsters = monsters.filter((monster) => {
+        if (monster.hp > 0) return true;
+        scene.remove(monster.group);
+        return false;
+      });
+      updateHud();
+    }
+
+    function startSpecial() {
+      if (hero.specialCooldown > 0 || gameOver || win) return;
+      hero.specialTime = 36;
+      hero.specialCooldown = 360;
+      playSound("special");
+      setMessage("필살기! 3D 충격파가 퍼져나가!", 110);
+      for (const monster of monsters) {
+        if (monster.hp > 0 && distance2D(monster.pos, hero.pos) < 4.8) hitEnemy(monster, 3, 25);
+      }
+      if (boss.hp > 0 && distance2D(boss.pos, hero.pos) < 5.2) hitEnemy(boss, 3, 17);
+      if (dragon && dragon.hp > 0 && distance2D(dragon.pos, hero.pos) < 5.4) hitEnemy(dragon, 3, 19);
+      monsters = monsters.filter((monster) => {
+        if (monster.hp > 0) return true;
+        scene.remove(monster.group);
+        return false;
+      });
+      updateHud();
+    }
+
+    function moveEnemy(enemy, dt) {
+      enemy.pos.addScaledVector(enemy.vel, dt);
+      enemy.vel.multiplyScalar(Math.pow(0.12, dt));
+      tmp.copy(hero.pos).sub(enemy.pos);
+      tmp.y = 0;
+      const chasing = tmp.lengthSq() > 0.001;
+      if (tmp.lengthSq() > 0.001) {
+        tmp.normalize();
+        enemy.pos.addScaledVector(tmp, enemy.speed * dt);
+      }
+      enemy.pos.x = Math.max(-MAP_HALF_X, Math.min(MAP_HALF_X, enemy.pos.x));
+      enemy.pos.z = Math.max(-MAP_HALF_Z, Math.min(MAP_HALF_Z, enemy.pos.z));
+      enemy.group.position.copy(enemy.pos);
+      let walkTilt = 0;
+      if (enemy.fly) {
+        enemy.stomp += dt * 4.5;
+        enemy.group.position.y = 0.8 + Math.sin(enemy.stomp) * 0.24;
+      } else {
+        enemy.stomp += chasing ? dt * 8 : 0;
+        const walkBob = Math.abs(Math.sin(enemy.stomp)) * (enemy === boss ? 0.12 : 0.18);
+        enemy.group.position.y = (enemy === boss ? Math.sin(enemy.stomp * 0.45) * 0.09 : 0) + walkBob;
+        walkTilt = Math.sin(enemy.stomp) * (enemy === boss ? 0.04 : 0.12);
+      }
+      enemy.group.lookAt(hero.pos.x, enemy.group.position.y, hero.pos.z);
+      enemy.group.rotateY(Math.PI);
+      enemy.group.rotateZ(walkTilt);
+      if (enemy.hitTime > 0) enemy.hitTime -= 1;
+    }
+
+    function collectArmorItem(item) {
+      hero.armor = Math.min(5, hero.armor + 1);
+      hero.maxShield += 2;
+      hero.shield = hero.maxShield;
+      hero.maxHp = Math.min(8, hero.maxHp + 1);
+      hero.hp = Math.min(hero.maxHp, hero.hp + 2);
+      score += 3;
+      scene.remove(item.group);
+      playSound("armor");
+      setMessage("갑옷 획득! 체력, 방패, 방어력이 올라갔어!", 120);
+      updateHud();
+    }
+
+    function updateArmorItems(dt) {
+      for (const item of armorItems) {
+        item.spin += dt * 2.5;
+        item.group.rotation.y = item.spin;
+        item.group.position.y = Math.sin(item.spin * 2) * 0.12;
+      }
+
+      armorItems = armorItems.filter((item) => {
+        if (distance2D(item.pos, hero.pos) >= item.radius + hero.radius) return true;
+        collectArmorItem(item);
+        return false;
+      });
+    }
+
+    function updateHappyCat(dt) {
+      cat.hop += dt * 7.5;
+      cat.roll += dt * 8.5;
+      cat.group.position.x = cat.baseX + Math.sin(cat.hop * 0.72) * 2.6;
+      cat.group.position.z = cat.baseZ + Math.cos(cat.hop * 0.58) * 1.5;
+      cat.group.position.y = 0.22 + Math.abs(Math.sin(cat.hop)) * 1.15;
+      cat.sprite.material.rotation = Math.sin(cat.roll) * 0.6;
+      cat.sprite.scale.setScalar(1 + Math.abs(Math.sin(cat.hop * 1.4)) * 0.18);
+      cat.sprite.scale.x *= 1.35;
+      cat.sprite.scale.y *= 1.78;
+    }
+
+    function chooseCatTarget() {
+      cat.target.set(
+        (Math.random() - 0.5) * MAP_HALF_X * 1.55,
+        0,
+        (Math.random() - 0.5) * MAP_HALF_Z * 1.55
+      );
+    }
+
+    function updateCat(dt) {
+      cat.hop += dt * 4.5;
+      cat.healCooldown = Math.max(0, cat.healCooldown - dt);
+      tmp.copy(cat.target).sub(cat.group.position);
+      tmp.y = 0;
+      if (tmp.length() < 0.35) chooseCatTarget();
+      if (tmp.lengthSq() > 0.001) {
+        tmp.normalize();
+        cat.group.position.addScaledVector(tmp, 1.55 * dt);
+      }
+      cat.group.position.x = Math.max(-MAP_HALF_X + 1, Math.min(MAP_HALF_X - 1, cat.group.position.x));
+      cat.group.position.z = Math.max(-MAP_HALF_Z + 1, Math.min(MAP_HALF_Z - 1, cat.group.position.z));
+      cat.group.position.y = Math.abs(Math.sin(cat.hop)) * 0.16;
+      cat.sprite.material.rotation = Math.sin(cat.hop) * 0.08;
+      cat.sprite.scale.set(1.2 + Math.abs(Math.sin(cat.hop)) * 0.08, 1.15 - Math.abs(Math.sin(cat.hop)) * 0.03, 1);
+
+      if (distance2D(cat.group.position, hero.pos) < 1.55 && cat.healCooldown <= 0 && hero.hp < hero.maxHp) {
+        hero.hp = Math.min(hero.maxHp, hero.hp + 1);
+        cat.healCooldown = 4;
+        playSound("meow");
+        setMessage("냐옹! 고양이가 체력을 회복해줬어!", 100);
+        updateHud();
+      }
+    }
+
+    function updateHeroVisual() {
+      hero.group.position.copy(hero.pos);
+      hero.group.rotation.y = Math.atan2(hero.face.x, hero.face.z);
+      hero.sword.visible = false;
+      hero.fist.visible = false;
+      if (hero.specialTime > 0) {
+        hero.sprite.material.map = textures.heroSpecial;
+        hero.sprite.scale.set(2.25, 2.42, 1);
+        hero.sprite.position.y = 1.22;
+      } else if (hero.attackTime > 0 && hero.attackKind === "sword") {
+        hero.sprite.material.map = textures.heroSword;
+        hero.sprite.scale.set(2.28, 2.16, 1);
+        hero.sprite.position.y = 1.13;
+      } else if (hero.attackTime > 0 && hero.attackKind === "punch") {
+        hero.sprite.material.map = textures.heroPunch;
+        hero.sprite.scale.set(2.1, 2.35, 1);
+        hero.sprite.position.y = 1.2;
+      } else {
+        hero.sprite.material.map = textures.hero;
+        if (hero.moving) {
+          const step = Math.sin(hero.walkTime);
+          const bounce = Math.abs(step);
+          hero.sprite.scale.set(1.85 + bounce * 0.08, 2.15 - bounce * 0.07, 1);
+          hero.sprite.position.y = 1.12 + bounce * 0.12;
+          hero.sprite.material.rotation = step * 0.08;
+        } else {
+          hero.sprite.scale.set(1.85, 2.15, 1);
+          hero.sprite.position.y = 1.12;
+          hero.sprite.material.rotation = 0;
+        }
+      }
+      hero.sprite.material.needsUpdate = true;
+      hero.shieldMesh.visible = hero.shield > 0 || hero.blockTime > 0;
+      hero.shieldMesh.material.opacity = hero.blockTime > 0 ? 0.78 : 0.36;
+      hero.shieldMesh.scale.setScalar(1 + hero.armor * 0.04);
+      hero.group.visible = !(hero.invincible > 0 && Math.floor(hero.invincible / 5) % 2 === 0);
+    }
+
+    function update(dt) {
+      if (keys.has("r")) resetGame();
+      if (gameOver) {
+        cat.hop += dt * 5;
+        cat.group.position.y = Math.sin(cat.hop) * 0.2;
+        return;
+      }
+      if (win) {
+        updateHappyCat(dt);
+        updateHeroVisual();
+        return;
+      }
+
+      let x = 0;
+      let z = 0;
+      if (keys.has("arrowleft") || keys.has("a")) x -= 1;
+      if (keys.has("arrowright") || keys.has("d")) x += 1;
+      if (keys.has("arrowup") || keys.has("w")) z -= 1;
+      if (keys.has("arrowdown") || keys.has("s")) z += 1;
+      x += touchMove.x;
+      z += touchMove.z;
+      if (x || z) {
+        tmp.set(x, 0, z).normalize();
+        hero.face.copy(tmp);
+        hero.pos.addScaledVector(tmp, hero.speed * dt);
+        hero.moving = true;
+        hero.walkTime += dt * 12;
+      } else {
+        hero.moving = false;
+      }
+      hero.pos.x = Math.max(-MAP_HALF_X, Math.min(MAP_HALF_X, hero.pos.x));
+      hero.pos.z = Math.max(-MAP_HALF_Z, Math.min(MAP_HALF_Z, hero.pos.z));
+
+      spawnTimer -= dt;
+      if (spawnTimer <= 0) {
+        spawnMonster();
+        spawnTimer = Math.max(0.55, 1.55 - score * 0.025);
+      }
+
+      armorTimer -= dt;
+      if (armorTimer <= 0 && armorItems.length < 3) {
+        spawnArmorItem();
+        armorTimer = 8 + Math.random() * 5;
+      }
+
+      for (const monster of monsters) {
+        moveEnemy(monster, dt);
+        if (distance2D(monster.pos, hero.pos) < monster.radius + hero.radius) damageHero(1, monster);
+      }
+
+      if (boss.hp > 0) {
+        boss.stomp += dt * 5;
+        moveEnemy(boss, dt);
+        if (distance2D(boss.pos, hero.pos) < boss.radius + hero.radius) damageHero(2, boss);
+      }
+
+      if (dragon && dragon.hp > 0) {
+        moveEnemy(dragon, dt);
+        if (distance2D(dragon.pos, hero.pos) < dragon.radius + hero.radius) damageHero(2, dragon);
+      }
+
+      updateCat(dt);
+      updateArmorItems(dt);
+      hero.attackTime = Math.max(0, hero.attackTime - 60 * dt);
+      hero.specialTime = Math.max(0, hero.specialTime - 60 * dt);
+      hero.specialCooldown = Math.max(0, hero.specialCooldown - 60 * dt);
+      hero.invincible = Math.max(0, hero.invincible - 60 * dt);
+      hero.blockTime = Math.max(0, hero.blockTime - 60 * dt);
+      hero.hitTime = Math.max(0, hero.hitTime - 60 * dt);
+      if (boss.hitTime > 0) boss.hitTime -= 60 * dt;
+      if (messageTimer > 0) {
+        messageTimer -= 60 * dt;
+        if (messageTimer <= 0) messageBox.style.display = "none";
+      }
+
+      updateHeroVisual();
+      updateHud();
+    }
+
+    function updateSpecialRing() {
+      if (hero.specialTime > 0) {
+        const t = 1 - hero.specialTime / 36;
+        specialRing.visible = true;
+        specialRing.position.x = hero.pos.x;
+        specialRing.position.z = hero.pos.z;
+        specialRing.scale.setScalar(0.75 + t * 4.6);
+        specialRing.rotation.y += 0.16;
+        for (const child of specialRing.children) {
+          if (child.material) child.material.opacity = child.geometry.type === "ConeGeometry" ? 0.28 * (1 - t) : 0.78 * (1 - t);
+        }
+      } else {
+        specialRing.visible = false;
+      }
+    }
+
+    function updateCamera() {
+      const target = new THREE.Vector3(hero.pos.x, 1.1, hero.pos.z);
+      const desired = new THREE.Vector3(hero.pos.x, 11.5, hero.pos.z + 13.2);
+      camera.position.lerp(desired, 0.08);
+      camera.lookAt(target);
+    }
+
+    function updateJoystick(event) {
+      const rect = joystick.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = event.clientX - cx;
+      const dy = event.clientY - cy;
+      const max = rect.width * 0.34;
+      const length = Math.min(max, Math.hypot(dx, dy));
+      const angle = Math.atan2(dy, dx);
+      const sx = Math.cos(angle) * length;
+      const sy = Math.sin(angle) * length;
+      stick.style.transform = `translate(calc(-50% + ${sx}px), calc(-50% + ${sy}px))`;
+      touchMove.x = sx / max;
+      touchMove.z = sy / max;
+    }
+
+    function resetJoystick() {
+      joystickPointerId = null;
+      touchMove.set(0, 0, 0);
+      stick.style.transform = "translate(-50%, -50%)";
+    }
+
+    function resize() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+
+    function loop() {
+      const dt = Math.min(0.033, clock.getDelta());
+      update(dt);
+      updateSpecialRing();
+      updateCamera();
+      renderer.render(scene, camera);
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener("resize", resize);
+    window.addEventListener("keydown", (event) => {
+      enableAudio();
+      const key = event.key.toLowerCase();
+      keys.add(key);
+      if (key === "z") startAttack("punch");
+      if (key === "x") startAttack("sword");
+      if (key === "c") startSpecial();
+      if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(key)) event.preventDefault();
+    });
+    window.addEventListener("keyup", (event) => keys.delete(event.key.toLowerCase()));
+    restartButton.addEventListener("click", () => {
+      enableAudio();
+      resetGame();
+    });
+    joystick.addEventListener("pointerdown", (event) => {
+      enableAudio();
+      joystickPointerId = event.pointerId;
+      joystick.setPointerCapture(event.pointerId);
+      updateJoystick(event);
+    });
+    joystick.addEventListener("pointermove", (event) => {
+      if (event.pointerId === joystickPointerId) updateJoystick(event);
+    });
+    joystick.addEventListener("pointerup", resetJoystick);
+    joystick.addEventListener("pointercancel", resetJoystick);
+    touchPunch.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      enableAudio();
+      startAttack("punch");
+    });
+    touchSword.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      enableAudio();
+      startAttack("sword");
+    });
+    touchSpecial.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      enableAudio();
+      startSpecial();
+    });
+    touchRestart.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      enableAudio();
+      resetGame();
+    });
+
+    createHero();
+    cat = createCat();
+    specialRing = createSpecialRing();
+    resize();
+    resetGame();
+    updateHeroVisual();
+    loop();
+  </script>
+</body>
+</html>
