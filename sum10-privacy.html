@@ -67,8 +67,11 @@ permalink: /sum10/privacy/
 
   <h2>3. 권한</h2>
   <p>
-    본 앱은 인터넷 접근 권한(<code>INTERNET</code>)만 사용하며, 이는 광고를 불러오기 위한 것입니다.
-    카메라, 연락처, 위치, 저장소, 마이크 등 다른 권한은 요청하지 않습니다. 게임은 인터넷 없이도 할 수 있습니다.
+    본 앱은 광고를 불러오기 위해 인터넷 접근(<code>INTERNET</code>)과 네트워크 상태 확인(<code>ACCESS_NETWORK_STATE</code>) 권한을 사용하며,
+    광고 SDK가 백그라운드 작업에 쓰는 일반 권한(<code>WAKE_LOCK</code>, <code>FOREGROUND_SERVICE</code>)이 함께 포함됩니다.
+    이 권한들은 설치 시 자동으로 허용되는 일반 권한이며 개인정보에 접근하지 않습니다.
+    광고 ID 권한과 Privacy Sandbox 광고 권한은 앱에서 제거했습니다.
+    카메라, 연락처, 위치, 저장소, 마이크 권한은 요청하지 않습니다. 게임은 인터넷 없이도 할 수 있습니다.
   </p>
 
   <h2>4. 아동 보호 (Google Play 가족 정책)</h2>
@@ -149,7 +152,10 @@ permalink: /sum10/privacy/
 
   <h2>3. Permissions</h2>
   <p>
-    The app requests only the <code>INTERNET</code> permission, which is required to load advertisements.
+    To load advertisements the app uses the <code>INTERNET</code> and <code>ACCESS_NETWORK_STATE</code> permissions,
+    and the ad SDK adds normal permissions for background work (<code>WAKE_LOCK</code>, <code>FOREGROUND_SERVICE</code>).
+    These are normal permissions granted at install time and do not access personal data.
+    The Advertising ID permission and the Privacy Sandbox ad permissions have been removed from the app.
     It does not request camera, contacts, location, storage, or microphone permissions. The game can be played offline.
   </p>
 
