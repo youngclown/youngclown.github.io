@@ -24,7 +24,7 @@ permalink: /kazoe/privacy/
   <div class="lang-switch"><a href="#en">English version below ↓</a></div>
 
   <h1>Kazoe 개인정보처리방침</h1>
-  <p class="updated">최종 수정일: 2026년 9월 4일</p>
+  <p class="updated">최종 수정일: 2026년 10월 1일</p>
 
   <p>
     Kazoe(이하 "본 앱")는 숫자 타일을 놓아 상대의 타일을 뒤집는 1인용 보드게임입니다.
@@ -55,23 +55,30 @@ permalink: /kazoe/privacy/
     AdMob은 광고를 게재하고 측정하기 위해 다음과 같은 정보를 수집할 수 있습니다.
   </p>
   <ul>
-    <li>광고 식별자(Advertising ID)</li>
+    <li>IP 주소 (대략적인 위치 추정에 쓰일 수 있습니다)</li>
     <li>기기 정보 (기기 모델, 운영체제 버전 등)</li>
-    <li>대략적인 위치 정보 (IP 주소 기반)</li>
+    <li>앱 세트 ID (같은 개발자의 앱끼리만 쓰이는 식별자)</li>
     <li>광고 상호작용 정보 (노출, 클릭)</li>
+    <li>진단 정보 (광고가 제대로 표시되었는지 등)</li>
   </ul>
+  <p>
+    <strong>광고 ID(Advertising ID)는 수집·전송되지 않습니다.</strong>
+    본 앱은 아동 대상 처리로 광고를 요청하므로 Google이 광고 ID를 사용하지 않으며,
+    앱에서 광고 ID 권한 자체를 제거했습니다.
+  </p>
   <p>
     이 정보는 Google이 수집·처리하며 개발자는 개별 이용자의 정보를 열람할 수 없습니다.
     자세한 내용은 <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">Google의 파트너 사이트 및 앱에서의 정보 이용 방침</a>을 참고하십시오.
   </p>
-  <p>
-    Android 설정 &gt; 개인정보 보호 &gt; 광고에서 광고 ID를 재설정하거나 맞춤 광고를 끌 수 있습니다.
-  </p>
+
 
   <h2>3. 권한</h2>
   <p>
-    본 앱은 인터넷 접근 권한(<code>INTERNET</code>)만 사용하며, 이는 광고를 불러오기 위한 것입니다.
-    카메라, 연락처, 위치, 저장소, 마이크 등 다른 권한은 요청하지 않습니다.
+    본 앱은 광고를 불러오기 위해 인터넷 접근(<code>INTERNET</code>)과 네트워크 상태 확인(<code>ACCESS_NETWORK_STATE</code>) 권한을 사용하며,
+    광고 SDK가 백그라운드 작업에 쓰는 일반 권한(<code>WAKE_LOCK</code>, <code>FOREGROUND_SERVICE</code>)이 함께 포함됩니다.
+    이 권한들은 설치 시 자동으로 허용되는 일반 권한이며 개인정보에 접근하지 않습니다.
+    <strong>광고 ID 권한과 Privacy Sandbox 광고 권한은 앱에서 제거했습니다.</strong>
+    카메라, 연락처, 위치, 저장소, 마이크 권한은 요청하지 않습니다.
   </p>
 
   <h2>4. 아동 보호 (Google Play 가족 정책)</h2>
@@ -110,7 +117,7 @@ permalink: /kazoe/privacy/
   <hr>
 
   <h1 id="en">Privacy Policy for Kazoe</h1>
-  <p class="updated">Last updated: September 4, 2026</p>
+  <p class="updated">Last updated: October 1, 2026</p>
 
   <p>
     Kazoe is a single-player board game in which you place numbered tiles to flip your opponent's tiles.
@@ -141,23 +148,31 @@ permalink: /kazoe/privacy/
     To serve and measure ads, AdMob may collect:
   </p>
   <ul>
-    <li>Advertising ID</li>
+    <li>IP address (may be used to estimate approximate location)</li>
     <li>Device information (model, OS version, and similar)</li>
-    <li>Approximate location derived from the IP address</li>
+    <li>App set ID (an identifier shared only across this developer's apps)</li>
     <li>Ad interaction data (impressions, clicks)</li>
+    <li>Diagnostic information (whether an ad rendered correctly, and similar)</li>
   </ul>
+  <p>
+    <strong>The Advertising ID is not collected or transmitted.</strong>
+    Ads are requested with child-directed treatment, so Google does not use the Advertising ID,
+    and the app removes the Advertising ID permission itself.
+  </p>
   <p>
     This data is collected and processed by Google; the developer cannot view information about individual users.
     See <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">How Google uses information from sites or apps that use our services</a>.
   </p>
-  <p>
-    You can reset your Advertising ID or opt out of personalised advertising in Android Settings &gt; Privacy &gt; Ads.
-  </p>
+
 
   <h2>3. Permissions</h2>
   <p>
-    The app requests only the <code>INTERNET</code> permission, which is required to load advertisements.
-    It does not request camera, contacts, location, storage, or microphone permissions.
+    The app uses internet access (<code>INTERNET</code>) and network state
+    (<code>ACCESS_NETWORK_STATE</code>) to load advertisements, together with ordinary permissions the
+    advertising SDK uses for background work (<code>WAKE_LOCK</code>, <code>FOREGROUND_SERVICE</code>).
+    These are normal permissions granted at install time and do not access personal information.
+    <strong>The Advertising ID permission and the Privacy Sandbox advertising permissions have been removed.</strong>
+    The app does not request camera, contacts, location, storage, or microphone permissions.
   </p>
 
   <h2>4. Children (Google Play Families Policy)</h2>
