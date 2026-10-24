@@ -1,0 +1,69 @@
+<!doctype html>
+<!-- 웹 안내 페이지: https://youngclown.github.io/nono/  (원본 = photo-nonogram/web/youngclown.github.io/nono/index.html, 바꿀 때 공개 저장소와 함께)
+     규칙: 외부 스크립트·글꼴·이미지·분석 도구 0개. 시스템 글꼴, 인라인 CSS/SVG/JS만. 광고 없음. 퍼즐 미리보기 없음. 자동 이동 없음. -->
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>퍼즐이 도착했어요 · 내 사진 노노그램 (Photo Nonogram)</title>
+<meta property="og:title" content="퍼즐이 왔어요!">
+<meta property="og:description" content="눌러서 내 사진 노노그램 앱에서 풀어 보세요">
+<style>
+:root{--paper:#FBF5EA;--surface:#FFFDF7;--line:#E6DCC8;--ink:#2B2A33;--ink2:#6B6470;--per:#D2582A;--per-ink:#B84A1C;--fill:#2E3550}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;-webkit-text-size-adjust:100%}
+main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 24px 20px;max-width:420px;margin:0 auto;text-align:center}
+.mark{width:64px;height:64px;margin-bottom:12px}
+h1{font-size:26px;line-height:1.3;font-weight:800;letter-spacing:-.3px}
+p{font-size:16px;line-height:1.5;color:var(--ink2);margin-top:8px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border-radius:20px;text-decoration:none;font-weight:800}
+.open{height:68px;margin-top:24px;background:var(--per);color:#fff;font-size:21px;box-shadow:0 3px 0 #A9441C}
+.store{height:56px;background:var(--surface);color:var(--per-ink);border:2px solid var(--per);font-size:17px;margin-top:12px}
+.soon{margin-top:12px;font-weight:700;color:var(--ink)}
+.sep{width:100%;height:1px;background:var(--line);margin:22px 0 16px}
+.small{font-size:13px;line-height:1.5;color:var(--ink2);margin-top:20px}
+.small a{color:var(--ink2)}
+.dbg{font-size:11px;color:var(--ink2);margin-top:6px}
+[hidden]{display:none!important}
+</style></head>
+<body><main>
+<svg class="mark" viewBox="0 0 88 88" aria-hidden="true"><rect x="4" y="4" width="80" height="80" rx="20" fill="#FFFDF7" stroke="#E6DCC8" stroke-width="2"/><g fill="#2E3550"><rect x="22" y="28" width="11" height="11" rx="2"/><rect x="55" y="28" width="11" height="11" rx="2"/><rect x="22" y="39" width="44" height="11" rx="2"/><rect x="33" y="50" width="22" height="11" rx="2"/></g><rect x="38.5" y="61" width="11" height="11" rx="2" fill="#D2582A"/><path d="M70 10l2.2 6 6 2.2-6 2.2L70 26.4l-2.2-6-6-2.2 6-2.2z" fill="#F3C34A"/></svg>
+<p style="margin:0 0 14px;font-size:14px;font-weight:700;color:var(--ink)">내 사진 노노그램 <span style="font-weight:500;color:var(--ink2)">· Photo Nonogram</span></p>
+<section id="ok">
+  <h1 id="t-h">퍼즐이 도착했어요!</h1>
+  <p id="t-sub">버튼을 누르면 앱에서 바로 열려요.</p>
+  <a class="btn open" id="open" href="#">앱에서 열기</a>
+  <div class="sep"></div>
+  <p style="margin-top:0" id="t-no">앱이 없나요?<br>앱을 설치하면 바로 풀 수 있어요.</p>
+  <a class="btn store" id="store" href="https://play.google.com/store/apps/details?id=com.youngclown.photonono" hidden><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5v17l14-8.5z" fill="currentColor"/></svg><span id="t-store">Play 스토어</span></a>
+  <p class="soon" id="soon">곧 출시돼요. 조금만 기다려 주세요!</p>
+</section>
+<section id="bad" hidden>
+  <h1 id="b-h">퍼즐 링크가 잘렸어요</h1>
+  <p id="b-p">보낸 사람에게 링크를 다시 받아 주세요.<br>끝까지 한 번에 복사해야 열려요.</p>
+</section>
+<p class="small"><span id="t-priv">퍼즐 내용은 주소의 # 뒤에만 있고, 서버로 보내지 않아요.</span><br><a id="t-pl" href="/photonono/privacy/">개인정보 처리방침</a></p>
+<p class="dbg" id="dbg" hidden></p>
+</main>
+<script>
+/* #v1.<payload> 가 없거나 짧으면 '잘린 링크'. 앱 열기는 해시를 query 로 옮긴 intent:// 주소(카카오톡 인앱 브라우저도 됨). 자동 이동하지 않는다.
+   출시되면 RELEASED 를 true 로 바꾼다. */
+(function(){
+var RELEASED=false;
+var store='https://play.google.com/store/apps/details?id=com.youngclown.photonono';
+var en=/^en/i.test(navigator.language||'');
+var T=en?{h:'A puzzle has arrived!',sub:'Tap the button to open it in the app.',open:'Open in app',no:"Don't have the app?<br>Install it to solve right away.",store:'Get it on Google Play',soon:'Coming soon to Google Play. Please wait a little!',bh:'This puzzle link was cut off',bp:'Ask the sender for the link again.<br>Copy it all at once so it opens.',priv:'The puzzle lives only after the # in the address and is never sent to a server.',pl:'Privacy Policy',title:'A puzzle has arrived · Photo Nonogram'}
+:{h:'퍼즐이 도착했어요!',sub:'버튼을 누르면 앱에서 바로 열려요.',open:'앱에서 열기',no:'앱이 없나요?<br>앱을 설치하면 바로 풀 수 있어요.',store:'Play 스토어',soon:'곧 출시돼요. 조금만 기다려 주세요!',bh:'퍼즐 링크가 잘렸어요',bp:'보낸 사람에게 링크를 다시 받아 주세요.<br>끝까지 한 번에 복사해야 열려요.',priv:'퍼즐 내용은 주소의 # 뒤에만 있고, 서버로 보내지 않아요.',pl:'개인정보 처리방침',title:'퍼즐이 도착했어요 · 내 사진 노노그램 (Photo Nonogram)'};
+var $=function(i){return document.getElementById(i)};
+if(en){document.documentElement.lang='en';document.title=T.title;
+$('t-h').textContent=T.h;$('t-sub').textContent=T.sub;$('open').textContent=T.open;$('t-no').innerHTML=T.no;$('t-store').textContent=T.store;$('soon').textContent=T.soon;
+$('b-h').textContent=T.bh;$('b-p').innerHTML=T.bp;$('t-priv').textContent=T.priv;$('t-pl').textContent=T.pl;}
+$('store').hidden=!RELEASED;$('soon').hidden=RELEASED;
+var h=location.hash,ok=/^#v1\.[A-Za-z0-9_-]{40,}$/.test(h);
+if(/[?&]debug=1/.test(location.search)){var d=$('dbg');d.hidden=false;d.textContent='payload '+Math.max(0,h.length-1)+' chars';}
+if(!ok){$('ok').hidden=true;$('bad').hidden=false;return;}
+$('open').href='intent://open?d='+encodeURIComponent(h.slice(1))+'#Intent;scheme=photonono;package=com.youngclown.photonono;S.browser_fallback_url='+encodeURIComponent(store)+';end';
+})();
+</script>
+</body></html>
